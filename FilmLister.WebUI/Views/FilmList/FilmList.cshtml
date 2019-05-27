@@ -1,0 +1,49 @@
+﻿@model FilmLister.WebUI.Models.FilmList
+
+@{
+    ViewData["Title"] = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>View</h1>
+
+<div>
+    <h4>FilmList</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Completed)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Completed)
+        </dd>
+    </dl>
+</div>
+
+@if (!Model.Completed)
+{
+    <dl class="row">
+        <dd class="col-sm-10">
+            Which do you prefer?
+        </dd>
+    </dl>
+    <dl class="row">
+        <dd class="col-sm-10">
+            <a asp-controller="FilmList" asp-action="SubmitFilmChoice" asp-route-id="@Model.Id" asp-route-lesserFilmId="@Model.ChoiceB.Id" asp-route-greaterFilmId="@Model.ChoiceA.Id">@Html.DisplayFor(model => model.ChoiceA.Name)</a>
+        </dd>
+        <dd class="col-sm-10">
+            <a asp-controller="FilmList" asp-action="SubmitFilmChoice" asp-route-id="@Model.Id" asp-route-lesserFilmId="@Model.ChoiceA.Id" asp-route-greaterFilmId="@Model.ChoiceB.Id">@Html.DisplayFor(model => model.ChoiceB.Name)</a>
+        </dd>
+    </dl>
+}
+
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -3,21 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmLister.WebUI", "FilmLister.WebUI\FilmLister.WebUI.csproj", "{C1EC99A2-35C5-4829-941D-D00C33E18C76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmLister.WebUI", "FilmLister.WebUI\FilmLister.WebUI.csproj", "{C1EC99A2-35C5-4829-941D-D00C33E18C76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmLister.Domain", "FilmLister.Domain\FilmLister.Domain.csproj", "{745A15BC-9A00-436A-95C2-DE22EA86109C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmLister.Domain", "FilmLister.Domain\FilmLister.Domain.csproj", "{745A15BC-9A00-436A-95C2-DE22EA86109C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmLister.Service", "FilmLister.Service\FilmLister.Service.csproj", "{C87E6669-FF55-4388-AFF8-6215E996037A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmLister.Service", "FilmLister.Service\FilmLister.Service.csproj", "{C87E6669-FF55-4388-AFF8-6215E996037A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmLister.Domain.Test", "FilmLister.Domain.Test\FilmLister.Domain.Test.csproj", "{9FFEFBBD-DF7B-4E17-9A97-BE8157DA9A8C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmLister.Domain.Test", "FilmLister.Domain.Test\FilmLister.Domain.Test.csproj", "{9FFEFBBD-DF7B-4E17-9A97-BE8157DA9A8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmLister.Server.Tests", "FilmLister.Server.Tests\FilmLister.Server.Tests.csproj", "{FD9238DA-7376-4903-ABD2-FF548B6D825C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmLister.Server.Tests", "FilmLister.Server.Tests\FilmLister.Server.Tests.csproj", "{FD9238DA-7376-4903-ABD2-FF548B6D825C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FDE9B479-4FF9-460A-8F96-94DC3F17A9E8}"
 	ProjectSection(SolutionItems) = preProject
 		licence.txt = licence.txt
 		readme.md = readme.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmLister.WebUI.Models", "FilmLister.WebUI.Models\FilmLister.WebUI.Models.csproj", "{94C9C3FE-425C-4232-9737-6C6D45490E96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{FD9238DA-7376-4903-ABD2-FF548B6D825C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD9238DA-7376-4903-ABD2-FF548B6D825C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD9238DA-7376-4903-ABD2-FF548B6D825C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94C9C3FE-425C-4232-9737-6C6D45490E96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94C9C3FE-425C-4232-9737-6C6D45490E96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94C9C3FE-425C-4232-9737-6C6D45490E96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94C9C3FE-425C-4232-9737-6C6D45490E96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

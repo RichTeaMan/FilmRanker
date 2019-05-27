@@ -9,6 +9,14 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\FilmLister.Domain\FilmLister.Domain.csproj" />
+    <ProjectReference Include="..\FilmLister.Service\FilmLister.Service.csproj" />
+    <ProjectReference Include="..\FilmLister.WebUI.Models\FilmLister.WebUI.Models.csproj" />
   </ItemGroup>
 
 </Project>

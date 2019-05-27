@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AssemblyName>FilmLister.WebUI.Models</AssemblyName>
+    <RootNamespace>FilmLister.WebUI.Models</RootNamespace>
+  </PropertyGroup>
+
+</Project>
