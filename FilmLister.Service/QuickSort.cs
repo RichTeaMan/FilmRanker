@@ -174,10 +174,10 @@ namespace FilmLister.Service
         public static void Sort(T[] entries, int first, int last)
         {
             for (var index = first + 1; index <= last; index++)
-                insert(entries, first, index);
+                Insert(entries, first, index);
         }
 
-        private static void insert(T[] entries, int first, int index)
+        private static void Insert(T[] entries, int first, int index)
         {
             var entry = entries[index];
             while (index > first && entries[index - 1].CompareTo(entry) > 0)

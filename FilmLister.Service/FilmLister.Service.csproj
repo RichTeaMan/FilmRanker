@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FilmLister.Domain\FilmLister.Domain.csproj" />
+    <ProjectReference Include="..\FilmLister.Persistence\FilmLister.Persistence.csproj" />
+    <ProjectReference Include="..\FilmLister.TmdbIntegration\FilmLister.TmdbIntegration.csproj" />
   </ItemGroup>
 
 </Project>

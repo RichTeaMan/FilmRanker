@@ -15,8 +15,16 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FilmLister.Domain\FilmLister.Domain.csproj" />
+    <ProjectReference Include="..\FilmLister.Persistence\FilmLister.Persistence.csproj" />
     <ProjectReference Include="..\FilmLister.Service\FilmLister.Service.csproj" />
     <ProjectReference Include="..\FilmLister.WebUI.Models\FilmLister.WebUI.Models.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

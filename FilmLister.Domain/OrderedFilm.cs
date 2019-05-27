@@ -5,12 +5,12 @@ namespace FilmLister.Domain
     public class OrderedFilm : AbstractComparable<OrderedFilm>
     {
         public int Id { get; }
-        public string Name { get; }
+        public Film Film { get; }
 
-        public OrderedFilm(int id, string name)
+        public OrderedFilm(int id, Film film)
         {
             Id = id;
-            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Film = film ?? throw new ArgumentNullException(nameof(film));
         }
     }
 }

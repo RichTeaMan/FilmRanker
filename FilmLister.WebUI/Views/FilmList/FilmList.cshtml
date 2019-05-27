@@ -25,7 +25,25 @@
         </dd>
     </dl>
 </div>
-
+@if (Model.Completed)
+{
+    <h4>
+        Sort Complete
+    </h4>
+}
+<div class="row">
+    @foreach (var film in Model.SortedFilms.Reverse())
+    {
+        <div class="col-md-4">
+            <figure>
+                <img width="100" src="@film.ImageUrl" />
+                <figcaption>
+                    @film.Name
+                </figcaption>
+            </figure>
+        </div>
+    }
+</div>
 @if (!Model.Completed)
 {
     <h4>
@@ -35,7 +53,7 @@
         <div class="col-sm">
             <a asp-controller="FilmList" asp-action="SubmitFilmChoice" asp-route-id="@Model.Id" asp-route-lesserFilmId="@Model.ChoiceB.Id" asp-route-greaterFilmId="@Model.ChoiceA.Id">
                 <figure>
-                    <img width="200" src="https://image.tmdb.org/t/p/w200/kqjL17yufvn9OVLyXYpvtyrFfak.jpg" />
+                    <img width="200" src="@Model.ChoiceA.ImageUrl" />
                     <figcaption>
                         @Html.DisplayFor(model => model.ChoiceA.Name)
                     </figcaption>
@@ -45,7 +63,7 @@
         <div class="col-sm">
             <a asp-controller="FilmList" asp-action="SubmitFilmChoice" asp-route-id="@Model.Id" asp-route-lesserFilmId="@Model.ChoiceA.Id" asp-route-greaterFilmId="@Model.ChoiceB.Id">
                 <figure>
-                    <img width="200" src="https://image.tmdb.org/t/p/w200/kqjL17yufvn9OVLyXYpvtyrFfak.jpg" />
+                    <img width="200" src="@Model.ChoiceB.ImageUrl" />
                     <figcaption>
                         @Html.DisplayFor(model => model.ChoiceB.Name)
                     </figcaption>

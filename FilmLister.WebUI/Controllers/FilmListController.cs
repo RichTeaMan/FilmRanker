@@ -16,14 +16,15 @@ namespace FilmLister.WebUI.Controllers
 
         private readonly FilmListMapper filmListMapper;
 
-        private readonly static Film[] Films = new[] { new Film() {Id = 1, Name = "Jurassic Park" }, new Film() { Id = 2, Name = "Jurassic Park 2: The Lost World" }, new Film() { Id = 3, Name = "Jurassic Park 3" } };
+        private readonly FilmService filmService;
 
         private readonly static Dictionary<string, OrderedFilmList> FilmList = new Dictionary<string, OrderedFilmList>();
 
-        public FilmListController(OrderService orderService, FilmListMapper filmListMapper)
+        public FilmListController(OrderService orderService, FilmListMapper filmListMapper, FilmService filmService)
         {
             this.orderService = orderService ?? throw new ArgumentNullException(nameof(orderService));
             this.filmListMapper = filmListMapper ?? throw new ArgumentNullException(nameof(filmListMapper));
+            this.filmService = filmService ?? throw new ArgumentNullException(nameof(filmService));
         }
 
         public IActionResult Index()
@@ -31,14 +32,15 @@ namespace FilmLister.WebUI.Controllers
             return View();
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var films = await filmService.RetrieveFilms();
             var id = Guid.NewGuid().ToString();
             var filmList = new OrderedFilmList()
             {
                 Id = id,
                 Completed = false,
-                SortedFilms = Films.Select(f => new OrderedFilm(f.Id, f.Name)).ToArray()
+                SortedFilms = films.Select(f => new OrderedFilm(f.Id, f)).ToArray()
             };
             FilmList.Add(id, filmList);
             return RedirectToAction("List", new { id = id });

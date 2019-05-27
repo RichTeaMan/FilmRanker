@@ -1,10 +1,9 @@
-﻿using FilmLister.Domain;
-using FilmLister.WebUI.Models;
+﻿using FilmLister.WebUI.Models;
 namespace FilmLister.WebUI.Mappers
 {
     public class FilmMapper
     {
-        public Film Map(OrderedFilm orderedFilm)
+        public Film Map(Domain.OrderedFilm orderedFilm)
         {
             Film film = null;
             if (orderedFilm != null)
@@ -12,10 +11,28 @@ namespace FilmLister.WebUI.Mappers
                 film = new Film()
                 {
                     Id = orderedFilm.Id,
-                    Name = orderedFilm.Name
+                    Name = orderedFilm.Film.Name,
+                    ImageUrl = orderedFilm.Film.ImageUrl,
+                    ImdbId = orderedFilm.Film.ImdbId
                 };
             }
             return film;
+        }
+
+        public Film Map(Domain.Film film)
+        {
+            Film filmModel = null;
+            if (film != null)
+            {
+                filmModel = new Film()
+                {
+                    Id = film.Id,
+                    Name = film.Name,
+                    ImageUrl = film.ImageUrl,
+                    ImdbId = film.ImdbId
+                };
+            }
+            return filmModel;
         }
     }
 }
