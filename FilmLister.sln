@@ -16,6 +16,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FDE9B479-4FF9-460A-8F96-94DC3F17A9E8}"
 	ProjectSection(SolutionItems) = preProject
 		build.cake = build.cake
+		dockerfile = dockerfile
+		JenkinsRunWebUI.jdp = JenkinsRunWebUI.jdp
 		licence.txt = licence.txt
 		readme.md = readme.md
 	EndProjectSection

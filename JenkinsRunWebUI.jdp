@@ -1,0 +1,28 @@
+pipeline {
+    agent { label "linux" }
+    
+    parameters {
+        string(name: 'imageName', description: 'Name of the Docker image once it is built.', defaultValue: 'deathclock-web-ui')
+        string(name: 'imageVersion', description: 'Version of the Docker image once it is built.', defaultValue: 'latest')
+        string(name: 'containerName', description: 'Name of the Docker container to deploy and run.', defaultValue: 'deathclock-web-ui')
+    }
+    
+    stages {
+        stage('Build image') { 
+            steps {
+                sh "sudo docker build -t ${params.imageName}:${params.imageVersion} --build-arg tmdbApiKey=${params.branch} ."
+            docker build --build-arg buildtime_variable=a_value
+            }
+        }
+        stage('Remove old container') { 
+            steps {
+                sh (script: "sudo docker rm --force ${params.containerName}", returnStatus: true)
+            }
+        }
+        stage('Build run container') { 
+            steps {
+                sh "sudo docker run -d -p 8082:80 --name ${params.containerName} -v ${params.volumeName}:/json --restart always ${params.imageName}:${params.imageVersion}"
+            }
+        }
+    }
+}
