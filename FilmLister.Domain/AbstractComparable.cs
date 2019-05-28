@@ -9,11 +9,11 @@ namespace FilmLister.Domain
         public HashSet<T> HigherRankedObjects { get; } = new HashSet<T>();
 
         /// <summary>
-        /// Results of comparions.
+        /// Results of comparisons.
         /// </summary>
         /// <remarks>
         /// Less than zero: This instance precedes other in the sort order.
-        /// Zero: This instance occurs in the same position in the sort order as other. This method will never return 0.
+        /// Zero: This instance occurs in the same position in the sort order as other.
         /// Greater than zero: This instance follows other in the sort order. 
         /// </remarks>
         /// <param name="other"></param>
@@ -24,6 +24,10 @@ namespace FilmLister.Domain
                 throw new InvalidOperationException($"Invalid type, comparison objects must be of the same type.");
             }
 
+            if (other == this)
+            {
+                return 0;
+            }
             if (HigherRankedObjects.Contains(other))
             {
                 return -1;

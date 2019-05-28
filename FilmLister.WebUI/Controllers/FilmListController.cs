@@ -5,35 +5,37 @@ using FilmLister.WebUI.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FilmLister.WebUI.Controllers
 {
     public class FilmListController : Controller
     {
-        private readonly OrderService orderService;
-
         private readonly FilmListMapper filmListMapper;
+
+        private readonly FilmListTemplateMapper filmListTemplateMapper;
 
         private readonly FilmService filmService;
 
-        private static readonly Dictionary<string, OrderedFilmList> FilmList = new Dictionary<string, OrderedFilmList>();
-
-        public FilmListController(OrderService orderService, FilmListMapper filmListMapper, FilmService filmService)
+        public FilmListController(FilmListMapper filmListMapper, FilmListTemplateMapper filmListTemplateMapper, FilmService filmService)
         {
-            this.orderService = orderService ?? throw new ArgumentNullException(nameof(orderService));
             this.filmListMapper = filmListMapper ?? throw new ArgumentNullException(nameof(filmListMapper));
+            this.filmListTemplateMapper = filmListTemplateMapper ?? throw new ArgumentNullException(nameof(filmListTemplateMapper));
             this.filmService = filmService ?? throw new ArgumentNullException(nameof(filmService));
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var lists = await filmService.RetrieveFilmListTemplates();
+            var modelLists = lists.Select(l => filmListTemplateMapper.Map(l)).ToArray();
+
+            return View(modelLists);
         }
 
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int listId)
         {
-            int filmListId = await filmService.CreateOrderedFilmList(3);
+            int filmListId = await filmService.CreateOrderedFilmList(listId);
             return RedirectToAction("List", new { id = filmListId });
         }
 

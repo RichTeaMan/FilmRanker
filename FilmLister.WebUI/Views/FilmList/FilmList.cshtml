@@ -4,46 +4,8 @@
     ViewData["Title"] = "View";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <h1>View</h1>
 
-<div>
-    <h4>FilmList</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Completed)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Completed)
-        </dd>
-    </dl>
-</div>
-@if (Model.Completed)
-{
-    <h4>
-        Sort Complete
-    </h4>
-}
-<div class="row">
-    @foreach (var film in Model.SortedFilms.Reverse())
-    {
-        <div class="col-md-4">
-            <figure>
-                <img width="100" src="@film.ImageUrl" />
-                <figcaption>
-                    @film.Name
-                </figcaption>
-            </figure>
-        </div>
-    }
-</div>
 @if (!Model.Completed)
 {
     <h4>
@@ -72,6 +34,45 @@
         </div>
     </div>
 }
+
+
+<div>
+    <h4>FilmList</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Completed)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Completed)
+        </dd>
+    </dl>
+</div>
+@if (Model.Completed)
+{
+    <h4>
+        Sort Complete
+    </h4>
+}
+<div class="row">
+    @foreach (var film in Model.SortedFilms.Reverse())
+    {
+        <div class="col-sm-2">
+            <figure>
+                <img width="100" src="@film.ImageUrl" />
+                <figcaption>
+                    @film.Name
+                </figcaption>
+            </figure>
+        </div>
+    }
+</div>
 
 <div>
     @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |

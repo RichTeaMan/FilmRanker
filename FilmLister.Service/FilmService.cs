@@ -33,6 +33,14 @@ namespace FilmLister.Service
             return domainFilms;
         }
 
+        public async Task<Domain.FilmListTemplate[]> RetrieveFilmListTemplates()
+        {
+            var filmListTemplates = await filmListerContext.FilmListTemplates.ToArrayAsync();
+
+            var domainLists = filmListTemplates.Select(l => Map(l)).ToArray();
+            return domainLists;
+        }
+
         /// <summary>
         /// Creates a new list for ordering. Returns ID of the list.
         /// </summary>
