@@ -13,19 +13,8 @@
     </div>
 </div>
 <div class="row">
-    @foreach (var film in Model.Films)
-    {
-        <figure class="mini-poster">
-            <img width="100" src="@film.ImageUrl" />
-            <figcaption>
-                @film.Name
-            </figcaption>
-        </figure>
-    }
-</div>
-<div class="row">
-    <div class="col-md-3">
-        <img id="selectedFilmImg" width="250" />
+    <div class="col-3">
+        <img id="selectedFilmImg" class="img-fluid" />
     </div>
     <div class="col-md-4">
         <form id="filmForm" method="post" action="/FilmListTemplate/AddFilm">
@@ -44,7 +33,21 @@
     </div>
 </div>
 <div class="row">
+    @foreach (var film in Model.Films)
+    {
+        <div class="col-4 col-md-2">
+            <figure>
+                <img class="img-fluid" src="@film.ImageUrl" />
+                <figcaption>
+                    @film.Name
+                </figcaption>
+            </figure>
+        </div>
+    }
+</div>
+<div class="row">
     <div class="col-md">
-        <a asp-controller="FilmList" asp-action="Create" asp-route-listId="@Model.Id">Sort the list</a>
+        <a asp-controller="FilmList" asp-action="Create" asp-route-listId="@Model.Id">Sort the list by popularity</a>
     </div>
 </div>
+

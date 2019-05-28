@@ -84,14 +84,3 @@ body {
     display: block;
     border-bottom: 1px solid #000;
 }
-
-figure.mini-poster {
-    display: table;
-    width: 120px;
-}
-
-
-figcaption.mini-poster {
-    display: table-caption;
-    caption-side: bottom;
-}

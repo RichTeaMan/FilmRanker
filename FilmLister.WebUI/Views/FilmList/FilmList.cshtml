@@ -46,15 +46,17 @@ else
         Sort Complete
     </h4>
 }
-</hr>
+<hr />
 <div class="row">
     @foreach (var film in Model.SortedFilms.Reverse())
     {
-        <figure class="mini-poster">
-            <img width="100" src="@film.ImageUrl" />
-            <figcaption>
-                @film.Name
-            </figcaption>
-        </figure>
+        <div class="col-4 col-md-2">
+            <figure>
+                <img class="img-fluid" src="@film.ImageUrl" />
+                <figcaption>
+                    @film.Name
+                </figcaption>
+            </figure>
+        </div>
     }
 </div>
