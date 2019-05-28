@@ -2,16 +2,17 @@ pipeline {
     agent { label "linux" }
     
     parameters {
-        string(name: 'imageName', description: 'Name of the Docker image once it is built.', defaultValue: 'deathclock-web-ui')
+        string(name: 'imageName', description: 'Name of the Docker image once it is built.', defaultValue: 'film-lister')
         string(name: 'imageVersion', description: 'Version of the Docker image once it is built.', defaultValue: 'latest')
-        string(name: 'containerName', description: 'Name of the Docker container to deploy and run.', defaultValue: 'deathclock-web-ui')
+        string(name: 'containerName', description: 'Name of the Docker container to deploy and run.', defaultValue: 'film-lister')
     }
     
     stages {
         stage('Build image') { 
             steps {
-                sh "sudo docker build -t ${params.imageName}:${params.imageVersion} --build-arg tmdbApiKey=${params.branch} ."
-            docker build --build-arg buildtime_variable=a_value
+                withCredentials([string(credentialsId: 'a564779d-d530-4d92-a46e-d8a4347c4302', variable: 'tmdbApiKey')]) {
+                   sh "sudo docker build -t ${params.imageName}:${params.imageVersion} --build-arg tmdbApiKey=${tmdbApiKey} ."
+                }
             }
         }
         stage('Remove old container') { 
@@ -21,7 +22,7 @@ pipeline {
         }
         stage('Build run container') { 
             steps {
-                sh "sudo docker run -d -p 8082:80 --name ${params.containerName} -v ${params.volumeName}:/json --restart always ${params.imageName}:${params.imageVersion}"
+                sh "sudo docker run -d -p 8087:80 --name ${params.containerName} --restart always ${params.imageName}:${params.imageVersion}"
             }
         }
     }
