@@ -2,7 +2,15 @@
 
 A website for listing and choosing favourite films.
 
-## Deployment
+## Web App Deployment
+
+The application can be deployed with Docker. You'll need a [TMDB API key](https://developers.themoviedb.org/3/getting-started/introduction) for full functionality.
+```bash
+docker build -t film-lister --build-arg tmdb=YOUR_TMDB_API_KEY 
+docker run 
+```
+
+## Database Deployment
 
 The following command will deploy the database to localhost:
 ```

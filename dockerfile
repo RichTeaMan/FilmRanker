@@ -8,5 +8,6 @@ RUN apt-get install -y unzip libunwind8 gettext
 RUN mkdir DeathClock
 ADD . /FilmLister
 WORKDIR /FilmLister
-ENTRYPOINT ["./cake.sh", "-target=WebUI", "--TmdbApiKey $envTmdbApiKey"]
+RUN ./cake.sh -target=build
+ENTRYPOINT ["./cake.sh", "-target=WebUIDocker", "--TmdbApiKey $envTmdbApiKey"]
 CMD []
