@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FilmLister.TmdbIntegration.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,6 +22,14 @@ namespace FilmLister.TmdbIntegration
             string json = await client.GetStringAsync(url);
             var movieDetails = JsonConvert.DeserializeObject<MovieDetails>(json);
             return movieDetails;
+        }
+
+        public async Task<MovieSearchResultContainer> SearchMovies(string query)
+        {
+            string url = $"https://api.themoviedb.org/3/search/movie?api_key={ApiKey}&language=en-US&query={query}";
+            string json = await client.GetStringAsync(url);
+            var movieSearchResult = JsonConvert.DeserializeObject<MovieSearchResultContainer>(json);
+            return movieSearchResult;
         }
 
         #region IDisposable Support

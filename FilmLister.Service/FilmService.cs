@@ -191,6 +191,15 @@ namespace FilmLister.Service
             return list;
         }
 
+        public async Task<FilmTitle[]> SearchFilmTitles(string query)
+        {
+            var searchResult = await tmdbService.SearchMovies(query);
+            var titles = searchResult.results
+                .Select(r => new FilmTitle(r.id, r.title))
+                .ToArray();
+            return titles;
+        }
+
         private Domain.Film Map(Persistence.Film film)
         {
             Domain.Film filmModel = null;

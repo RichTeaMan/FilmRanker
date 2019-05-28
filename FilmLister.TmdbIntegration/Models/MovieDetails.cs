@@ -1,4 +1,4 @@
-﻿namespace FilmLister.TmdbIntegration
+﻿namespace FilmLister.TmdbIntegration.Models
 {
 
 
@@ -7,7 +7,7 @@
         public bool adult { get; set; }
         public string backdrop_path { get; set; }
         public BelongsToCollection belongs_to_collection { get; set; }
-        public int budget { get; set; }
+        public long budget { get; set; }
         public Genre[] genres { get; set; }
         public string homepage { get; set; }
         public int id { get; set; }
@@ -20,7 +20,7 @@
         public ProductionCompanies[] production_companies { get; set; }
         public ProductionCountries[] production_countries { get; set; }
         public string release_date { get; set; }
-        public int revenue { get; set; }
+        public long revenue { get; set; }
         public int runtime { get; set; }
         public SpokenLanguages[] spoken_languages { get; set; }
         public string status { get; set; }

@@ -33,7 +33,7 @@ namespace FilmLister.WebUI.Controllers
 
         public async Task<IActionResult> Create()
         {
-            int filmListId = await filmService.CreateOrderedFilmList(1);
+            int filmListId = await filmService.CreateOrderedFilmList(3);
             return RedirectToAction("List", new { id = filmListId });
         }
 
