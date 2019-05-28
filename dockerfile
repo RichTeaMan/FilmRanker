@@ -9,5 +9,4 @@ RUN mkdir DeathClock
 ADD . /FilmLister
 WORKDIR /FilmLister
 RUN ./cake.sh -target=build
-ENTRYPOINT ["./cake.sh", "-target=WebUIDocker", "--TmdbApiKey $envTmdbApiKey"]
-CMD []
+ENTRYPOINT ./cake.sh -target=WebUIDocker -tmdbApiKey=$envTmdbApiKey
