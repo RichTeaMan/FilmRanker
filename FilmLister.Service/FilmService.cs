@@ -92,7 +92,8 @@ namespace FilmLister.Service
                     {
                         lesser.GreaterRankedFilmItems = new List<Persistence.OrderedFilmRankItem>();
                     }
-                    var rankItem = new OrderedFilmRankItem {
+                    var rankItem = new OrderedFilmRankItem
+                    {
                         LesserRankedFilm = lesser,
                         GreaterRankedFilm = greater
                     };
@@ -155,7 +156,7 @@ namespace FilmLister.Service
                 film = new Persistence.Film
                 {
                     Name = movieDetail.title,
-                    ImageUrl = $"https://image.tmdb.org/t/p/w500/{movieDetail.poster_path}",
+                    ImageUrl = CreateFullImagePath(movieDetail.poster_path),
                     ImdbId = movieDetail.imdb_id,
                     TmdbId = tmdbId
                 };
@@ -199,11 +200,27 @@ namespace FilmLister.Service
             return list;
         }
 
+        /// <summary>
+        /// Creates a full image path from part of a path. If image path is null
+        /// then an empty string is returned.
+        /// </summary>
+        /// <param name="imagePath"></param>
+        /// <returns></returns>
+        public string CreateFullImagePath(string imagePath)
+        {
+            string fullPath = string.Empty;
+            if (!string.IsNullOrWhiteSpace(imagePath))
+            {
+                fullPath = $"https://image.tmdb.org/t/p/w500/{imagePath}";
+            }
+            return fullPath;
+        }
+
         public async Task<FilmTitle[]> SearchFilmTitles(string query)
         {
             var searchResult = await tmdbService.SearchMovies(query);
             var titles = searchResult.results
-                .Select(r => new FilmTitle(r.id, r.title))
+                .Select(r => new FilmTitle(r.id, r.title, CreateFullImagePath(r.poster_path), r.release_date))
                 .ToArray();
             return titles;
         }
@@ -248,9 +265,9 @@ namespace FilmLister.Service
             if (orderedFilmList?.OrderedFilms != null)
             {
                 var mapping = orderedFilmList.OrderedFilms.ToDictionary(k => k, v => Map(v));
-                foreach(var kv in mapping.Where(m => m.Key.LesserRankedFilmItems != null))
+                foreach (var kv in mapping.Where(m => m.Key.LesserRankedFilmItems != null))
                 {
-                    foreach(var greater in kv.Key.LesserRankedFilmItems)
+                    foreach (var greater in kv.Key.LesserRankedFilmItems)
                     {
                         var domain = mapping[greater.GreaterRankedFilm];
                         kv.Value.HigherRankedObjects.Add(domain);

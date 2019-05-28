@@ -8,10 +8,16 @@ namespace FilmLister.Domain
 
         public string Title { get; }
 
-        public FilmTitle(int tmdbId, string title)
+        public string ImageUrl { get; }
+
+        public string ReleaseYear { get; }
+
+        public FilmTitle(int tmdbId, string title, string imageUrl, string releaseYear)
         {
             TmdbId = tmdbId;
             Title = title ?? throw new ArgumentNullException(nameof(title));
+            ImageUrl = imageUrl ?? string.Empty;
+            ReleaseYear = releaseYear ?? throw new ArgumentNullException(nameof(releaseYear));
         }
     }
 }
