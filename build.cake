@@ -70,6 +70,22 @@ Task("WebUI")
     DotNetCoreExecute($"{publishDirectory}/FilmLister.WebUI.dll", $"--TmdbApiKey {tmdbApiKey}", executeSettings);
 });
 
+Task("WebUIDocker")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    var publishDirectory = $"./FilmLister.WebUI/bin/{buildDir}/netcoreapp2.2/publish";
+    var executeSettings = new DotNetCoreExecuteSettings
+    {
+        WorkingDirectory = publishDirectory
+    };
+	CopyFile(
+		"./FilmLister.WebUI/appsettings.Docker.json",
+		$"{publishDirectory}/appsettings.json");
+    
+    DotNetCoreExecute($"{publishDirectory}/FilmLister.WebUI.dll", $"--TmdbApiKey {tmdbApiKey}", executeSettings);
+});
+
 //////////////////////////////////////////////////////////////////////
 // TASK TARGETS
 //////////////////////////////////////////////////////////////////////
