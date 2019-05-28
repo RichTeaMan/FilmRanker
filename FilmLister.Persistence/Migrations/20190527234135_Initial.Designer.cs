@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FilmLister.Persistence.Migrations
 {
     [DbContext(typeof(FilmListerContext))]
-    [Migration("20190527213425_Initial")]
+    [Migration("20190527234135_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,13 +33,9 @@ namespace FilmLister.Persistence.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<int?>("OrderedFilmId");
-
                     b.Property<int>("TmdbId");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrderedFilmId");
 
                     b.ToTable("Films");
                 });
@@ -60,7 +56,7 @@ namespace FilmLister.Persistence.Migrations
 
                     b.HasIndex("FilmListTemplateId");
 
-                    b.ToTable("FilmListItem");
+                    b.ToTable("FilmListItems");
                 });
 
             modelBuilder.Entity("FilmLister.Persistence.FilmListTemplate", b =>
@@ -95,11 +91,32 @@ namespace FilmLister.Persistence.Migrations
                     b.ToTable("OrderedFilms");
                 });
 
+            modelBuilder.Entity("FilmLister.Persistence.OrderedFilmRankItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("GreaterRankedFilmId");
+
+                    b.Property<int?>("LesserRankedFilmId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GreaterRankedFilmId");
+
+                    b.HasIndex("LesserRankedFilmId");
+
+                    b.ToTable("OrderedFilmRankItems");
+                });
+
             modelBuilder.Entity("FilmLister.Persistence.OrderedList", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Completed");
 
                     b.Property<int?>("FilmListTemplateId");
 
@@ -108,13 +125,6 @@ namespace FilmLister.Persistence.Migrations
                     b.HasIndex("FilmListTemplateId");
 
                     b.ToTable("OrderedLists");
-                });
-
-            modelBuilder.Entity("FilmLister.Persistence.Film", b =>
-                {
-                    b.HasOne("FilmLister.Persistence.OrderedFilm")
-                        .WithMany("HigherRankedFilms")
-                        .HasForeignKey("OrderedFilmId");
                 });
 
             modelBuilder.Entity("FilmLister.Persistence.FilmListItem", b =>
@@ -137,6 +147,17 @@ namespace FilmLister.Persistence.Migrations
                     b.HasOne("FilmLister.Persistence.OrderedList")
                         .WithMany("OrderedFilms")
                         .HasForeignKey("OrderedListId");
+                });
+
+            modelBuilder.Entity("FilmLister.Persistence.OrderedFilmRankItem", b =>
+                {
+                    b.HasOne("FilmLister.Persistence.OrderedFilm", "GreaterRankedFilm")
+                        .WithMany("GreaterRankedFilmItems")
+                        .HasForeignKey("GreaterRankedFilmId");
+
+                    b.HasOne("FilmLister.Persistence.OrderedFilm", "LesserRankedFilm")
+                        .WithMany("LesserRankedFilmItems")
+                        .HasForeignKey("LesserRankedFilmId");
                 });
 
             modelBuilder.Entity("FilmLister.Persistence.OrderedList", b =>

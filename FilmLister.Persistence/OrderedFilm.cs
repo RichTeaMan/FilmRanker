@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FilmLister.Persistence
 {
@@ -12,8 +11,10 @@ namespace FilmLister.Persistence
 
         public Film Film { get; set; }
 
-        public List<Film> HigherRankedFilms { get; set; }
+        [InverseProperty("GreaterRankedFilm")]
+        public List<OrderedFilmRankItem> GreaterRankedFilmItems { get; set; }
 
-        
+        [InverseProperty("LesserRankedFilm")]
+        public List<OrderedFilmRankItem> LesserRankedFilmItems { get; set; }
     }
 }

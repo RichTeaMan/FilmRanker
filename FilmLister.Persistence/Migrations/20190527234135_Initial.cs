@@ -21,11 +21,28 @@ namespace FilmLister.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Films",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
+                    TmdbId = table.Column<int>(nullable: false),
+                    ImageUrl = table.Column<string>(nullable: true),
+                    ImdbId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Films", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrderedLists",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Completed = table.Column<bool>(nullable: false),
                     FilmListTemplateId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -40,7 +57,7 @@ namespace FilmLister.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FilmListItem",
+                name: "FilmListItems",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -50,9 +67,15 @@ namespace FilmLister.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FilmListItem", x => x.Id);
+                    table.PrimaryKey("PK_FilmListItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FilmListItem_FilmListTemplates_FilmListTemplateId",
+                        name: "FK_FilmListItems_Films_FilmId",
+                        column: x => x.FilmId,
+                        principalTable: "Films",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_FilmListItems_FilmListTemplates_FilmListTemplateId",
                         column: x => x.FilmListTemplateId,
                         principalTable: "FilmListTemplates",
                         principalColumn: "Id",
@@ -72,6 +95,12 @@ namespace FilmLister.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_OrderedFilms", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_OrderedFilms_Films_FilmId",
+                        column: x => x.FilmId,
+                        principalTable: "Films",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_OrderedFilms_OrderedLists_OrderedListId",
                         column: x => x.OrderedListId,
                         principalTable: "OrderedLists",
@@ -80,42 +109,50 @@ namespace FilmLister.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Films",
+                name: "OrderedFilmRankItems",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: true),
-                    TmdbId = table.Column<int>(nullable: false),
-                    ImageUrl = table.Column<string>(nullable: true),
-                    ImdbId = table.Column<string>(nullable: true),
-                    OrderedFilmId = table.Column<int>(nullable: true)
+                    LesserRankedFilmId = table.Column<int>(nullable: true),
+                    GreaterRankedFilmId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Films", x => x.Id);
+                    table.PrimaryKey("PK_OrderedFilmRankItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Films_OrderedFilms_OrderedFilmId",
-                        column: x => x.OrderedFilmId,
+                        name: "FK_OrderedFilmRankItems_OrderedFilms_GreaterRankedFilmId",
+                        column: x => x.GreaterRankedFilmId,
+                        principalTable: "OrderedFilms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_OrderedFilmRankItems_OrderedFilms_LesserRankedFilmId",
+                        column: x => x.LesserRankedFilmId,
                         principalTable: "OrderedFilms",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_FilmListItem_FilmId",
-                table: "FilmListItem",
+                name: "IX_FilmListItems_FilmId",
+                table: "FilmListItems",
                 column: "FilmId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FilmListItem_FilmListTemplateId",
-                table: "FilmListItem",
+                name: "IX_FilmListItems_FilmListTemplateId",
+                table: "FilmListItems",
                 column: "FilmListTemplateId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Films_OrderedFilmId",
-                table: "Films",
-                column: "OrderedFilmId");
+                name: "IX_OrderedFilmRankItems_GreaterRankedFilmId",
+                table: "OrderedFilmRankItems",
+                column: "GreaterRankedFilmId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderedFilmRankItems_LesserRankedFilmId",
+                table: "OrderedFilmRankItems",
+                column: "LesserRankedFilmId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderedFilms_FilmId",
@@ -131,38 +168,21 @@ namespace FilmLister.Persistence.Migrations
                 name: "IX_OrderedLists_FilmListTemplateId",
                 table: "OrderedLists",
                 column: "FilmListTemplateId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_FilmListItem_Films_FilmId",
-                table: "FilmListItem",
-                column: "FilmId",
-                principalTable: "Films",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_OrderedFilms_Films_FilmId",
-                table: "OrderedFilms",
-                column: "FilmId",
-                principalTable: "Films",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_OrderedFilms_Films_FilmId",
-                table: "OrderedFilms");
+            migrationBuilder.DropTable(
+                name: "FilmListItems");
 
             migrationBuilder.DropTable(
-                name: "FilmListItem");
-
-            migrationBuilder.DropTable(
-                name: "Films");
+                name: "OrderedFilmRankItems");
 
             migrationBuilder.DropTable(
                 name: "OrderedFilms");
+
+            migrationBuilder.DropTable(
+                name: "Films");
 
             migrationBuilder.DropTable(
                 name: "OrderedLists");

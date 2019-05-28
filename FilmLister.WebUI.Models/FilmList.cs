@@ -2,7 +2,7 @@
 {
     public class FilmList
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public bool Completed { get; set; }
 
         /// <summary>

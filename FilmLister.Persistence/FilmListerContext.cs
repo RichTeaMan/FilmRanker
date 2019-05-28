@@ -10,11 +10,13 @@ namespace FilmLister.Persistence
 
         public DbSet<FilmListTemplate> FilmListTemplates { get; set; }
 
-        public DbSet<FilmListItem> FilmListItem { get; set; }
+        public DbSet<FilmListItem> FilmListItems { get; set; }
 
         public DbSet<OrderedFilm> OrderedFilms { get; set; }
 
         public DbSet<OrderedList> OrderedLists { get; set; }
+
+        public DbSet<OrderedFilmRankItem> OrderedFilmRankItems { get; set; }
 
         public FilmListerContext(DbContextOptions<FilmListerContext> options)
             : base(options)

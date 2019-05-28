@@ -1,11 +1,24 @@
-﻿namespace FilmLister.Domain
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace FilmLister.Domain
 {
     public class OrderedFilmList
     {
-        public string Id { get; set; }
-        public bool Completed { get; set; }
-        public OrderedFilm[] SortedFilms { get; set; }
-        public OrderedFilm ChoiceA { get; set; }
-        public OrderedFilm ChoiceB { get; set; }
+        public int Id { get; }
+        public bool Completed { get; }
+        public IReadOnlyList<OrderedFilm> SortedFilms { get; }
+        public OrderedFilm ChoiceA { get; }
+        public OrderedFilm ChoiceB { get; }
+
+        public OrderedFilmList(int id, bool completed, IEnumerable<OrderedFilm> sortedFilms, OrderedFilm choiceA, OrderedFilm choiceB)
+        {
+            Id = id;
+            Completed = completed;
+            SortedFilms = sortedFilms.ToList() ?? throw new ArgumentNullException(nameof(sortedFilms));
+            ChoiceA = choiceA;
+            ChoiceB = choiceB;
+        }
     }
 }

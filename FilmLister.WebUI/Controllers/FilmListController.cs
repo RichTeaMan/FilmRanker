@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FilmLister.Domain;
+﻿using FilmLister.Domain;
 using FilmLister.Service;
+using FilmLister.Service.Exceptions;
 using FilmLister.WebUI.Mappers;
-using FilmLister.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FilmLister.WebUI.Controllers
 {
@@ -18,7 +17,7 @@ namespace FilmLister.WebUI.Controllers
 
         private readonly FilmService filmService;
 
-        private readonly static Dictionary<string, OrderedFilmList> FilmList = new Dictionary<string, OrderedFilmList>();
+        private static readonly Dictionary<string, OrderedFilmList> FilmList = new Dictionary<string, OrderedFilmList>();
 
         public FilmListController(OrderService orderService, FilmListMapper filmListMapper, FilmService filmService)
         {
@@ -34,59 +33,40 @@ namespace FilmLister.WebUI.Controllers
 
         public async Task<IActionResult> Create()
         {
-            var films = await filmService.RetrieveFilms();
-            var id = Guid.NewGuid().ToString();
-            var filmList = new OrderedFilmList()
-            {
-                Id = id,
-                Completed = false,
-                SortedFilms = films.Select(f => new OrderedFilm(f.Id, f)).ToArray()
-            };
-            FilmList.Add(id, filmList);
-            return RedirectToAction("List", new { id = id });
+            int filmListId = await filmService.CreateOrderedFilmList(1);
+            return RedirectToAction("List", new { id = filmListId });
         }
 
-        public IActionResult SubmitFilmChoice(string id, int lesserFilmId, int greaterFilmId)
+        public async Task<IActionResult> SubmitFilmChoice(int id, int lesserFilmId, int greaterFilmId)
         {
             IActionResult result;
-            if (FilmList.TryGetValue(id, out OrderedFilmList orderedFilmList))
+            try
             {
-                var lesser = orderedFilmList.SortedFilms.FirstOrDefault(f => f.Id == lesserFilmId);
-                var greater = orderedFilmList.SortedFilms.FirstOrDefault(f => f.Id == greaterFilmId);
-
-                if (lesser == null || greater == null)
-                {
-                    result = NotFound("Film with given ID not found.");
-                }
-                else
-                {
-                    lesser.HigherRankedObjects.Add(greater);
-                    result = RedirectToAction("List", new { id = id });
-                }
+                await filmService.SubmitFilmChoice(id, lesserFilmId, greaterFilmId);
+                result = RedirectToAction("List", new { id = id });
             }
-            else
+            catch (FilmNotFoundException)
+            {
+                result = NotFound("Film with given ID not found.");
+            }
+            catch (ListNotFoundException)
             {
                 result = NotFound("Film list with given ID not found.");
+
             }
             return result;
         }
 
-        public IActionResult List(string id)
+        public async Task<IActionResult> List(int id)
         {
             IActionResult result;
-            if (FilmList.TryGetValue(id, out OrderedFilmList orderedFilmList))
+            try
             {
-                var orderResult = orderService.OrderFilms(orderedFilmList.SortedFilms);
-
-                orderedFilmList.SortedFilms = orderResult.SortedResults.ToArray();
-                orderedFilmList.ChoiceA = orderResult.LeftSort;
-                orderedFilmList.ChoiceB = orderResult.RightSort;
-                orderedFilmList.Completed = orderResult.Completed;
-
+                var orderedFilmList = await filmService.AttemptListOrder(id);
                 var filmList = filmListMapper.Map(orderedFilmList);
                 result = View("FilmList", filmList);
             }
-            else
+            catch (ListNotFoundException)
             {
                 result = NotFound();
             }

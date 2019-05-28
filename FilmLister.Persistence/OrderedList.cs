@@ -8,6 +8,8 @@ namespace FilmLister.Persistence
         [Key]
         public int Id { get; set; }
 
+        public bool Completed { get; set; }
+
         public List<OrderedFilm> OrderedFilms { get; set; }
 
         public FilmListTemplate FilmListTemplate { get; set; }

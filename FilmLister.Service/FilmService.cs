@@ -1,4 +1,6 @@
-﻿using FilmLister.Persistence;
+﻿using FilmLister.Domain;
+using FilmLister.Persistence;
+using FilmLister.Service.Exceptions;
 using FilmLister.TmdbIntegration;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,12 +12,15 @@ namespace FilmLister.Service
 {
     public class FilmService
     {
+        private readonly OrderService orderService;
+
         private readonly TmdbService tmdbService;
 
         private readonly FilmListerContext filmListerContext;
 
-        public FilmService(TmdbService tmdbService, FilmListerContext filmListerContext)
+        public FilmService(OrderService orderService, TmdbService tmdbService, FilmListerContext filmListerContext)
         {
+            this.orderService = orderService ?? throw new ArgumentNullException(nameof(orderService));
             this.tmdbService = tmdbService ?? throw new ArgumentNullException(nameof(tmdbService));
             this.filmListerContext = filmListerContext ?? throw new ArgumentNullException(nameof(filmListerContext));
         }
@@ -26,6 +31,110 @@ namespace FilmLister.Service
 
             var domainFilms = films.Select(f => Map(f)).ToArray();
             return domainFilms;
+        }
+
+        /// <summary>
+        /// Creates a new list for ordering. Returns ID of the list.
+        /// </summary>
+        /// <param name="filmListTemplateId"></param>
+        /// <returns></returns>
+        public async Task<int> CreateOrderedFilmList(int filmListTemplateId)
+        {
+            var filmListTemplate = await RetrieveFilmListTemplateById(filmListTemplateId);
+            var persistenceListTemplate = await filmListerContext.FilmListTemplates
+                .Include(l => l.FilmListItems)
+                    .ThenInclude(i => i.Film)
+                .FirstAsync(l => l.Id == filmListTemplateId);
+
+            var films = persistenceListTemplate.FilmListItems.Select(i => new Persistence.OrderedFilm() { Film = i.Film }).ToList();
+            var filmList = new Persistence.OrderedList()
+            {
+                OrderedFilms = films,
+                FilmListTemplate = persistenceListTemplate
+            };
+
+            await filmListerContext.OrderedLists.AddAsync(filmList);
+            await filmListerContext.SaveChangesAsync();
+
+            return filmList.Id;
+        }
+
+        public async Task SubmitFilmChoice(int id, int lesserFilmId, int greaterFilmId)
+        {
+            var orderedFilmList = await filmListerContext.OrderedLists
+                .Include(ol => ol.OrderedFilms)
+                    .ThenInclude(f => f.Film)
+                .FirstOrDefaultAsync(ol => ol.Id == id);
+            if (orderedFilmList != null)
+            {
+                var lesser = orderedFilmList.OrderedFilms.FirstOrDefault(f => f.Id == lesserFilmId);
+                var greater = orderedFilmList.OrderedFilms.FirstOrDefault(f => f.Id == greaterFilmId);
+
+                if (lesser == null)
+                {
+                    throw new FilmNotFoundException(lesserFilmId);
+                }
+                else if (greater == null)
+                {
+                    throw new FilmNotFoundException(greaterFilmId);
+                }
+                else
+                {
+                    if (lesser.GreaterRankedFilmItems == null)
+                    {
+                        lesser.GreaterRankedFilmItems = new List<Persistence.OrderedFilmRankItem>();
+                    }
+                    var rankItem = new OrderedFilmRankItem {
+                        LesserRankedFilm = lesser,
+                        GreaterRankedFilm = greater
+                    };
+                    await filmListerContext.OrderedFilmRankItems.AddAsync(rankItem);
+                    await filmListerContext.SaveChangesAsync();
+                    System.Console.WriteLine();
+                }
+            }
+            else
+            {
+                throw new ListNotFoundException(id);
+            }
+        }
+
+        /// <summary>
+        /// Attempts to order a list. Further information might be required, which is requested in the return object.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<OrderedFilmList> AttemptListOrder(int id)
+        {
+            var persistenceOrderedFilmList = await filmListerContext.OrderedLists
+                .Include(ol => ol.OrderedFilms)
+                    .ThenInclude(f => f.GreaterRankedFilmItems)
+                .Include(ol => ol.OrderedFilms)
+                    .ThenInclude(f => f.Film)
+                .FirstOrDefaultAsync(ol => ol.Id == id);
+
+            if (persistenceOrderedFilmList == null)
+            {
+                throw new ListNotFoundException(id);
+            }
+
+            var orderedFilmList = Map(persistenceOrderedFilmList);
+            var orderResult = orderService.OrderFilms(orderedFilmList.SortedFilms);
+
+            var filmList = new Domain.OrderedFilmList(
+                orderedFilmList.Id,
+                orderResult.Completed,
+                orderResult.SortedResults.ToArray(),
+                orderResult.LeftSort,
+                orderResult.RightSort);
+
+            if (persistenceOrderedFilmList.Completed != filmList.Completed)
+            {
+                persistenceOrderedFilmList.Completed = filmList.Completed;
+                await filmListerContext.SaveChangesAsync();
+            }
+
+            return filmList;
         }
 
         public async Task<Domain.Film> RetrieveFilmByTmdbId(int tmdbId)
@@ -92,6 +201,16 @@ namespace FilmLister.Service
             return filmModel;
         }
 
+        private Domain.OrderedFilm Map(Persistence.OrderedFilm film)
+        {
+            Domain.OrderedFilm filmModel = null;
+            if (film != null)
+            {
+                filmModel = new Domain.OrderedFilm(film.Id, Map(film.Film));
+            }
+            return filmModel;
+        }
+
         private Domain.FilmListTemplate Map(Persistence.FilmListTemplate orderedFilmList)
         {
             List<Domain.Film> films = new List<Domain.Film>();
@@ -103,6 +222,31 @@ namespace FilmLister.Service
                 orderedFilmList.Id,
                 orderedFilmList.Name,
                 films.ToArray());
+            return filmList;
+        }
+
+        private Domain.OrderedFilmList Map(Persistence.OrderedList orderedFilmList)
+        {
+            var films = new List<Domain.OrderedFilm>();
+            if (orderedFilmList?.OrderedFilms != null)
+            {
+                var mapping = orderedFilmList.OrderedFilms.ToDictionary(k => k, v => Map(v));
+                foreach(var kv in mapping.Where(m => m.Key.LesserRankedFilmItems != null))
+                {
+                    foreach(var greater in kv.Key.LesserRankedFilmItems)
+                    {
+                        var domain = mapping[greater.GreaterRankedFilm];
+                        kv.Value.HigherRankedObjects.Add(domain);
+                    }
+                }
+                films.AddRange(mapping.Values);
+            }
+            var filmList = new Domain.OrderedFilmList(
+                orderedFilmList.Id,
+                orderedFilmList.Completed,
+                films,
+                null,
+                null);
             return filmList;
         }
     }
