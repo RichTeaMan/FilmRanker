@@ -15,15 +15,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmLister.Server.Tests", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FDE9B479-4FF9-460A-8F96-94DC3F17A9E8}"
 	ProjectSection(SolutionItems) = preProject
+		build.cake = build.cake
 		licence.txt = licence.txt
 		readme.md = readme.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmLister.WebUI.Models", "FilmLister.WebUI.Models\FilmLister.WebUI.Models.csproj", "{94C9C3FE-425C-4232-9737-6C6D45490E96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmLister.Persistence", "FilmLister.Persistence\FilmLister.Persistence.csproj", "{31C21DAB-0888-492E-8C7D-69BED2C0A63A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmLister.Persistence", "FilmLister.Persistence\FilmLister.Persistence.csproj", "{31C21DAB-0888-492E-8C7D-69BED2C0A63A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmLister.TmdbIntegration", "FilmLister.TmdbIntegration\FilmLister.TmdbIntegration.csproj", "{6B791B48-F77F-417D-8D1F-E56067860286}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmLister.TmdbIntegration", "FilmLister.TmdbIntegration\FilmLister.TmdbIntegration.csproj", "{6B791B48-F77F-417D-8D1F-E56067860286}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

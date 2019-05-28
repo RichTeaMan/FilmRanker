@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace FilmLister.WebUI
 {
@@ -19,6 +13,12 @@ namespace FilmLister.WebUI
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+            .ConfigureAppConfiguration((hostingContext, config) =>
+            {
+                config.AddUserSecrets("9b9374a9-4a72-4657-a398-2e265456aaf2");
+                config.AddCommandLine(args);
+                config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
+            })
+            .UseStartup<Startup>();
     }
 }

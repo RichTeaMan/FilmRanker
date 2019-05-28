@@ -30,11 +30,10 @@ namespace FilmLister.WebUI
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+            
+            var connectionString = Configuration.GetConnectionString("FilmListerDatabase");
 
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
-            var config = builder.Build();
-            var connectionString = config.GetConnectionString("FilmListerDatabase");
+            string tmdbApiKey = Configuration.GetValue<string>("TmdbApiKey");
 
             services.AddDbContext<FilmListerContext>(options => options.UseSqlServer(connectionString));
 
@@ -42,7 +41,12 @@ namespace FilmLister.WebUI
             services.AddTransient<FilmMapper>();
             services.AddTransient<FilmListMapper>();
             services.AddTransient<FilmListTemplateMapper>();
-            services.AddTransient<TmdbService>();
+            services.AddTransient(sp => {
+                return new TmdbService
+                {
+                    ApiKey = tmdbApiKey
+                };
+            });
             services.AddTransient<OrderService>();
             services.AddTransient<FilmService>();
         }
