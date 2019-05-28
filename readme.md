@@ -1,6 +1,11 @@
 # Film Lister
 
-A website for listing and choosing favourite films.
+A website for listing and determining your favourite films mathematically.
+
+The project uses ASP NET Core to host a website that presents a pair of film choices. These choices are then stored
+in a SQL database that can be eventually be used to order film preferences via the [quicksort algorithm](https://en.wikipedia.org/wiki/Quicksort).
+
+Film information, such as titles and posters, are provided via [The Movie Database](https://www.themoviedb.org/).
 
 ## Web App Deployment
 

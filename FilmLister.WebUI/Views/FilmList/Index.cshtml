@@ -1,7 +1,13 @@
 ﻿@model FilmLister.WebUI.Models.FilmListTemplate[]
 
-<h1>Create Film List</h1>
-<div>
+@{
+    ViewData["Title"] = "Film Lister - Film Lists";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Choose a Film List</h1>
+<div class="row">
+    <div class="col-md">
     <h4>Featured Lists:</h4>
     @foreach (var filmList in Model)
     {
@@ -9,4 +15,11 @@
             <a asp-controller="FilmList" asp-action="Create" asp-route-listId="@filmList.Id">@filmList.Name</a>
         </div>
     }
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
+        <hr />
+        <a asp-controller="FilmList" asp-action="Index">Or create your own...</a>
+    </div>
 </div>
