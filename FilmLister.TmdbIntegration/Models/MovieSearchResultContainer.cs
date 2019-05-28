@@ -1,4 +1,7 @@
-﻿namespace FilmLister.TmdbIntegration.Models
+﻿using Newtonsoft.Json;
+using System;
+
+namespace FilmLister.TmdbIntegration.Models
 {
     public class MovieSearchResultContainer
     {
@@ -23,7 +26,23 @@
         public string backdrop_path { get; set; }
         public bool adult { get; set; }
         public string overview { get; set; }
-        public string release_date { get; set; }
+
+        [JsonProperty("release_date")]
+        public string ReleaseDateString { get; set; }
+
+        [JsonIgnore]
+        public DateTimeOffset? ReleaseDate
+        {
+            get
+            {
+                DateTimeOffset? result = null;
+                if (ReleaseDateString != null)
+                {
+                    result = DateTimeOffset.Parse(ReleaseDateString);
+                }
+                return result;
+            }
+        }
     }
 
 }

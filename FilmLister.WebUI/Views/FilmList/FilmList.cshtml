@@ -17,7 +17,7 @@
                 <figure>
                     <img class="img-fluid" src="@Model.ChoiceA.ImageUrl" />
                     <figcaption>
-                        @Html.DisplayFor(model => model.ChoiceA.Name)
+                        @Html.DisplayFor(model => model.ChoiceA.DisplayName)
                     </figcaption>
                 </figure>
             </a>
@@ -54,7 +54,7 @@ else
             <figure>
                 <img class="img-fluid" src="@film.ImageUrl" />
                 <figcaption>
-                    @film.Name
+                    @film.DisplayName
                 </figcaption>
             </figure>
         </div>

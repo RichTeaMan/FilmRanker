@@ -13,7 +13,8 @@ namespace FilmLister.WebUI.Mappers
                     Id = orderedFilm.Id,
                     Name = orderedFilm.Film.Name,
                     ImageUrl = orderedFilm.Film.ImageUrl,
-                    ImdbId = orderedFilm.Film.ImdbId
+                    ImdbId = orderedFilm.Film.ImdbId,
+                    ReleaseYear = orderedFilm.Film.ReleaseYear
                 };
             }
             return film;
@@ -29,7 +30,8 @@ namespace FilmLister.WebUI.Mappers
                     Id = film.Id,
                     Name = film.Name,
                     ImageUrl = film.ImageUrl,
-                    ImdbId = film.ImdbId
+                    ImdbId = film.ImdbId,
+                    ReleaseYear = film.ReleaseYear
                 };
             }
             return filmModel;

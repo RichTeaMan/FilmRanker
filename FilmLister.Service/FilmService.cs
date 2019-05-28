@@ -158,7 +158,8 @@ namespace FilmLister.Service
                     Name = movieDetail.title,
                     ImageUrl = CreateFullImagePath(movieDetail.poster_path),
                     ImdbId = movieDetail.imdb_id,
-                    TmdbId = tmdbId
+                    TmdbId = tmdbId,
+                    ReleaseDate = movieDetail.ReleaseDate
                 };
 
                 await filmListerContext.Films.AddAsync(film);
@@ -220,7 +221,7 @@ namespace FilmLister.Service
         {
             var searchResult = await tmdbService.SearchMovies(query);
             var titles = searchResult.results
-                .Select(r => new FilmTitle(r.id, r.title, CreateFullImagePath(r.poster_path), r.release_date))
+                .Select(r => new FilmTitle(r.id, r.title, CreateFullImagePath(r.poster_path), r.ReleaseDate?.Year))
                 .ToArray();
             return titles;
         }
@@ -230,7 +231,7 @@ namespace FilmLister.Service
             Domain.Film filmModel = null;
             if (film != null)
             {
-                filmModel = new Domain.Film(film.Id, film.Name, film.TmdbId, film.ImageUrl, film.ImdbId);
+                filmModel = new Domain.Film(film.Id, film.Name, film.TmdbId, film.ImageUrl, film.ImdbId, film.ReleaseDate?.Year);
             }
             return filmModel;
         }

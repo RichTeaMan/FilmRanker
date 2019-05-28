@@ -8,7 +8,7 @@ namespace FilmLister.Server.Tests
     [TestClass]
     public class OrderServiceTest
     {
-        private Film testFilm = new Film(0, "test", 0, "test", "test");
+        private Film testFilm = new Film(0, "test", 0, "test", "test", null);
 
         private OrderService orderService;
 

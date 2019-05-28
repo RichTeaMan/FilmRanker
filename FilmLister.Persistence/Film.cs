@@ -17,6 +17,8 @@ namespace FilmLister.Persistence
 
         public string ImdbId { get; set; }
 
+        public DateTimeOffset? ReleaseDate { get; set; }
+
         public List<FilmListItem> FilmListItems { get; set; }
     }
 }

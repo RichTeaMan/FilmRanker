@@ -15,7 +15,8 @@ $(document).ready(function () {
                 success: function (data) {
                     const suggestions = data.map(r => {
                         return {
-                            "value": r.title,
+                            "value": r.releaseYear ? `${r.title} (${r.releaseYear})` : r.title,
+                            "title": r.title,
                             "tmdbId": r.tmdbId,
                             "imageUrl": r.imageUrl,
                             "releaseYear": r.releaseYear

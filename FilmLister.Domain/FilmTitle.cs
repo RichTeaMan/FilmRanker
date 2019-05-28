@@ -10,14 +10,14 @@ namespace FilmLister.Domain
 
         public string ImageUrl { get; }
 
-        public string ReleaseYear { get; }
+        public int? ReleaseYear { get; }
 
-        public FilmTitle(int tmdbId, string title, string imageUrl, string releaseYear)
+        public FilmTitle(int tmdbId, string title, string imageUrl, int? releaseYear)
         {
             TmdbId = tmdbId;
             Title = title ?? throw new ArgumentNullException(nameof(title));
             ImageUrl = imageUrl ?? string.Empty;
-            ReleaseYear = releaseYear ?? throw new ArgumentNullException(nameof(releaseYear));
+            ReleaseYear = releaseYear;
         }
     }
 }

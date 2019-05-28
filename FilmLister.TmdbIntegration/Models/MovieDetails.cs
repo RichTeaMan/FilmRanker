@@ -1,7 +1,8 @@
-﻿namespace FilmLister.TmdbIntegration.Models
+﻿using Newtonsoft.Json;
+using System;
+
+namespace FilmLister.TmdbIntegration.Models
 {
-
-
     public class MovieDetails
     {
         public bool adult { get; set; }
@@ -19,7 +20,6 @@
         public string poster_path { get; set; }
         public ProductionCompanies[] production_companies { get; set; }
         public ProductionCountries[] production_countries { get; set; }
-        public string release_date { get; set; }
         public long revenue { get; set; }
         public int runtime { get; set; }
         public SpokenLanguages[] spoken_languages { get; set; }
@@ -29,6 +29,23 @@
         public bool video { get; set; }
         public float vote_average { get; set; }
         public int vote_count { get; set; }
+
+        [JsonProperty("release_date")]
+        public string ReleaseDateString { get; set; }
+
+        [JsonIgnore]
+        public DateTimeOffset? ReleaseDate
+        {
+            get
+            {
+                DateTimeOffset? result = null;
+                if (ReleaseDateString != null)
+                {
+                    result = DateTimeOffset.Parse(ReleaseDateString);
+                }
+                return result;
+            }
+        }
     }
 
     public class BelongsToCollection
