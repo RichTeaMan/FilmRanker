@@ -1,6 +1,6 @@
 # Film Lister
 
-A website for listing and determining your favourite films mathematically.
+A website for listing and determining your favourite films mathematically. A live version can be found at https://filmlister.richteaman.com/.
 
 The project uses ASP NET Core to host a website that presents a pair of film choices. These choices are then stored
 in a SQL database that can be eventually be used to order film preferences via the [quicksort algorithm](https://en.wikipedia.org/wiki/Quicksort).
