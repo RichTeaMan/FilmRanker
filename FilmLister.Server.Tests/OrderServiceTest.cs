@@ -217,7 +217,7 @@ namespace FilmLister.Server.Tests
         [TestMethod]
         public void SortLargeIntegerSet()
         {
-            int setLength = 500;
+            int setLength = 1000;
 
             var integerComparableDictionary = new Dictionary<int, IntegerAbstractComparable>();
             foreach(var i in Enumerable.Range(0, setLength))

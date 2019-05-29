@@ -46,20 +46,16 @@ namespace FilmLister.Domain
             if (!result.ComparisonSucceeded)
             {
                 var higherRankedObjects = FetchTransitiveHigherRankedObjects(result);
-                if (higherRankedObjects.Contains(other))
+                if (higherRankedObjects.Any(o => o == other))
                 {
-                    // Adding transitive objects should decrease ordering time,
-                    // but it seems adding to a hashset is slow. 
-                    // HigherRankedObjects.UnionWith(higherRankedObjects);
                     result = new AbstractComparisonResult(-1, true);
                 }
             }
             if (!result.ComparisonSucceeded)
             {
                 var otherHigherRankedObjects = other.FetchTransitiveHigherRankedObjects(result);
-                if (otherHigherRankedObjects.Contains(this))
+                if (otherHigherRankedObjects.Any(o => o ==  this))
                 {
-                    // other.HigherRankedObjects.UnionWith(otherHigherRankedObjects);
                     result = new AbstractComparisonResult(1, true);
                 }
             }
@@ -71,22 +67,17 @@ namespace FilmLister.Domain
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        public HashSet<T> FetchTransitiveHigherRankedObjects(AbstractComparisonResult result)
+        public IEnumerable<T> FetchTransitiveHigherRankedObjects(AbstractComparisonResult result)
         {
-            // collect all higher ranked obbjects
-            var higherRanked = new List<T>();
             Stack<T> entitiesToFlatten = new Stack<T>(HigherRankedObjects);
-            var currentHighRanked = HigherRankedObjects;
             while (entitiesToFlatten.TryPop(out T entity))
             {
-                higherRanked.Add(entity);
+                yield return entity;
                 foreach (var nextEntity in entity.HigherRankedObjects)
                 {
                     entitiesToFlatten.Push(nextEntity);
                 }
             }
-            var higherRankedHash = new HashSet<T>(higherRanked, CreateComparer());
-            return higherRankedHash;
         }
 
         /// <summary>
