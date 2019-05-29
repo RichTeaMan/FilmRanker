@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace FilmLister.Service
 {
@@ -169,20 +170,31 @@ namespace FilmLister.Service
     }
 
     #region Insertion Sort
-    static class InsertionSort<T> where T : IComparable
+    internal static class InsertionSort<T> where T : IComparable
     {
         public static void Sort(T[] entries, int first, int last)
         {
+            T[] result = entries.ToArray();
             for (var index = first + 1; index <= last; index++)
-                Insert(entries, first, index);
+            {
+                result = Insert(result, first, index);
+            }
+            for (int index = 0; index < entries.Length; index++)
+            {
+                entries[index] = result[index];
+            }
         }
 
-        private static void Insert(T[] entries, int first, int index)
+        private static T[] Insert(T[] entries, int first, int index)
         {
-            var entry = entries[index];
-            while (index > first && entries[index - 1].CompareTo(entry) > 0)
-                entries[index] = entries[--index];
-            entries[index] = entry;
+            T[] result = entries.ToArray();
+            var entry = result[index];
+            while (index > first && result[index - 1].CompareTo(entry) > 0)
+            {
+                result[index] = result[--index];
+            }
+            result[index] = entry;
+            return result;
         }
     }
     #endregion

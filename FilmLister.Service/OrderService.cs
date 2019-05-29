@@ -1,6 +1,5 @@
 ﻿using FilmLister.Domain;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace FilmLister.Service
 {
@@ -9,19 +8,19 @@ namespace FilmLister.Service
         public SortResult<T> OrderObjects<T>(IEnumerable<T> films) where T : AbstractComparable<T>
         {
             T[] results;
+            results = new List<T>(films).ToArray();
             T left = null;
             T right = null;
             bool completed = true;
 
             try
             {
-                results = new List<T>(films).ToArray();
                 var sorter = new QuickSort<T>();
                 sorter.Sort(results);
             }
             catch (UnknownComparisonException<T> exception)
             {
-                results = films.ToArray();
+                // TODO: Add check that result is the correct length
                 left = exception.Left;
                 right = exception.Right;
                 completed = false;
