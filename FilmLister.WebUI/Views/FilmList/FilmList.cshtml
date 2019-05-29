@@ -11,8 +11,8 @@
     <h4>
         Which do you prefer?
     </h4>
-    <div class="row">
-        <div class="col-6">
+    <div class="row align-items-center">
+        <div class="col-4">
             <a asp-controller="FilmList" asp-action="SubmitFilmChoice" asp-route-id="@Model.Id" asp-route-lesserFilmId="@Model.ChoiceB.Id" asp-route-greaterFilmId="@Model.ChoiceA.Id">
                 <figure>
                     <img class="img-fluid" src="@Model.ChoiceA.ImageUrl" />
@@ -22,7 +22,12 @@
                 </figure>
             </a>
         </div>
-        <div class="col-6">
+        <div class="col-4 mx-auto align-middle align-items-center text-center">
+                <h4 class="text-left">@Model.ChoiceA.Name</h4>
+                <h5>VS</h5>
+                <h4 class="text-right">@Model.ChoiceB.Name</h4>
+        </div>
+        <div class="col-4">
             <a asp-controller="FilmList" asp-action="SubmitFilmChoice" asp-route-id="@Model.Id" asp-route-lesserFilmId="@Model.ChoiceA.Id" asp-route-greaterFilmId="@Model.ChoiceB.Id">
                 <figure>
                     <img class="img-fluid" src="@Model.ChoiceB.ImageUrl" />
