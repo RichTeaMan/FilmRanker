@@ -1,4 +1,5 @@
 ﻿using FilmLister.Domain;
+using System;
 using System.Collections.Generic;
 
 namespace FilmLister.Service
@@ -33,6 +34,11 @@ namespace FilmLister.Service
         {
             var sortResult = OrderObjects(films);
             return sortResult;
+        }
+
+        public static implicit operator Version(OrderService v)
+        {
+            throw new NotImplementedException();
         }
     }
 }

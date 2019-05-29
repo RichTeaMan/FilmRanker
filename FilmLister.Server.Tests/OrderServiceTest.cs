@@ -1,6 +1,7 @@
 using FilmLister.Domain;
 using FilmLister.Service;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace FilmLister.Server.Tests
@@ -211,6 +212,74 @@ namespace FilmLister.Server.Tests
             Assert.IsNotNull(sortResult.RightSort);
             Assert.AreNotSame(sortResult.LeftSort, sortResult.RightSort);
             Assert.IsFalse(sortResult.Completed);
+        }
+
+        [TestMethod]
+        public void SortLargeIntegerSet()
+        {
+            int setLength = 500;
+
+            var integerComparableDictionary = new Dictionary<int, IntegerAbstractComparable>();
+            foreach(var i in Enumerable.Range(0, setLength))
+            {
+                integerComparableDictionary.Add(i, new IntegerAbstractComparable(i));
+            }
+
+            foreach(var kv in integerComparableDictionary)
+            {
+                if (integerComparableDictionary.TryGetValue(kv.Key + 1, out IntegerAbstractComparable greater))
+                {
+                    kv.Value.HigherRankedObjects.Add(greater);
+                }
+            }
+
+            var integerComparableList = integerComparableDictionary.Values.ToArray();
+            var orderedIntegerComparableSortResult = orderService.OrderObjects(integerComparableList);
+
+            var expectedIntegerComparableList = integerComparableList.OrderBy(i => i.Value).ToArray();
+
+            // asserts
+            Assert.IsTrue(orderedIntegerComparableSortResult.Completed);
+            CollectionAssert.AreEquivalent(expectedIntegerComparableList, orderedIntegerComparableSortResult.SortedResults.ToArray());
+
+            int comparisons = orderedIntegerComparableSortResult.SortedResults.Sum(i => i.Comparisons);
+            System.Console.WriteLine(comparisons);
+        }
+    }
+
+    public class IntegerAbstractComparable : AbstractComparable<IntegerAbstractComparable>
+    {
+        public int Value { get; }
+
+        public int Comparisons { get; private set; }
+
+        public IntegerAbstractComparable(int value)
+        {
+            Value = value;
+        }
+
+        public override AbstractComparisonResult AbstractCompareTo(IntegerAbstractComparable other)
+        {
+            Comparisons++;
+            return base.AbstractCompareTo(other);
+        }
+
+        public override IEqualityComparer<IntegerAbstractComparable> CreateComparer()
+        {
+            return new IntegerAbstractComparableComparer();
+        }
+    }
+
+    public class IntegerAbstractComparableComparer : IEqualityComparer<IntegerAbstractComparable>
+    {
+        public bool Equals(IntegerAbstractComparable x, IntegerAbstractComparable y)
+        {
+            return x.Value == y.Value;
+        }
+        
+        public int GetHashCode(IntegerAbstractComparable obj)
+        {
+            return obj.Value.GetHashCode();
         }
     }
 }
