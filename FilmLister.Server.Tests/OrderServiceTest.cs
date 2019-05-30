@@ -1,6 +1,7 @@
 using FilmLister.Domain;
 using FilmLister.Service;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,7 +10,7 @@ namespace FilmLister.Server.Tests
     [TestClass]
     public class OrderServiceTest
     {
-        private Film testFilm = new Film(0, "test", 0, "test", "test", null);
+        private readonly Film testFilm = new Film(0, "test", 0, "test", "test", null);
 
         private OrderService orderService;
 
@@ -220,12 +221,12 @@ namespace FilmLister.Server.Tests
             int setLength = 1000;
 
             var integerComparableDictionary = new Dictionary<int, IntegerAbstractComparable>();
-            foreach(var i in Enumerable.Range(0, setLength))
+            foreach (var i in Enumerable.Range(0, setLength))
             {
                 integerComparableDictionary.Add(i, new IntegerAbstractComparable(i));
             }
 
-            foreach(var kv in integerComparableDictionary)
+            foreach (var kv in integerComparableDictionary)
             {
                 if (integerComparableDictionary.TryGetValue(kv.Key + 1, out IntegerAbstractComparable greater))
                 {
@@ -233,7 +234,7 @@ namespace FilmLister.Server.Tests
                 }
             }
 
-            var integerComparableList = integerComparableDictionary.Values.ToArray();
+            var integerComparableList = ToRandomArray(integerComparableDictionary.Values);
             var orderedIntegerComparableSortResult = orderService.OrderObjects(integerComparableList);
 
             var expectedIntegerComparableList = integerComparableList.OrderBy(i => i.Value).ToArray();
@@ -244,6 +245,22 @@ namespace FilmLister.Server.Tests
 
             int comparisons = orderedIntegerComparableSortResult.SortedResults.Sum(i => i.Comparisons);
             System.Console.WriteLine(comparisons);
+        }
+
+        private T[] ToRandomArray<T>(IEnumerable<T> collection)
+        {
+            var linkedList = new LinkedList<T>(collection);
+            var result = new List<T>();
+            var random = new Random();
+
+            while (linkedList.Any())
+            {
+                int index = random.Next(linkedList.Count);
+                var elementAt = linkedList.ElementAt(index);
+                result.Add(elementAt);
+                linkedList.Remove(elementAt);
+            }
+            return result.ToArray();
         }
     }
 
@@ -276,7 +293,7 @@ namespace FilmLister.Server.Tests
         {
             return x.Value == y.Value;
         }
-        
+
         public int GetHashCode(IntegerAbstractComparable obj)
         {
             return obj.Value.GetHashCode();
