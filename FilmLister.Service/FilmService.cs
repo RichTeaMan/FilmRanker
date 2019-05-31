@@ -271,7 +271,7 @@ namespace FilmLister.Service
                     foreach (var greater in kv.Key.LesserRankedFilmItems)
                     {
                         var domain = mapping[greater.GreaterRankedFilm];
-                        kv.Value.HigherRankedObjects.Add(domain);
+                        kv.Value.AddHigherRankedObject(domain);
                     }
                 }
                 films.AddRange(mapping.Values);

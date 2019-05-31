@@ -23,7 +23,7 @@ namespace FilmLister.Service.Profiler
             {
                 if (integerComparableDictionary.TryGetValue(kv.Key + 1, out IntegerAbstractComparable greater))
                 {
-                    kv.Value.HigherRankedObjects.Add(greater);
+                    kv.Value.AddHigherRankedObject(greater);
                 }
             }
 

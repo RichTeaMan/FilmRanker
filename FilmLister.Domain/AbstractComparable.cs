@@ -6,11 +6,13 @@ namespace FilmLister.Domain
 {
     public abstract class AbstractComparable<T> : IComparable<T>, IComparable where T : AbstractComparable<T>
     {
-        public HashSet<T> HigherRankedObjects { get; private set; }
+        private HashSet<T> _higherRankedObjects;
+
+        public IReadOnlyCollection<T> HigherRankedObjects { get { return _higherRankedObjects; } }
 
         protected AbstractComparable()
         {
-            HigherRankedObjects = new HashSet<T>(CreateComparer());
+            _higherRankedObjects = new HashSet<T>(CreateComparer());
         }
 
         /// <summary>
@@ -20,6 +22,14 @@ namespace FilmLister.Domain
         public virtual IEqualityComparer<T> CreateComparer()
         {
             return EqualityComparer<T>.Default;
+        }
+
+        public void AddHigherRankedObject(T higherRankedObject)
+        {
+            if (higherRankedObject != this)
+            {
+                _higherRankedObjects.Add(higherRankedObject);
+            }
         }
 
         public virtual AbstractComparisonResult AbstractCompareTo(T other)
@@ -35,11 +45,11 @@ namespace FilmLister.Domain
             {
                 result = new AbstractComparisonResult(0, true);
             }
-            else if (HigherRankedObjects.Contains(other))
+            else if (_higherRankedObjects.Contains(other))
             {
                 result = new AbstractComparisonResult(-1, true);
             }
-            else if (other.HigherRankedObjects.Contains((T)this))
+            else if (other._higherRankedObjects.Contains((T)this))
             {
                 result = new AbstractComparisonResult(1, true);
             }
@@ -69,11 +79,11 @@ namespace FilmLister.Domain
         /// <returns></returns>
         public IEnumerable<T> FetchTransitiveHigherRankedObjects(AbstractComparisonResult result)
         {
-            Stack<T> entitiesToFlatten = new Stack<T>(HigherRankedObjects);
+            Stack<T> entitiesToFlatten = new Stack<T>(_higherRankedObjects);
             while (entitiesToFlatten.TryPop(out T entity))
             {
                 yield return entity;
-                foreach (var nextEntity in entity.HigherRankedObjects)
+                foreach (var nextEntity in entity._higherRankedObjects.Where(ne => ne != this))
                 {
                     entitiesToFlatten.Push(nextEntity);
                 }

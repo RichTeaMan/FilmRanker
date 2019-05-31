@@ -23,7 +23,7 @@ namespace FilmLister.Domain.Test
             var film1 = new OrderedFilm(1, testFilm);
             var film2 = new OrderedFilm(2, testFilm);
 
-            film1.HigherRankedObjects.Add(film2);
+            film1.AddHigherRankedObject(film2);
             var comparion = film1.CompareTo(film2);
 
             Assert.AreEqual(-1, comparion);
@@ -35,7 +35,7 @@ namespace FilmLister.Domain.Test
             var film1 = new OrderedFilm(1, testFilm);
             var film2 = new OrderedFilm(2, testFilm);
 
-            film2.HigherRankedObjects.Add(film1);
+            film2.AddHigherRankedObject(film1);
             var comparion = film2.CompareTo(film1);
 
             Assert.AreEqual(-1, comparion);

@@ -26,7 +26,7 @@ namespace FilmLister.Server.Tests
             var film1 = new OrderedFilm(1, testFilm);
             var film2 = new OrderedFilm(2, testFilm);
 
-            film2.HigherRankedObjects.Add(film1);
+            film2.AddHigherRankedObject(film1);
 
             var sortResult = orderService.OrderFilms(new[] { film1, film2 });
 
@@ -50,59 +50,59 @@ namespace FilmLister.Server.Tests
             var film8 = new OrderedFilm(8, testFilm);
             var film9 = new OrderedFilm(9, testFilm);
 
-            film0.HigherRankedObjects.Add(film1);
-            film0.HigherRankedObjects.Add(film2);
-            film0.HigherRankedObjects.Add(film3);
-            film0.HigherRankedObjects.Add(film4);
-            film0.HigherRankedObjects.Add(film5);
-            film0.HigherRankedObjects.Add(film6);
-            film0.HigherRankedObjects.Add(film7);
-            film0.HigherRankedObjects.Add(film8);
-            film0.HigherRankedObjects.Add(film9);
+            film0.AddHigherRankedObject(film1);
+            film0.AddHigherRankedObject(film2);
+            film0.AddHigherRankedObject(film3);
+            film0.AddHigherRankedObject(film4);
+            film0.AddHigherRankedObject(film5);
+            film0.AddHigherRankedObject(film6);
+            film0.AddHigherRankedObject(film7);
+            film0.AddHigherRankedObject(film8);
+            film0.AddHigherRankedObject(film9);
 
-            film1.HigherRankedObjects.Add(film2);
-            film1.HigherRankedObjects.Add(film3);
-            film1.HigherRankedObjects.Add(film4);
-            film1.HigherRankedObjects.Add(film5);
-            film1.HigherRankedObjects.Add(film6);
-            film1.HigherRankedObjects.Add(film7);
-            film1.HigherRankedObjects.Add(film8);
-            film1.HigherRankedObjects.Add(film9);
+            film1.AddHigherRankedObject(film2);
+            film1.AddHigherRankedObject(film3);
+            film1.AddHigherRankedObject(film4);
+            film1.AddHigherRankedObject(film5);
+            film1.AddHigherRankedObject(film6);
+            film1.AddHigherRankedObject(film7);
+            film1.AddHigherRankedObject(film8);
+            film1.AddHigherRankedObject(film9);
 
-            film2.HigherRankedObjects.Add(film3);
-            film2.HigherRankedObjects.Add(film4);
-            film2.HigherRankedObjects.Add(film5);
-            film2.HigherRankedObjects.Add(film6);
-            film2.HigherRankedObjects.Add(film7);
-            film2.HigherRankedObjects.Add(film8);
-            film2.HigherRankedObjects.Add(film9);
+            film2.AddHigherRankedObject(film3);
+            film2.AddHigherRankedObject(film4);
+            film2.AddHigherRankedObject(film5);
+            film2.AddHigherRankedObject(film6);
+            film2.AddHigherRankedObject(film7);
+            film2.AddHigherRankedObject(film8);
+            film2.AddHigherRankedObject(film9);
 
-            film3.HigherRankedObjects.Add(film4);
-            film3.HigherRankedObjects.Add(film5);
-            film3.HigherRankedObjects.Add(film6);
-            film3.HigherRankedObjects.Add(film7);
-            film3.HigherRankedObjects.Add(film8);
-            film3.HigherRankedObjects.Add(film9);
+            film3.AddHigherRankedObject(film4);
+            film3.AddHigherRankedObject(film5);
+            film3.AddHigherRankedObject(film6);
+            film3.AddHigherRankedObject(film7);
+            film3.AddHigherRankedObject(film8);
+            film3.AddHigherRankedObject(film9);
 
-            film4.HigherRankedObjects.Add(film5);
-            film4.HigherRankedObjects.Add(film6);
-            film4.HigherRankedObjects.Add(film7);
-            film4.HigherRankedObjects.Add(film8);
-            film4.HigherRankedObjects.Add(film9);
+            film4.AddHigherRankedObject(film5);
+            film4.AddHigherRankedObject(film6);
+            film4.AddHigherRankedObject(film7);
+            film4.AddHigherRankedObject(film8);
+            film4.AddHigherRankedObject(film9);
 
-            film5.HigherRankedObjects.Add(film6);
-            film5.HigherRankedObjects.Add(film7);
-            film5.HigherRankedObjects.Add(film8);
-            film5.HigherRankedObjects.Add(film9);
+            film5.AddHigherRankedObject(film6);
+            film5.AddHigherRankedObject(film7);
+            film5.AddHigherRankedObject(film8);
+            film5.AddHigherRankedObject(film9);
 
-            film6.HigherRankedObjects.Add(film7);
-            film6.HigherRankedObjects.Add(film8);
-            film6.HigherRankedObjects.Add(film9);
+            film6.AddHigherRankedObject(film7);
+            film6.AddHigherRankedObject(film8);
+            film6.AddHigherRankedObject(film9);
 
-            film7.HigherRankedObjects.Add(film8);
-            film7.HigherRankedObjects.Add(film9);
+            film7.AddHigherRankedObject(film8);
+            film7.AddHigherRankedObject(film9);
 
-            film8.HigherRankedObjects.Add(film9);
+            film8.AddHigherRankedObject(film9);
 
             var sortResult = orderService.OrderFilms(new[] {
                 film3,
@@ -147,40 +147,40 @@ namespace FilmLister.Server.Tests
             var film8 = new OrderedFilm(8, testFilm);
             var film9 = new OrderedFilm(9, testFilm);
 
-            film0.HigherRankedObjects.Add(film4);
-            film0.HigherRankedObjects.Add(film5);
-            film0.HigherRankedObjects.Add(film6);
-            film0.HigherRankedObjects.Add(film7);
-            film0.HigherRankedObjects.Add(film8);
-            film0.HigherRankedObjects.Add(film9);
+            film0.AddHigherRankedObject(film4);
+            film0.AddHigherRankedObject(film5);
+            film0.AddHigherRankedObject(film6);
+            film0.AddHigherRankedObject(film7);
+            film0.AddHigherRankedObject(film8);
+            film0.AddHigherRankedObject(film9);
 
-            film1.HigherRankedObjects.Add(film2);
-            film1.HigherRankedObjects.Add(film3);
-            film1.HigherRankedObjects.Add(film8);
-            film1.HigherRankedObjects.Add(film9);
+            film1.AddHigherRankedObject(film2);
+            film1.AddHigherRankedObject(film3);
+            film1.AddHigherRankedObject(film8);
+            film1.AddHigherRankedObject(film9);
 
-            film2.HigherRankedObjects.Add(film3);
-            film2.HigherRankedObjects.Add(film4);
-            film2.HigherRankedObjects.Add(film5);
-            film2.HigherRankedObjects.Add(film6);
-            film2.HigherRankedObjects.Add(film7);
-            film2.HigherRankedObjects.Add(film8);
-            film2.HigherRankedObjects.Add(film9);
+            film2.AddHigherRankedObject(film3);
+            film2.AddHigherRankedObject(film4);
+            film2.AddHigherRankedObject(film5);
+            film2.AddHigherRankedObject(film6);
+            film2.AddHigherRankedObject(film7);
+            film2.AddHigherRankedObject(film8);
+            film2.AddHigherRankedObject(film9);
 
-            film3.HigherRankedObjects.Add(film4);
-            film3.HigherRankedObjects.Add(film5);
-            film3.HigherRankedObjects.Add(film6);
-            film3.HigherRankedObjects.Add(film8);
-            film3.HigherRankedObjects.Add(film9);
+            film3.AddHigherRankedObject(film4);
+            film3.AddHigherRankedObject(film5);
+            film3.AddHigherRankedObject(film6);
+            film3.AddHigherRankedObject(film8);
+            film3.AddHigherRankedObject(film9);
 
-            film6.HigherRankedObjects.Add(film7);
-            film6.HigherRankedObjects.Add(film8);
-            film6.HigherRankedObjects.Add(film9);
+            film6.AddHigherRankedObject(film7);
+            film6.AddHigherRankedObject(film8);
+            film6.AddHigherRankedObject(film9);
 
-            film7.HigherRankedObjects.Add(film8);
-            film7.HigherRankedObjects.Add(film9);
+            film7.AddHigherRankedObject(film8);
+            film7.AddHigherRankedObject(film9);
 
-            film8.HigherRankedObjects.Add(film9);
+            film8.AddHigherRankedObject(film9);
 
             var sortResult = orderService.OrderFilms(new[] {
                 film3,
@@ -230,7 +230,7 @@ namespace FilmLister.Server.Tests
             {
                 if (integerComparableDictionary.TryGetValue(kv.Key + 1, out IntegerAbstractComparable greater))
                 {
-                    kv.Value.HigherRankedObjects.Add(greater);
+                    kv.Value.AddHigherRankedObject(greater);
                 }
             }
 
