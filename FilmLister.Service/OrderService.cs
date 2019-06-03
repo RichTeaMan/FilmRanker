@@ -17,6 +17,7 @@ namespace FilmLister.Service
             try
             {
                 var sorter = new QuickSort<T>();
+                // var sorter = new MergeSort<T>();
                 sorter.Sort(results);
             }
             catch (UnknownComparisonException<T> exception)
@@ -34,11 +35,6 @@ namespace FilmLister.Service
         {
             var sortResult = OrderObjects(films);
             return sortResult;
-        }
-
-        public static implicit operator Version(OrderService v)
-        {
-            throw new NotImplementedException();
         }
     }
 }

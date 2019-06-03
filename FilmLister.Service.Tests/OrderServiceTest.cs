@@ -1,8 +1,11 @@
 using FilmLister.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RichTea.Common.Extensions;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FilmLister.Service.Tests
 {
@@ -244,6 +247,76 @@ namespace FilmLister.Service.Tests
 
             int comparisons = orderedIntegerComparableSortResult.SortedResults.Sum(i => i.Comparisons);
             System.Console.WriteLine(comparisons);
+        }
+
+        [TestMethod]
+        public void CountSortDecisionsTest()
+        {
+            int setLength = 11;
+            int sortAttempts = 1000;
+            var decisionCounts = new ConcurrentBag<int>();
+
+            Parallel.ForEach(Enumerable.Range(0, sortAttempts), attempt =>
+            {
+                var integerComparableList = ToRandomArray(Enumerable.Range(0, setLength).Select(i => new IntegerAbstractComparable(i)));
+
+                bool completed = false;
+                int decisions = 0;
+                SortResult<IntegerAbstractComparable> orderedIntegerComparableSortResult = null;
+                while (!completed)
+                {
+                    orderedIntegerComparableSortResult = orderService.OrderObjects(integerComparableList);
+                    completed = orderedIntegerComparableSortResult.Completed;
+                    if (!completed)
+                    {
+                        if (orderedIntegerComparableSortResult.LeftSort.Value > orderedIntegerComparableSortResult.RightSort.Value)
+                        {
+                            orderedIntegerComparableSortResult.RightSort.AddHigherRankedObject(orderedIntegerComparableSortResult.LeftSort);
+                        }
+                        else
+                        {
+                            orderedIntegerComparableSortResult.LeftSort.AddHigherRankedObject(orderedIntegerComparableSortResult.RightSort);
+                        }
+                        decisions++;
+                    }
+                }
+
+                var expectedIntegerComparableList = integerComparableList.OrderBy(i => i.Value).ToArray();
+
+                // asserts
+                Assert.IsTrue(orderedIntegerComparableSortResult.Completed);
+                CollectionAssert.AreEquivalent(expectedIntegerComparableList, orderedIntegerComparableSortResult.SortedResults.ToArray());
+
+                decisionCounts.Add(decisions);
+            });
+            var averageDecision = decisionCounts.Average();
+            var minDecision = decisionCounts.Min();
+            var maxDecision = decisionCounts.Max();
+            var diff = maxDecision - minDecision;
+            Console.WriteLine(averageDecision);
+            // quick sort - 35.519
+            // 13
+            // 53
+
+            // merge sort
+            // min 17
+            // max 52
+        }
+
+        private T[] ToRandomArray<T>(IEnumerable<T> collection)
+        {
+            var linkedList = new LinkedList<T>(collection);
+            var result = new List<T>();
+            var random = new Random();
+
+            while (linkedList.Any())
+            {
+                int index = random.Next(linkedList.Count);
+                var elementAt = linkedList.ElementAt(index);
+                result.Add(elementAt);
+                linkedList.Remove(elementAt);
+            }
+            return result.ToArray();
         }
     }
 
