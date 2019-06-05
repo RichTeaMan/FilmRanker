@@ -99,7 +99,32 @@ namespace FilmLister.Service
                     };
                     await filmListerContext.OrderedFilmRankItems.AddAsync(rankItem);
                     await filmListerContext.SaveChangesAsync();
-                    System.Console.WriteLine();
+                }
+            }
+            else
+            {
+                throw new ListNotFoundException(id);
+            }
+        }
+
+        public async Task SubmitIgnoreFilm(int id, int filmId)
+        {
+            var orderedFilmList = await filmListerContext.OrderedLists
+                .Include(ol => ol.OrderedFilms)
+                    .ThenInclude(f => f.Film)
+                .FirstOrDefaultAsync(ol => ol.Id == id);
+            if (orderedFilmList != null)
+            {
+                var filmToIgnore = orderedFilmList.OrderedFilms.FirstOrDefault(f => f.Id == filmId);
+
+                if (filmToIgnore == null)
+                {
+                    throw new FilmNotFoundException(filmId);
+                }
+                else
+                {
+                    filmToIgnore.Ignored = true;
+                    await filmListerContext.SaveChangesAsync();
                 }
             }
             else
@@ -128,12 +153,13 @@ namespace FilmLister.Service
             }
 
             var orderedFilmList = Map(persistenceOrderedFilmList);
-            var orderResult = orderService.OrderFilms(orderedFilmList.SortedFilms);
+            var orderResult = orderService.OrderFilms(orderedFilmList.SortedFilms.Where(f => !f.Ignore));
 
             var filmList = new Domain.OrderedFilmList(
                 orderedFilmList.Id,
                 orderResult.Completed,
                 orderResult.SortedResults.ToArray(),
+                persistenceOrderedFilmList.OrderedFilms.Where(f => f.Ignored).Select(f => Map(f)).ToArray(),
                 orderResult.LeftSort,
                 orderResult.RightSort);
 
@@ -241,7 +267,7 @@ namespace FilmLister.Service
             Domain.OrderedFilm filmModel = null;
             if (film != null)
             {
-                filmModel = new Domain.OrderedFilm(film.Id, Map(film.Film));
+                filmModel = new Domain.OrderedFilm(film.Id, film.Ignored, Map(film.Film));
             }
             return filmModel;
         }
@@ -280,6 +306,7 @@ namespace FilmLister.Service
                 orderedFilmList.Id,
                 orderedFilmList.Completed,
                 films,
+                new Domain.OrderedFilm[0],
                 null,
                 null);
             return filmList;

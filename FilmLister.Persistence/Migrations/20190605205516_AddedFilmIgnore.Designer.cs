@@ -4,14 +4,16 @@ using FilmLister.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FilmLister.Persistence.Migrations
 {
     [DbContext(typeof(FilmListerContext))]
-    partial class FilmListerContextModelSnapshot : ModelSnapshot
+    [Migration("20190605205516_AddedFilmIgnore")]
+    partial class AddedFilmIgnore
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -11,8 +11,8 @@ namespace FilmLister.Domain.Test
         [ExpectedException(typeof(UnknownComparisonException<OrderedFilm>))]
         public void NoComparison()
         {
-            var film1 = new OrderedFilm(1, testFilm);
-            var film2 = new OrderedFilm(2, testFilm);
+            var film1 = new OrderedFilm(1, false, testFilm);
+            var film2 = new OrderedFilm(2, false, testFilm);
 
             film1.CompareTo(film2);
         }
@@ -20,8 +20,8 @@ namespace FilmLister.Domain.Test
         [TestMethod]
         public void MinusOneComparison()
         {
-            var film1 = new OrderedFilm(1, testFilm);
-            var film2 = new OrderedFilm(2, testFilm);
+            var film1 = new OrderedFilm(1, false, testFilm);
+            var film2 = new OrderedFilm(2, false, testFilm);
 
             film1.AddHigherRankedObject(film2);
             var comparion = film1.CompareTo(film2);
@@ -32,8 +32,8 @@ namespace FilmLister.Domain.Test
         [TestMethod]
         public void PositiveOneComparison()
         {
-            var film1 = new OrderedFilm(1, testFilm);
-            var film2 = new OrderedFilm(2, testFilm);
+            var film1 = new OrderedFilm(1, false, testFilm);
+            var film2 = new OrderedFilm(2, false, testFilm);
 
             film2.AddHigherRankedObject(film1);
             var comparion = film2.CompareTo(film1);

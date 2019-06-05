@@ -24,7 +24,8 @@ namespace FilmLister.WebUI.Mappers
                 Completed = orderedFilmList.Completed,
                 ChoiceA = filmMapper.Map(orderedFilmList.ChoiceA),
                 ChoiceB = filmMapper.Map(orderedFilmList.ChoiceB),
-                SortedFilms = orderedFilmList.SortedFilms.Select(f => filmMapper.Map(f)).ToArray()
+                SortedFilms = orderedFilmList.SortedFilms.Select(f => filmMapper.Map(f)).ToArray(),
+                IgnoredFilms = orderedFilmList.IgnoredFilms.Select(f => filmMapper.Map(f)).ToArray()
             };
             return filmList;
         }

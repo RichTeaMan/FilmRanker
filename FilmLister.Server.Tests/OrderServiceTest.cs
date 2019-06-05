@@ -23,8 +23,8 @@ namespace FilmLister.Server.Tests
         [TestMethod]
         public void SortCompleted()
         {
-            var film1 = new OrderedFilm(1, testFilm);
-            var film2 = new OrderedFilm(2, testFilm);
+            var film1 = new OrderedFilm(1, false, testFilm);
+            var film2 = new OrderedFilm(2, false, testFilm);
 
             film2.AddHigherRankedObject(film1);
 
@@ -39,16 +39,16 @@ namespace FilmLister.Server.Tests
         [TestMethod]
         public void LongSortCompleted()
         {
-            var film0 = new OrderedFilm(0, testFilm);
-            var film1 = new OrderedFilm(1, testFilm);
-            var film2 = new OrderedFilm(2, testFilm);
-            var film3 = new OrderedFilm(3, testFilm);
-            var film4 = new OrderedFilm(4, testFilm);
-            var film5 = new OrderedFilm(5, testFilm);
-            var film6 = new OrderedFilm(6, testFilm);
-            var film7 = new OrderedFilm(7, testFilm);
-            var film8 = new OrderedFilm(8, testFilm);
-            var film9 = new OrderedFilm(9, testFilm);
+            var film0 = new OrderedFilm(0, false, testFilm);
+            var film1 = new OrderedFilm(1, false, testFilm);
+            var film2 = new OrderedFilm(2, false, testFilm);
+            var film3 = new OrderedFilm(3, false, testFilm);
+            var film4 = new OrderedFilm(4, false, testFilm);
+            var film5 = new OrderedFilm(5, false, testFilm);
+            var film6 = new OrderedFilm(6, false, testFilm);
+            var film7 = new OrderedFilm(7, false, testFilm);
+            var film8 = new OrderedFilm(8, false, testFilm);
+            var film9 = new OrderedFilm(9, false, testFilm);
 
             film0.AddHigherRankedObject(film1);
             film0.AddHigherRankedObject(film2);
@@ -136,16 +136,16 @@ namespace FilmLister.Server.Tests
         [TestMethod]
         public void LongSortNotCompleted()
         {
-            var film0 = new OrderedFilm(0, testFilm);
-            var film1 = new OrderedFilm(1, testFilm);
-            var film2 = new OrderedFilm(2, testFilm);
-            var film3 = new OrderedFilm(3, testFilm);
-            var film4 = new OrderedFilm(4, testFilm);
-            var film5 = new OrderedFilm(5, testFilm);
-            var film6 = new OrderedFilm(6, testFilm);
-            var film7 = new OrderedFilm(7, testFilm);
-            var film8 = new OrderedFilm(8, testFilm);
-            var film9 = new OrderedFilm(9, testFilm);
+            var film0 = new OrderedFilm(0, false, testFilm);
+            var film1 = new OrderedFilm(1, false, testFilm);
+            var film2 = new OrderedFilm(2, false, testFilm);
+            var film3 = new OrderedFilm(3, false, testFilm);
+            var film4 = new OrderedFilm(4, false, testFilm);
+            var film5 = new OrderedFilm(5, false, testFilm);
+            var film6 = new OrderedFilm(6, false, testFilm);
+            var film7 = new OrderedFilm(7, false, testFilm);
+            var film8 = new OrderedFilm(8, false, testFilm);
+            var film9 = new OrderedFilm(9, false, testFilm);
 
             film0.AddHigherRankedObject(film4);
             film0.AddHigherRankedObject(film5);
@@ -204,8 +204,8 @@ namespace FilmLister.Server.Tests
         [TestMethod]
         public void SortNotCompleted()
         {
-            var film1 = new OrderedFilm(1, testFilm);
-            var film2 = new OrderedFilm(2, testFilm);
+            var film1 = new OrderedFilm(1, false, testFilm);
+            var film2 = new OrderedFilm(2, false, testFilm);
 
             var sortResult = orderService.OrderFilms(new[] { film1, film2 });
 

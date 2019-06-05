@@ -59,6 +59,12 @@ namespace FilmLister.WebUI.Controllers
             return result;
         }
 
+        public async Task<IActionResult> SubmitIgnoreFilm(int filmListId, int filmId)
+        {
+            await filmService.SubmitIgnoreFilm(filmListId, filmId);
+            return RedirectToAction("List", new { id = filmListId });
+        }
+
         public async Task<IActionResult> List(int id)
         {
             IActionResult result;

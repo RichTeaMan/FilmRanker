@@ -4,7 +4,6 @@
     ViewData["Title"] = "Film Lister - Choose a Film";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h1>Film Listing</h1>
 
 @if (!Model.Completed)
 {
@@ -21,11 +20,12 @@
                     </figcaption>
                 </figure>
             </a>
+            <a class="btn btn-secondary" asp-controller="FilmList" asp-action="SubmitIgnoreFilm" asp-route-filmListId="@Model.Id" asp-route-filmId="@Model.ChoiceA.Id">Not Seen</a>
         </div>
         <div class="col-4 mx-auto align-middle align-items-center text-center">
-                <h4 class="text-left">@Model.ChoiceA.Name</h4>
-                <h5>VS</h5>
-                <h4 class="text-right">@Model.ChoiceB.Name</h4>
+            <h4 class="text-left">@Model.ChoiceA.Name</h4>
+            <h5>OR</h5>
+            <h4 class="text-right">@Model.ChoiceB.Name</h4>
         </div>
         <div class="col-4">
             <a asp-controller="FilmList" asp-action="SubmitFilmChoice" asp-route-id="@Model.Id" asp-route-lesserFilmId="@Model.ChoiceA.Id" asp-route-greaterFilmId="@Model.ChoiceB.Id">
@@ -36,6 +36,7 @@
                     </figcaption>
                 </figure>
             </a>
+            <a class="btn btn-secondary" asp-controller="FilmList" asp-action="SubmitIgnoreFilm" asp-route-filmListId="@Model.Id" asp-route-filmId="@Model.ChoiceB.Id">Not Seen</a>
         </div>
     </div>
     <div class="row">
@@ -65,3 +66,23 @@ else
         </div>
     }
 </div>
+@if (Model.IgnoredFilms?.Any() == true)
+{
+    <div class="row">
+        <h4>Unseen Films</h4>
+    </div>
+    <div class="row">
+        @foreach (var film in Model.IgnoredFilms)
+        {
+
+            <div class="col-4 col-md-2">
+                <figure>
+                    <img class="img-fluid" src="@film.ImageUrl" />
+                    <figcaption>
+                        @film.DisplayName
+                    </figcaption>
+                </figure>
+            </div>
+        }
+    </div>
+}

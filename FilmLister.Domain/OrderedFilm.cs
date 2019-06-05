@@ -6,10 +6,12 @@ namespace FilmLister.Domain
     {
         public int Id { get; }
         public Film Film { get; }
+        public bool Ignore { get; }
 
-        public OrderedFilm(int id, Film film)
+        public OrderedFilm(int id, bool ignore, Film film)
         {
             Id = id;
+            Ignore = ignore;
             Film = film ?? throw new ArgumentNullException(nameof(film));
         }
     }
