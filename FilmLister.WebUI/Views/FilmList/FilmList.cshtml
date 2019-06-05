@@ -68,16 +68,15 @@ else
 </div>
 @if (Model.IgnoredFilms?.Any() == true)
 {
-    <div class="row">
-        <h4>Unseen Films</h4>
-    </div>
+    <h4>Unseen Films</h4>
+    <hr />
     <div class="row">
         @foreach (var film in Model.IgnoredFilms)
         {
 
             <div class="col-4 col-md-2">
                 <figure>
-                    <img class="img-fluid" src="@film.ImageUrl" />
+                    <img class="img-fluid black-and-white" src="@film.ImageUrl" />
                     <figcaption>
                         @film.DisplayName
                     </figcaption>

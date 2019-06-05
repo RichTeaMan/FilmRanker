@@ -84,3 +84,7 @@ body {
     display: block;
     border-bottom: 1px solid #000;
 }
+
+.black-and-white {
+    filter: grayscale(100%);
+}
