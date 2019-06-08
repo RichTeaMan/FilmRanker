@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AsyncEnumerator" Version="2.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FilmLister.Domain\FilmLister.Domain.csproj" />
     <ProjectReference Include="..\FilmLister.Persistence\FilmLister.Persistence.csproj" />
     <ProjectReference Include="..\FilmLister.TmdbIntegration\FilmLister.TmdbIntegration.csproj" />

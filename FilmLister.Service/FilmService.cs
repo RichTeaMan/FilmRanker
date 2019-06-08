@@ -4,6 +4,8 @@ using FilmLister.Service.Exceptions;
 using FilmLister.TmdbIntegration;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Async;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -255,34 +257,43 @@ namespace FilmLister.Service
             return titles;
         }
 
-        public async Task<FilmTitle[]> SearchFilmTitlesByPersonName(string query)
+        /// <summary>
+        /// Gets credits from persons that match the query.
+        /// </summary>
+        /// <param name="query">Query for a person.</param>
+        /// <param name="maxPersonToSearch">Maximum number of people to search. High values may cause too many API request errors.</param>
+        /// <returns></returns>
+        public async Task<FilmTitleWithPersonCredit[]> SearchFilmTitlesByPersonName(string query, int maxPersonToSearch = 5)
         {
             var peopleResults = await tmdbService.SearchPeople(query);
-            var peopleIdList = peopleResults.results.Select(r => r.id).ToArray();
+            var personSearchResult = peopleResults.results.Take(maxPersonToSearch);
 
-            var creditTasks = peopleIdList.Select(id => tmdbService.FetchPersonMovieCredits(id)).ToArray();
-            var credits = await Task.WhenAll(creditTasks);
-
-            var titles = new List<FilmTitle>();
-            foreach (var credit in credits)
+            var titles = new ConcurrentBag<FilmTitleWithPersonCredit>();
+            await personSearchResult.ParallelForEachAsync(async person =>
             {
-                foreach (var r in credit.cast)
+                var credit = await tmdbService.FetchPersonMovieCredits(person.id);
+                foreach (var r in credit.Cast)
                 {
-                    titles.Add(new FilmTitle(
+                    titles.Add(new FilmTitleWithPersonCredit(
                         r.id,
                         r.title,
                         CreateFullImagePath(r.poster_path),
-                        r.ReleaseDate?.Year));
+                        r.ReleaseDate?.Year,
+                        person.name,
+                        "Actor"));
                 }
-                foreach (var r in credit.crew)
+                foreach (var r in credit.Crew)
                 {
-                    titles.Add(new FilmTitle(
+                    titles.Add(new FilmTitleWithPersonCredit(
                         r.id,
                         r.title,
                         CreateFullImagePath(r.poster_path),
-                        r.ReleaseDate?.Year));
+                        r.ReleaseDate?.Year,
+                        person.name,
+                        r.job
+                        ));
                 }
-            }
+            });
 
             return titles.ToArray();
         }

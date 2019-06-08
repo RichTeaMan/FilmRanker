@@ -38,6 +38,7 @@ namespace FilmLister.WebUI
             services.AddDbContext<FilmListerContext>(options => options.UseSqlServer(connectionString));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMemoryCache();
             services.AddTransient<FilmMapper>();
             services.AddTransient<FilmListMapper>();
             services.AddTransient<FilmListTemplateMapper>();
