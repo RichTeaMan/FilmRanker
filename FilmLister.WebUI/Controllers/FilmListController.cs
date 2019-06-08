@@ -28,7 +28,7 @@ namespace FilmLister.WebUI.Controllers
         public async Task<IActionResult> Index()
         {
             var lists = await filmService.RetrieveFilmListTemplates();
-            var modelLists = lists.Select(l => filmListTemplateMapper.Map(l)).ToArray();
+            var modelLists = lists.Where(l => l.Films?.Length > 1).Select(l => filmListTemplateMapper.Map(l)).ToArray();
 
             return View(modelLists);
         }

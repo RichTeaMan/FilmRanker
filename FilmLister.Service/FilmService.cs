@@ -35,7 +35,10 @@ namespace FilmLister.Service
 
         public async Task<Domain.FilmListTemplate[]> RetrieveFilmListTemplates()
         {
-            var filmListTemplates = await filmListerContext.FilmListTemplates.ToArrayAsync();
+            var filmListTemplates = await filmListerContext.FilmListTemplates
+                .Include(l => l.FilmListItems)
+                    .ThenInclude(i => i.Film)
+                .ToArrayAsync();
 
             var domainLists = filmListTemplates.Select(l => Map(l)).ToArray();
             return domainLists;
