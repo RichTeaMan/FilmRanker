@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FilmLister.Domain;
+﻿using FilmLister.Domain;
 using FilmLister.Service;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace FilmLister.WebUI.Controllers
 {
@@ -24,6 +21,13 @@ namespace FilmLister.WebUI.Controllers
         public async Task<FilmTitle[]> Films(string query)
         {
             var titles = await filmService.SearchFilmTitles(query);
+            return titles;
+        }
+
+        [HttpGet("filmsByPerson/{query}")]
+        public async Task<FilmTitle[]> FilmsByPerson(string query)
+        {
+            var titles = await filmService.SearchFilmTitlesByPersonName(query);
             return titles;
         }
     }

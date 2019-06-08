@@ -255,6 +255,38 @@ namespace FilmLister.Service
             return titles;
         }
 
+        public async Task<FilmTitle[]> SearchFilmTitlesByPersonName(string query)
+        {
+            var peopleResults = await tmdbService.SearchPeople(query);
+            var peopleIdList = peopleResults.results.Select(r => r.id).ToArray();
+
+            var creditTasks = peopleIdList.Select(id => tmdbService.FetchPersonMovieCredits(id)).ToArray();
+            var credits = await Task.WhenAll(creditTasks);
+
+            var titles = new List<FilmTitle>();
+            foreach (var credit in credits)
+            {
+                foreach (var r in credit.cast)
+                {
+                    titles.Add(new FilmTitle(
+                        r.id,
+                        r.title,
+                        CreateFullImagePath(r.poster_path),
+                        r.ReleaseDate?.Year));
+                }
+                foreach (var r in credit.crew)
+                {
+                    titles.Add(new FilmTitle(
+                        r.id,
+                        r.title,
+                        CreateFullImagePath(r.poster_path),
+                        r.ReleaseDate?.Year));
+                }
+            }
+
+            return titles.ToArray();
+        }
+
         private Domain.Film Map(Persistence.Film film)
         {
             Domain.Film filmModel = null;

@@ -1,10 +1,7 @@
 ﻿using FilmLister.TmdbIntegration.Models;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FilmLister.TmdbIntegration
@@ -32,6 +29,22 @@ namespace FilmLister.TmdbIntegration
             return movieSearchResult;
         }
 
+        public async Task<PersonSearchResultContainer> SearchPeople(string query)
+        {
+            string url = $"https://api.themoviedb.org/3/search/person?api_key={ApiKey}&language=en-US&query={query}";
+            string json = await client.GetStringAsync(url);
+            var personSearchResult = JsonConvert.DeserializeObject<PersonSearchResultContainer>(json);
+            return personSearchResult;
+        }
+
+        public async Task<CastCrewContainer> FetchPersonMovieCredits(int tmdbPersonId)
+        {
+            string url = $"https://api.themoviedb.org/3/person/{tmdbPersonId}/movie_credits?api_key={ApiKey}&language=en-US";
+            string json = await client.GetStringAsync(url);
+            var castCrewResult = JsonConvert.DeserializeObject<CastCrewContainer>(json);
+            return castCrewResult;
+        }
+
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
@@ -43,9 +56,6 @@ namespace FilmLister.TmdbIntegration
                 {
                     client.Dispose();
                 }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
 
                 disposedValue = true;
             }
