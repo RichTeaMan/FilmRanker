@@ -1,5 +1,6 @@
 ﻿using FilmLister.Persistence;
 using FilmLister.Service;
+using FilmLister.Service.Exceptions;
 using FilmLister.WebUI.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -32,9 +33,16 @@ namespace FilmLister.WebUI.Controllers
 
             if (list != null && film != null)
             {
-                var updatedList = await filmService.AddFilmToFilmListTemplate(list, film);
-                var listModel = filmListTemplateMapper.Map(updatedList);
-                return listModel;
+                try
+                {
+                    var updatedList = await filmService.AddFilmToFilmListTemplate(list, film);
+                    var listModel = filmListTemplateMapper.Map(updatedList);
+                    return listModel;
+                }
+                catch(FilmAlreadyInFilmListTemplateException)
+                {
+                    return BadRequest($"Lists cannot have duplicate films. {film.Name} is already in the list.");
+                }
             }
             else
             {

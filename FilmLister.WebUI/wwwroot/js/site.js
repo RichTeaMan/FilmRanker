@@ -170,7 +170,7 @@ $(document).ready(function () {
                 $("#filmsPerPersonSearch").val('');
                 $("#selectedFilmImg").attr("src", "");
             }).fail(error => {
-                alert(`Failed to submit choice: ${error}`)
+                alert(`Failed to submit choice: ${error.responseText}`)
             });
         }
         event.preventDefault();

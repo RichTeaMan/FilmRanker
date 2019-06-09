@@ -210,16 +210,27 @@ namespace FilmLister.Service
             return domainList;
         }
 
+        /// <summary>
+        /// Adds a film to the film list template.
+        /// </summary>
+        /// <param name="filmListTemplate"></param>
+        /// <param name="film"></param>
+        /// <exception cref="FilmAlreadyInFilmListTemplateException">Occurs when the given film is already in the list.</exception>
+        /// <returns></returns>
         public async Task<Domain.FilmListTemplate> AddFilmToFilmListTemplate(Domain.FilmListTemplate filmListTemplate, Domain.Film film)
         {
             var persistenceList = await filmListerContext.FilmListTemplates.FirstAsync(l => l.Id == filmListTemplate.Id);
-            var persistenceFilm = await filmListerContext.Films.FirstAsync(l => l.Id == film.Id);
 
             if (persistenceList.FilmListItems == null)
             {
                 persistenceList.FilmListItems = new List<FilmListItem>();
             }
+            if (persistenceList.FilmListItems.Any(item => item.Film.Id == film.Id))
+            {
+                throw new FilmAlreadyInFilmListTemplateException(film.Id, filmListTemplate.Id);
+            }
 
+            var persistenceFilm = await filmListerContext.Films.FirstAsync(l => l.Id == film.Id);
             persistenceList.FilmListItems.Add(new FilmListItem
             {
                 Film = persistenceFilm,
