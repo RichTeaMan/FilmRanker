@@ -29,3 +29,10 @@ After making changes run the following to create a migration. Run the update com
 ```bash
 dotnet ef migrations add < name of migration > --project FilmLister.Persistence --startup-project FilmLister.WebUI
 ```
+
+## Licences
+
+Source code licenced under MIT.
+
+Favicon made by [Freepik](https://www.freepik.com/?__hstc=57440181.e8f90e954527a143edf65bc8cda51b7e.1560094900348.1560094900348.1560094900348.1&__hssc=57440181.1.1560094900348&__hsfp=3307354061)
+from https://www.flaticon.com/ is licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/).
