@@ -18,10 +18,7 @@
     </div>
     <div class="col-md-9">
         <form id="filmForm" method="post" action="/FilmListTemplate/AddFilm">
-            <input type="hidden" name="filmListTemplateId" value="@Model.Id" />
-            <div class="form-group">
-                <input id="tmdbId" class="form-control" type="hidden" name="tmdbId" />
-            </div>
+            <input type="hidden" id="filmListTemplateId" name="filmListTemplateId" value="@Model.Id" />
             <div class="form-group">
                 <h4>Search by film name:</h4>
                 <label class="control-label">Film Name</label>
@@ -32,7 +29,7 @@
                 <label class="control-label">Person Name</label>
                 <input id="personSearch" class="form-control" type="text" />
 
-                <div  class="form-check" id="jobFilterContainer"></div>
+                <div class="form-check" id="jobFilterContainer"></div>
 
                 <label class="control-label">Person's Film</label>
                 <input id="filmsPerPersonSearch" class="form-control" type="text" disabled="disabled" />
@@ -43,7 +40,7 @@
         </form>
     </div>
 </div>
-<div class="row">
+<div id="filmRow" class="row">
     @foreach (var film in Model.Films)
     {
         <div class="col-4 col-md-2">

@@ -143,11 +143,37 @@ $(document).ready(function () {
     });
 
     $("#filmForm").submit(function (event) {
+
+        const templateId = $("#filmListTemplateId").val();
+
         if (selectedSuggestion) {
-            $("#tmdbId").val(selectedSuggestion.tmdbId);
-        } else {
-            event.preventDefault();
+            $.post({
+                url: '/api/filmListTemplate/addFilm',
+                data: { filmListTemplateId: templateId, tmdbId: selectedSuggestion.tmdbId },
+            }).done(response => {
+                $("#filmRow").children().remove();
+                for (const film of response.films) {
+                    $("#filmRow").append(`
+                        <div class="col-4 col-md-2">
+                            <figure>
+                                <img class="img-fluid" src="${film.imageUrl}" />
+                                <figcaption>
+                                    ${film.displayName}
+                                </figcaption>
+                            </figure>
+                        </div>`
+                    );
+                }
+
+                selectedSuggestion = null;
+                $("#filmSearch").val('');
+                $("#filmsPerPersonSearch").val('');
+                $("#selectedFilmImg").attr("src", "");
+            }).fail(error => {
+                alert(`Failed to submit choice: ${error}`)
+            });
         }
+        event.preventDefault();
     });
 });
 
