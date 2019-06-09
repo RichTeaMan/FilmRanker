@@ -2,10 +2,9 @@
 using FilmLister.Persistence;
 using FilmLister.Service.Exceptions;
 using FilmLister.TmdbIntegration;
+using FilmLister.TmdbIntegration.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Async;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -257,45 +256,60 @@ namespace FilmLister.Service
             return titles;
         }
 
-        /// <summary>
-        /// Gets credits from persons that match the query.
-        /// </summary>
-        /// <param name="query">Query for a person.</param>
-        /// <param name="maxPersonToSearch">Maximum number of people to search. High values may cause too many API request errors.</param>
-        /// <returns></returns>
-        public async Task<FilmTitleWithPersonCredit[]> SearchFilmTitlesByPersonName(string query, int maxPersonToSearch = 5)
+        public async Task<Domain.Person[]> SearchPersons(string query)
         {
             var peopleResults = await tmdbService.SearchPeople(query);
-            var personSearchResult = peopleResults.results.Take(maxPersonToSearch);
+            var result = peopleResults.results.Select(r => Map(r)).ToArray();
+            return result;
+        }
 
-            var titles = new ConcurrentBag<FilmTitleWithPersonCredit>();
-            await personSearchResult.ParallelForEachAsync(async person =>
+        public async Task<FilmTitleWithPersonCredit[]> FetchFilmTitlesByPersonId(int tmdbId)
+        {
+            var titles = new List<FilmTitleWithPersonCredit>();
+            var credit = await tmdbService.FetchPersonMovieCredits(tmdbId);
+            foreach (var r in credit.Cast)
             {
-                var credit = await tmdbService.FetchPersonMovieCredits(person.id);
-                foreach (var r in credit.Cast)
-                {
-                    titles.Add(new FilmTitleWithPersonCredit(
-                        r.id,
-                        r.title,
-                        CreateFullImagePath(r.poster_path),
-                        r.ReleaseDate?.Year,
-                        person.name,
-                        "Actor"));
-                }
-                foreach (var r in credit.Crew)
-                {
-                    titles.Add(new FilmTitleWithPersonCredit(
-                        r.id,
-                        r.title,
-                        CreateFullImagePath(r.poster_path),
-                        r.ReleaseDate?.Year,
-                        person.name,
-                        r.job
-                        ));
-                }
-            });
+                titles.Add(new FilmTitleWithPersonCredit(
+                    r.id,
+                    r.title,
+                    CreateFullImagePath(r.poster_path),
+                    r.ReleaseDate?.Year,
+                    tmdbId,
+                    "Actor"));
+            }
+            foreach (var r in credit.Crew)
+            {
+                titles.Add(new FilmTitleWithPersonCredit(
+                    r.id,
+                    r.title,
+                    CreateFullImagePath(r.poster_path),
+                    r.ReleaseDate?.Year,
+                    tmdbId,
+                    r.job));
+            }
 
             return titles.ToArray();
+        }
+
+        private Domain.Person Map(TmdbIntegration.Models.Person person)
+        {
+            Domain.Person personDomain = null;
+            if (person != null)
+            {
+                personDomain = new Domain.Person(person.id, person.title);
+            }
+            return personDomain;
+        }
+
+
+        private Domain.Person Map(PersonSearchResult personSearchResult)
+        {
+            Domain.Person personDomain = null;
+            if (personSearchResult != null)
+            {
+                personDomain = new Domain.Person(personSearchResult.id, personSearchResult.name);
+            }
+            return personDomain;
         }
 
         private Domain.Film Map(Persistence.Film film)

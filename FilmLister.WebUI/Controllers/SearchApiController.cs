@@ -33,14 +33,27 @@ namespace FilmLister.WebUI.Controllers
             return filmTitles;
         }
 
-        [HttpGet("filmsByPerson/{query}")]
-        public async Task<FilmTitleWithPersonCredit[]> FilmsByPerson(string query)
+        [HttpGet("persons/{query}")]
+        public async Task<Person[]> Persons(string query)
+        {
+            Person[] personTitles;
+            string key = $"personQuery/{query}";
+            if (!memoryCache.TryGetValue(key, out personTitles))
+            {
+                personTitles = await filmService.SearchPersons(query);
+                memoryCache.Set(key, personTitles);
+            }
+            return personTitles;
+        }
+
+        [HttpGet("filmsByPersonId/{id}")]
+        public async Task<FilmTitleWithPersonCredit[]> FilmsByPersonId(int id)
         {
             FilmTitleWithPersonCredit[] filmTitles;
-            string key = $"personQuery/{query}";
+            string key = $"filmsByPersonId/{id}";
             if (!memoryCache.TryGetValue(key, out filmTitles))
             {
-                filmTitles = await filmService.SearchFilmTitlesByPersonName(query);
+                filmTitles = await filmService.FetchFilmTitlesByPersonId(id);
                 memoryCache.Set(key, filmTitles);
             }
             return filmTitles;

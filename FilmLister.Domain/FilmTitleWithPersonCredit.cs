@@ -3,7 +3,7 @@
     public class FilmTitleWithPersonCredit : FilmTitle
     {
 
-        public string PersonTitle { get; }
+        public int PersonTmdbId { get; }
 
         public string JobTitle { get; }
 
@@ -12,11 +12,11 @@
             string title,
             string imageUrl,
             int? releaseYear,
-            string personTitle,
+            int personTmdbId,
             string jobTitle)
             : base(tmdbId, title, imageUrl, releaseYear)
         {
-            PersonTitle = personTitle ?? string.Empty;
+            PersonTmdbId = personTmdbId;
             JobTitle = jobTitle ?? string.Empty;
         }
     }
