@@ -11,8 +11,8 @@ Film information, such as titles and posters, are provided via [The Movie Databa
 
 The application can be deployed with Docker. You'll need a [TMDB API key](https://developers.themoviedb.org/3/getting-started/introduction) for full functionality.
 ```bash
-docker build -t film-lister --build-arg tmdb=YOUR_TMDB_API_KEY 
-docker run 
+docker build -t film-lister --build-arg tmdb=YOUR_TMDB_API_KEY .
+docker run -d --name film-lister -p 8080:80 film-lister
 ```
 
 ## Database Deployment
