@@ -1,8 +1,22 @@
 ﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 
+/**
+ * @typedef {Object} personSuggestion
+ * @property {string} value
+ * @property {string} title
+ * @property {string} tmdbId
+ * @property {string} imageUrl
+ * @property {number} releaseYear
+ * @property {string} job
+ */
+
 let currentSuggestions = [];
 let selectedSuggestion = null;
+
+/**
+ * @type {personSuggestion[]}
+ */
 let personSuggestions = [];
 
 
@@ -67,9 +81,16 @@ $(document).ready(function () {
                 url: `/api/search/filmsByPersonId/${suggestion.tmdbId}`,
                 dataType: 'json',
                 success: function (data) {
+
+                    /**
+                     * @type {personSuggestion[]}
+                     */
                     const suggestions = data.map(r => {
                         const suffix = r.releaseYear ? ` (${r.releaseYear})` : '';
-                        return {
+                        /**
+                         * @type {personSuggestion}
+                         */
+                        const ps = {
                             "value": `${r.title}, ${r.jobTitle}${suffix}`,
                             "title": r.title,
                             "tmdbId": r.tmdbId,
@@ -77,10 +98,11 @@ $(document).ready(function () {
                             "releaseYear": r.releaseYear,
                             "job": r.jobTitle
                         };
+                        return ps;
                     });
                     personSuggestions = suggestions;
+                    updateJobFilters();
                     $("#filmsPerPersonSearch").prop('disabled', false);
-                    console.log(suggestions);
                 }
             });
         },
@@ -95,8 +117,15 @@ $(document).ready(function () {
         showNoSuggestionNotice: true,
         minChars: 0,
         lookup: function (query, done) {
+
+            const filteredJobs = new Set($('input.job-check').filter(function (_, el) {
+                return $(el).is(':checked');
+            }).map(function (_, el) {
+                return $(el).val();
+            }).get());
+
             const filteredSuggestions = personSuggestions.filter(function (item) {
-                return item.value.toLowerCase().includes(query.toLowerCase());
+                return item.value.toLowerCase().includes(query.toLowerCase()) && filteredJobs.has(item.job);
             });
             const result = { suggestions: filteredSuggestions };
             done(result);
@@ -121,3 +150,35 @@ $(document).ready(function () {
         }
     });
 });
+
+function updateJobFilters() {
+    const jobs = new Set(personSuggestions.map(item => {
+        return item.job
+    }));
+
+    $("#jobFilterContainer").children().remove();
+
+    for (const job of jobs) {
+
+        const jobContainer = $(document.createElement('span')).attr({
+            class: 'form-check form-check-inline'
+        });
+        const label = $(document.createElement('label')).attr({
+            class: 'switch control-label',
+        });
+        label.append(
+            $(document.createElement('input')).attr({
+                id: `${job}Chb`,
+                class: 'form-check-input job-check',
+                value: `${job}`,
+                type: 'checkbox',
+                checked: 'checked'
+            }));
+        label.append(`${job}`);
+        jobContainer.append(label);
+
+        $("#jobFilterContainer")
+            .append(jobContainer);
+    }
+
+}

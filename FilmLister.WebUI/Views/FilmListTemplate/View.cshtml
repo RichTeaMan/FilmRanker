@@ -16,7 +16,7 @@
     <div class="col-3">
         <img id="selectedFilmImg" class="img-fluid" />
     </div>
-    <div class="col-md-4">
+    <div class="col-md-9">
         <form id="filmForm" method="post" action="/FilmListTemplate/AddFilm">
             <input type="hidden" name="filmListTemplateId" value="@Model.Id" />
             <div class="form-group">
@@ -31,6 +31,8 @@
                 <h4>Search by person, such as actor or director:</h4>
                 <label class="control-label">Person Name</label>
                 <input id="personSearch" class="form-control" type="text" />
+
+                <div  class="form-check" id="jobFilterContainer"></div>
 
                 <label class="control-label">Person's Film</label>
                 <input id="filmsPerPersonSearch" class="form-control" type="text" disabled="disabled" />
