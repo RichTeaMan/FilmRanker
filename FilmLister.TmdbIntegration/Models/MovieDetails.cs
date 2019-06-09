@@ -39,7 +39,7 @@ namespace FilmLister.TmdbIntegration.Models
             get
             {
                 DateTimeOffset? result = null;
-                if (ReleaseDateString != null)
+                if (!string.IsNullOrEmpty(ReleaseDateString))
                 {
                     result = DateTimeOffset.Parse(ReleaseDateString);
                 }
