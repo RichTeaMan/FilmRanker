@@ -21,19 +21,19 @@ namespace FilmLister.TmdbIntegration
             return movieDetails;
         }
 
-        public async Task<MovieSearchResultContainer> SearchMovies(string query)
+        public async Task<ResultContainer<MovieSearchResult>> SearchMovies(string query)
         {
             string url = $"https://api.themoviedb.org/3/search/movie?api_key={ApiKey}&language=en-US&query={query}";
             string json = await client.GetStringAsync(url);
-            var movieSearchResult = JsonConvert.DeserializeObject<MovieSearchResultContainer>(json);
+            var movieSearchResult = JsonConvert.DeserializeObject<ResultContainer<MovieSearchResult>>(json);
             return movieSearchResult;
         }
 
-        public async Task<PersonSearchResultContainer> SearchPeople(string query)
+        public async Task<ResultContainer<PersonSearchResult>> SearchPeople(string query)
         {
             string url = $"https://api.themoviedb.org/3/search/person?api_key={ApiKey}&language=en-US&query={query}";
             string json = await client.GetStringAsync(url);
-            var personSearchResult = JsonConvert.DeserializeObject<PersonSearchResultContainer>(json);
+            var personSearchResult = JsonConvert.DeserializeObject<ResultContainer<PersonSearchResult>>(json);
             return personSearchResult;
         }
 

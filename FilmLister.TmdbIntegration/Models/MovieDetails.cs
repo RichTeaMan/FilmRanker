@@ -5,30 +5,77 @@ namespace FilmLister.TmdbIntegration.Models
 {
     public class MovieDetails
     {
-        public bool adult { get; set; }
-        public string backdrop_path { get; set; }
-        public BelongsToCollection belongs_to_collection { get; set; }
-        public long budget { get; set; }
-        public Genre[] genres { get; set; }
-        public string homepage { get; set; }
-        public int id { get; set; }
-        public string imdb_id { get; set; }
-        public string original_language { get; set; }
-        public string original_title { get; set; }
-        public string overview { get; set; }
-        public float popularity { get; set; }
-        public string poster_path { get; set; }
-        public ProductionCompanies[] production_companies { get; set; }
-        public ProductionCountries[] production_countries { get; set; }
-        public long revenue { get; set; }
-        public int runtime { get; set; }
-        public SpokenLanguages[] spoken_languages { get; set; }
-        public string status { get; set; }
-        public string tagline { get; set; }
-        public string title { get; set; }
-        public bool video { get; set; }
-        public float vote_average { get; set; }
-        public int vote_count { get; set; }
+        [JsonProperty("adult")]
+        public bool Adult { get; set; }
+
+        [JsonProperty("backdrop_path")]
+        public string Backdrop_path { get; set; }
+
+        [JsonProperty("belongs_to_collection")]
+        public BelongsToCollection BelongsToCollection { get; set; }
+
+        [JsonProperty("budget")]
+        public long Budget { get; set; }
+
+        [JsonProperty("genres")]
+        public Genre[] Genres { get; set; }
+
+        [JsonProperty("homepage")]
+        public string Homepage { get; set; }
+
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("imdb_id")]
+        public string ImdbId { get; set; }
+
+        [JsonProperty("original_language")]
+        public string OriginalLanguage { get; set; }
+
+        [JsonProperty("original_title")]
+        public string OriginalTitle { get; set; }
+
+        [JsonProperty("overview")]
+        public string Overview { get; set; }
+
+        [JsonProperty("popularity")]
+        public float Popularity { get; set; }
+
+        [JsonProperty("poster_path")]
+        public string PosterPath { get; set; }
+
+        [JsonProperty("production_companies")]
+        public ProductionCompanies[] ProductionCompanies { get; set; }
+
+        [JsonProperty("production_countries")]
+        public ProductionCountries[] ProductionCountries { get; set; }
+
+        [JsonProperty("revenue")]
+        public long Revenue { get; set; }
+
+        [JsonProperty("runtime")]
+        public int Runtime { get; set; }
+
+        [JsonProperty("spoken_languages")]
+        public SpokenLanguages[] SpokenLanguages { get; set; }
+
+        [JsonProperty("status")]
+        public string Status { get; set; }
+
+        [JsonProperty("tagline")]
+        public string Tagline { get; set; }
+
+        [JsonProperty("title")]
+        public string Title { get; set; }
+
+        [JsonProperty("video")]
+        public bool Video { get; set; }
+
+        [JsonProperty("vote_average")]
+        public float VoteAverage { get; set; }
+
+        [JsonProperty("vote_count")]
+        public int VoteCount { get; set; }
 
         [JsonProperty("release_date")]
         public string ReleaseDateString { get; set; }
@@ -50,35 +97,61 @@ namespace FilmLister.TmdbIntegration.Models
 
     public class BelongsToCollection
     {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string poster_path { get; set; }
-        public string backdrop_path { get; set; }
+
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("poster_path")]
+        public string PosterPath { get; set; }
+
+        [JsonProperty("backdrop_path")]
+        public string BackdropPath { get; set; }
     }
 
     public class Genre
     {
-        public int id { get; set; }
-        public string name { get; set; }
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
     }
 
     public class ProductionCompanies
     {
-        public int id { get; set; }
-        public string logo_path { get; set; }
-        public string name { get; set; }
-        public string origin_country { get; set; }
+
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("logo_path")]
+        public string LogoPath { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("origin_country")]
+        public string OriginCountry { get; set; }
     }
 
     public class ProductionCountries
     {
-        public string iso_3166_1 { get; set; }
-        public string name { get; set; }
+
+        [JsonProperty("iso_3166_1")]
+        public string Iso31661 { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
     }
 
     public class SpokenLanguages
     {
-        public string iso_639_1 { get; set; }
-        public string name { get; set; }
+        [JsonProperty("iso_639_1")]
+        public string Iso6391 { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
     }
 }

@@ -3,40 +3,70 @@ using System;
 
 namespace FilmLister.TmdbIntegration.Models
 {
-    public class PersonSearchResultContainer
-    {
-        public int page { get; set; }
-        public int total_results { get; set; }
-        public int total_pages { get; set; }
-        public PersonSearchResult[] results { get; set; }
-    }
-
     public class PersonSearchResult
     {
-        public float popularity { get; set; }
-        public int id { get; set; }
-        public string profile_path { get; set; }
-        public string name { get; set; }
-        public PersonKnownFor[] known_for { get; set; }
-        public bool adult { get; set; }
+        [JsonProperty("popularity")]
+        public float Popularity { get; set; }
+
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("profile_path")]
+        public string ProfilePath { get; set; }
+
+        [JsonProperty("name")]
+        public string Name { get; set; }
+
+        [JsonProperty("known_for")]
+        public PersonKnownFor[] KnownFor { get; set; }
+
+        [JsonProperty("adult")]
+        public bool Adult { get; set; }
     }
 
     public class PersonKnownFor
     {
-        public float vote_average { get; set; }
-        public int vote_count { get; set; }
-        public int id { get; set; }
-        public bool video { get; set; }
-        public string media_type { get; set; }
-        public string title { get; set; }
-        public float popularity { get; set; }
-        public string poster_path { get; set; }
-        public string original_language { get; set; }
-        public string original_title { get; set; }
-        public int[] genre_ids { get; set; }
-        public string backdrop_path { get; set; }
-        public bool adult { get; set; }
-        public string overview { get; set; }
+        [JsonProperty("vote_average")]
+        public float VoteAverage { get; set; }
+
+        [JsonProperty("vote_count")]
+        public int VoteCount { get; set; }
+
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("video")]
+        public bool Video { get; set; }
+
+        [JsonProperty("media_type")]
+        public string MediaType { get; set; }
+
+        [JsonProperty("title")]
+        public string Title { get; set; }
+
+        [JsonProperty("popularity")]
+        public float Popularity { get; set; }
+
+        [JsonProperty("poster_path")]
+        public string PosterPath { get; set; }
+
+        [JsonProperty("original_language")]
+        public string OriginalLanguage { get; set; }
+
+        [JsonProperty("original_title")]
+        public string OriginalTitle { get; set; }
+
+        [JsonProperty("genre_ids")]
+        public int[] GenreIds { get; set; }
+
+        [JsonProperty("backdrop_path")]
+        public string BackdropPath { get; set; }
+
+        [JsonProperty("adult")]
+        public bool Adult { get; set; }
+
+        [JsonProperty("overview")]
+        public string Overview { get; set; }
 
         [JsonProperty("release_date")]
         public string ReleaseDateString { get; set; }

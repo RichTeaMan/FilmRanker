@@ -23,9 +23,8 @@ namespace FilmLister.WebUI.Controllers
         [HttpGet("films/{query}")]
         public async Task<FilmTitle[]> Films(string query)
         {
-            FilmTitle[] filmTitles;
             string key = $"filmQuery/{query}";
-            if (!memoryCache.TryGetValue(key, out filmTitles))
+            if (!memoryCache.TryGetValue(key, out FilmTitle[] filmTitles))
             {
                 filmTitles = await filmService.SearchFilmTitles(query);
                 memoryCache.Set(key, filmTitles);
@@ -36,9 +35,8 @@ namespace FilmLister.WebUI.Controllers
         [HttpGet("persons/{query}")]
         public async Task<Person[]> Persons(string query)
         {
-            Person[] personTitles;
             string key = $"personQuery/{query}";
-            if (!memoryCache.TryGetValue(key, out personTitles))
+            if (!memoryCache.TryGetValue(key, out Person[] personTitles))
             {
                 personTitles = await filmService.SearchPersons(query);
                 memoryCache.Set(key, personTitles);
@@ -49,9 +47,8 @@ namespace FilmLister.WebUI.Controllers
         [HttpGet("filmsByPersonId/{id}")]
         public async Task<FilmTitleWithPersonCredit[]> FilmsByPersonId(int id)
         {
-            FilmTitleWithPersonCredit[] filmTitles;
             string key = $"filmsByPersonId/{id}";
-            if (!memoryCache.TryGetValue(key, out filmTitles))
+            if (!memoryCache.TryGetValue(key, out FilmTitleWithPersonCredit[] filmTitles))
             {
                 filmTitles = await filmService.FetchFilmTitlesByPersonId(id);
                 memoryCache.Set(key, filmTitles);

@@ -185,9 +185,9 @@ namespace FilmLister.Service
                 var movieDetail = await tmdbService.FetchMovieDetails(tmdbId);
                 film = new Persistence.Film
                 {
-                    Name = movieDetail.title,
-                    ImageUrl = CreateFullImagePath(movieDetail.poster_path),
-                    ImdbId = movieDetail.imdb_id,
+                    Name = movieDetail.Title,
+                    ImageUrl = CreateFullImagePath(movieDetail.PosterPath),
+                    ImdbId = movieDetail.ImdbId,
                     TmdbId = tmdbId,
                     ReleaseDate = movieDetail.ReleaseDate
                 };
@@ -261,8 +261,8 @@ namespace FilmLister.Service
         public async Task<FilmTitle[]> SearchFilmTitles(string query)
         {
             var searchResult = await tmdbService.SearchMovies(query);
-            var titles = searchResult.results
-                .Select(r => new FilmTitle(r.id, r.title, CreateFullImagePath(r.poster_path), r.ReleaseDate?.Year))
+            var titles = searchResult.Results
+                .Select(r => new FilmTitle(r.Id, r.Title, CreateFullImagePath(r.PosterPath), r.ReleaseDate?.Year))
                 .ToArray();
             return titles;
         }
@@ -270,7 +270,7 @@ namespace FilmLister.Service
         public async Task<Domain.Person[]> SearchPersons(string query)
         {
             var peopleResults = await tmdbService.SearchPeople(query);
-            var result = peopleResults.results.Select(r => Map(r)).ToArray();
+            var result = peopleResults.Results.Select(r => Map(r)).ToArray();
             return result;
         }
 
@@ -278,25 +278,15 @@ namespace FilmLister.Service
         {
             var titles = new List<FilmTitleWithPersonCredit>();
             var credit = await tmdbService.FetchPersonMovieCredits(tmdbId);
-            foreach (var r in credit.Cast)
+            foreach (var r in credit.Persons)
             {
                 titles.Add(new FilmTitleWithPersonCredit(
-                    r.id,
-                    r.title,
-                    CreateFullImagePath(r.poster_path),
+                    r.Id,
+                    r.Title,
+                    CreateFullImagePath(r.PosterPath),
                     r.ReleaseDate?.Year,
                     tmdbId,
-                    "Actor"));
-            }
-            foreach (var r in credit.Crew)
-            {
-                titles.Add(new FilmTitleWithPersonCredit(
-                    r.id,
-                    r.title,
-                    CreateFullImagePath(r.poster_path),
-                    r.ReleaseDate?.Year,
-                    tmdbId,
-                    r.job));
+                    r.Job));
             }
 
             return titles.ToArray();
@@ -307,7 +297,7 @@ namespace FilmLister.Service
             Domain.Person personDomain = null;
             if (person != null)
             {
-                personDomain = new Domain.Person(person.id, person.title);
+                personDomain = new Domain.Person(person.Id, person.Title);
             }
             return personDomain;
         }
@@ -318,7 +308,7 @@ namespace FilmLister.Service
             Domain.Person personDomain = null;
             if (personSearchResult != null)
             {
-                personDomain = new Domain.Person(personSearchResult.id, personSearchResult.name);
+                personDomain = new Domain.Person(personSearchResult.Id, personSearchResult.Name);
             }
             return personDomain;
         }
