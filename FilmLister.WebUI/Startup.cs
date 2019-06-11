@@ -66,6 +66,8 @@ namespace FilmLister.WebUI
 
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseHttpsRedirection();
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using FilmLister.Persistence;
 using FilmLister.WebUI.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -15,12 +16,12 @@ namespace FilmLister.WebUI.Areas.Identity
         public void Configure(IWebHostBuilder builder)
         {
             builder.ConfigureServices((context, services) => {
-                services.AddDbContext<IdentityContext>(options =>
+                services.AddDbContext<FilmListerContext>(options =>
                     options.UseSqlServer(
-                        context.Configuration.GetConnectionString("IdentityContextConnection")));
+                        context.Configuration.GetConnectionString("FilmListerDatabase")));
 
                 services.AddDefaultIdentity<IdentityUser>()
-                    .AddEntityFrameworkStores<IdentityContext>();
+                    .AddEntityFrameworkStores<FilmListerContext>();
             });
         }
     }
