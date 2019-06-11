@@ -1,0 +1,47 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@model FilmLister.WebUI.Models.FilmListTemplate[]
+
+@{
+    ViewData["Title"] = "Film Lister - All Film Lists";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Choose a Film List</h1>
+<div class="row">
+    <div class="col-md">
+        <h4>All Film Lists:</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">List</th>
+                    <th scope="col">Film Count</th>
+                    @if (SignInManager.IsSignedIn(User)) {
+                    <th scope="col">Edit</th>
+                    <th scope="col">Delete</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var filmList in Model) {
+                <tr>
+                    <td>
+                        <a asp-controller="FilmList" asp-action="Create" asp-route-listId="@filmList.Id">@filmList.Name</a>
+                    </td>
+                    <td>@filmList.Films.Length</td>
+                    @if (SignInManager.IsSignedIn(User)) {
+                    <td>Edit</td>
+                    <td>
+                        <a asp-controller="FilmListTemplate"
+                           asp-action="ConfirmDelete"
+                           asp-route-filmListTemplateId="@filmList.Id">
+                            Delete
+                        </a>
+                    </td>
+                    }
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

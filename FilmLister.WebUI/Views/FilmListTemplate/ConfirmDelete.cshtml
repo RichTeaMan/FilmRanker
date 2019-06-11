@@ -1,0 +1,21 @@
+﻿@model FilmLister.WebUI.Models.FilmListTemplate
+
+@{
+    ViewData["Title"] = "Film Lister - Confirm Deletion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3>Delete Film List?</h3>
+<div class="row">
+    <div class="col-md">
+        <p>
+            Delete @Model.Name?
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
+        <a class="btn btn-primary mr-1" asp-controller="FilmListTemplate" asp-action="Delete" asp-route-filmListTemplateId="@Model.Id">Delete</a>
+        <a class="btn btn-secondary mr-1" asp-controller="FilmListTemplate" asp-action="List">Cancel</a>
+    </div>
+</div>

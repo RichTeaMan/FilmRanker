@@ -7,6 +7,7 @@ using FilmLister.Persistence;
 using FilmLister.Service;
 using FilmLister.WebUI.Mappers;
 using FilmLister.WebUI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -79,6 +80,38 @@ namespace FilmLister.WebUI.Controllers
                 result = NotFound("Film list template with given ID not found.");
             }
             return result;
+        }
+
+        public async Task<IActionResult> List()
+        {
+            var templates = await filmService.RetrieveFilmListTemplates();
+            var modelTemplates = templates.Select(l => filmListTemplateMapper.Map(l)).ToArray();
+            return View(modelTemplates);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> ConfirmDelete(int filmListTemplateId)
+        {
+            IActionResult result;
+            var list = await filmService.RetrieveFilmListTemplateById(filmListTemplateId);
+
+            if (list != null)
+            {
+                var listModel = filmListTemplateMapper.Map(list);
+                return View(listModel);
+            }
+            else
+            {
+                result = NotFound("Film list template with given ID not found.");
+            }
+            return result;
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Delete(int filmListTemplateId)
+        {
+            await filmService.DeleteFilmListTemplateById(filmListTemplateId);
+            return RedirectToAction(nameof(List));
         }
     }
 }

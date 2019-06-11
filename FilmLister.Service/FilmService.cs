@@ -210,6 +210,34 @@ namespace FilmLister.Service
             return domainList;
         }
 
+        public async Task DeleteFilmListTemplateById(int id)
+        {
+            var list = await filmListerContext.FilmListTemplates
+                .Include(l => l.FilmListItems)
+                    .ThenInclude(i => i.Film)
+                .FirstOrDefaultAsync(l => l.Id == id);
+
+            if (list != null)
+            {
+                var derivedLists = await filmListerContext
+                    .OrderedLists
+                    .Where(l => l.FilmListTemplate == list)
+                    .ToArrayAsync();
+
+                var derivedFilms = derivedLists
+                    .Where(l => l.OrderedFilms != null)
+                    .SelectMany(l => l.OrderedFilms)
+                    .ToArray();
+
+                filmListerContext.OrderedLists.RemoveRange(derivedLists);
+                filmListerContext.OrderedFilms.RemoveRange(derivedFilms);
+                filmListerContext.FilmListItems.RemoveRange(list.FilmListItems);
+                filmListerContext.FilmListTemplates.Remove(list);
+
+                await filmListerContext.SaveChangesAsync();
+            }
+        }
+
         /// <summary>
         /// Adds a film to the film list template.
         /// </summary>
