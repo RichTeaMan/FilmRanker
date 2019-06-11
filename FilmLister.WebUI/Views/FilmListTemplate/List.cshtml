@@ -30,7 +30,13 @@
                     </td>
                     <td>@filmList.Films.Length</td>
                     @if (SignInManager.IsSignedIn(User)) {
-                    <td>Edit</td>
+                    <td>
+                        <a asp-controller="FilmListTemplate"
+                           asp-action="View"
+                           asp-route-filmListTemplateId="@filmList.Id">
+                            Edit
+                        </a>
+                    </td>
                     <td>
                         <a asp-controller="FilmListTemplate"
                            asp-action="ConfirmDelete"
