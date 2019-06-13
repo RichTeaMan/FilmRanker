@@ -221,6 +221,10 @@ namespace FilmLister.Service
             {
                 var derivedLists = await filmListerContext
                     .OrderedLists
+                    .Include(l => l.OrderedFilms)
+                        .ThenInclude(f => f.GreaterRankedFilmItems)
+                    .Include(l => l.OrderedFilms)
+                        .ThenInclude(f => f.LesserRankedFilmItems)
                     .Where(l => l.FilmListTemplate == list)
                     .ToArrayAsync();
 
@@ -229,8 +233,15 @@ namespace FilmLister.Service
                     .SelectMany(l => l.OrderedFilms)
                     .ToArray();
 
-                filmListerContext.OrderedLists.RemoveRange(derivedLists);
+                var derivedRankings = derivedFilms
+                    .SelectMany(f => f.GreaterRankedFilmItems)
+                    .Union(derivedFilms
+                    .SelectMany(f => f.LesserRankedFilmItems))
+                    .ToArray();
+
+                filmListerContext.OrderedFilmRankItems.RemoveRange(derivedRankings);
                 filmListerContext.OrderedFilms.RemoveRange(derivedFilms);
+                filmListerContext.OrderedLists.RemoveRange(derivedLists);
                 filmListerContext.FilmListItems.RemoveRange(list.FilmListItems);
                 filmListerContext.FilmListTemplates.Remove(list);
 
