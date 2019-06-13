@@ -35,6 +35,7 @@ namespace FilmLister.WebUI
 
             string tmdbApiKey = Configuration.GetValue<string>("TmdbApiKey");
 
+            BindConfig<AuthConfig>(services, "Auth");
             services.AddDbContext<FilmListerContext>(options => options.UseSqlServer(connectionString));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -75,6 +76,13 @@ namespace FilmLister.WebUI
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        public void BindConfig<T>(IServiceCollection serviceCollection, string configKey) where T : class, new()
+        {
+            var t = new T();
+            Configuration.Bind(configKey, t);
+            serviceCollection.AddSingleton(t);
         }
     }
 }
