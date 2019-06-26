@@ -28,10 +28,13 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-3">
-        <img id="selectedFilmImg" class="img-fluid" />
+    <div class="col-lg-3 col-md-9">
+        <div id="selectedFilmImgContainer" class="jumbotron">
+            <h3>Choose a film</h3>
+            <img id="selectedFilmImg" class="img-fluid" />
+        </div>
     </div>
-    <div class="col-md-9">
+    <div class="col-lg-9">
         <form id="filmForm" method="post" action="/FilmListTemplate/AddFilm">
             <input type="hidden" id="filmListTemplateId" name="filmListTemplateId" value="@Model.Id" />
             <div class="form-group">
