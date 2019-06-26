@@ -6,4 +6,8 @@
     <RootNamespace>FilmLister.WebUI.Models</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FilmLister.Persistence\FilmLister.Persistence.csproj" />
+  </ItemGroup>
+
 </Project>

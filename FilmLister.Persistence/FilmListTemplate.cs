@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace FilmLister.Persistence
 {
@@ -10,6 +8,7 @@ namespace FilmLister.Persistence
         [Key]
         public int Id { get; set; }
 
+        [MaxLength(Constants.FILM_LIST_TEMPLATE_MAX_LENGTH)]
         public string Name { get; set; }
 
         public List<FilmListItem> FilmListItems { get; set; }

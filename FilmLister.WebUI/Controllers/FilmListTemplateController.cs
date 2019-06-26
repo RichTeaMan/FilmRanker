@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FilmLister.Domain;
-using FilmLister.Persistence;
+﻿using FilmLister.Persistence;
 using FilmLister.Service;
+using FilmLister.Service.Exceptions;
 using FilmLister.WebUI.Mappers;
-using FilmLister.WebUI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FilmLister.WebUI.Controllers
 {
@@ -33,16 +30,10 @@ namespace FilmLister.WebUI.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(string listName)
+        [HttpGet]
+        public async Task<IActionResult> Create()
         {
-            var filmListTemplate = new Persistence.FilmListTemplate()
-            {
-                Name = listName
-            };
-            await filmListerContext.FilmListTemplates.AddAsync(filmListTemplate);
-            await filmListerContext.SaveChangesAsync();
-
+            var filmListTemplate = await filmService.CreateFilmListTemplate();
             return RedirectToAction("View", new { filmListTemplateId = filmListTemplate.Id });
         }
 
@@ -80,6 +71,25 @@ namespace FilmLister.WebUI.Controllers
                 result = NotFound("Film list template with given ID not found.");
             }
             return result;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Rename(Models.FilmListTemplate filmListTemplate)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(filmListTemplate);
+            }
+            try
+            {
+                await filmService.RenameFilmListTemplate(filmListTemplate.Id, filmListTemplate.Name);
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is ListNotFoundException)
+            {
+                Console.WriteLine($"Error occurred: {ex.Message}.");
+            }
+
+            return RedirectToAction("View", new { filmListTemplateId = filmListTemplate.Id });
         }
 
         public async Task<IActionResult> List()

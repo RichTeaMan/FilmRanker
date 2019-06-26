@@ -282,6 +282,47 @@ namespace FilmLister.Service
         }
 
         /// <summary>
+        /// Creates a new empty film list with a generated name.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Domain.FilmListTemplate> CreateFilmListTemplate()
+        {
+            var filmListTemplate = new Persistence.FilmListTemplate()
+            {
+                Name = $"New List - {DateTimeOffset.Now.Date.ToShortDateString()}"
+            };
+            await filmListerContext.FilmListTemplates.AddAsync(filmListTemplate);
+            await filmListerContext.SaveChangesAsync();
+
+            var domain = await RetrieveFilmListTemplateById(filmListTemplate.Id);
+            return domain;
+        }
+
+        /// <summary>
+        /// Renames the film list template with the given ID.
+        /// </summary>
+        /// <param name="filmListId"></param>
+        /// <param name="newListName"></param>
+        /// <exception cref="ArgumentException">If new list name is null or longer than the maximum length.</exception>
+        /// <exception cref="ListNotFoundException">Could not find list with the given ID.</exception>
+        /// <returns></returns>
+        public async Task RenameFilmListTemplate(int filmListId, string newListName)
+        {
+            if (string.IsNullOrEmpty(newListName) || newListName.Length >= Persistence.Constants.FILM_LIST_TEMPLATE_MAX_LENGTH)
+            {
+                throw new ArgumentException($"NewListName must be not null and have a maximum of{Persistence.Constants.FILM_LIST_TEMPLATE_MAX_LENGTH} characters.");
+            }
+            var persistenceList = await filmListerContext.FilmListTemplates.FirstOrDefaultAsync(l => l.Id == filmListId);
+            if (persistenceList == null)
+            {
+                throw new ListNotFoundException(filmListId);
+            }
+
+            persistenceList.Name = newListName;
+            await filmListerContext.SaveChangesAsync();
+        }
+
+        /// <summary>
         /// Creates a full image path from part of a path. If image path is null
         /// then an empty string is returned.
         /// </summary>
