@@ -14,6 +14,7 @@ namespace FilmLister.WebUI.Mappers
                     Name = orderedFilm.Film.Name,
                     ImageUrl = orderedFilm.Film.ImageUrl,
                     ImdbId = orderedFilm.Film.ImdbId,
+                    TmdbId = orderedFilm.Film.TmdbId,
                     ReleaseYear = orderedFilm.Film.ReleaseYear
                 };
             }
@@ -31,6 +32,7 @@ namespace FilmLister.WebUI.Mappers
                     Name = film.Name,
                     ImageUrl = film.ImageUrl,
                     ImdbId = film.ImdbId,
+                    TmdbId = film.TmdbId,
                     ReleaseYear = film.ReleaseYear
                 };
             }

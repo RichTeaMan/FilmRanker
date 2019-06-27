@@ -302,6 +302,28 @@ namespace FilmLister.Service
         }
 
         /// <summary>
+        /// Removes the film with the given ID from the film list template.
+        /// </summary>
+        /// <param name="filmListTemplateId">Film list template ID.</param>
+        /// <param name="tmdbId"></param>
+        /// <exception cref="ListNotFoundException">Could not find list with the given ID.</exception>
+        /// <returns></returns>
+        public async Task RemoveFilmFromFilmListTemplate(int filmListTemplateId, int tmdbId)
+        {
+            var persistenceList = await filmListerContext.FilmListTemplates
+                .Include(l => l.FilmListItems)
+                    .ThenInclude(f => f.Film)
+                .FirstOrDefaultAsync(l => l.Id == filmListTemplateId);
+            if (persistenceList == null)
+            {
+                throw new ListNotFoundException(filmListTemplateId);
+            }
+
+            persistenceList.FilmListItems.RemoveAll(f => f.Film.TmdbId == tmdbId);
+            await filmListerContext.SaveChangesAsync();
+        }
+
+        /// <summary>
         /// Renames the film list template with the given ID.
         /// </summary>
         /// <param name="filmListId"></param>

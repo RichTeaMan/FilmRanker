@@ -78,6 +78,11 @@
                     }
                 </figcaption>
             </figure>
+            <form action="/FilmListTemplate/RemoveFilm" method="post">
+                <input type="hidden" name="filmListTemplateId" value="@Model.Id" />
+                <input type="hidden" name="tmdbId" value="@film.TmdbId" />
+                <input type="submit" class="btn btn-outline-danger" value="Remove" />
+            </form>
         </div>
     }
 </div>

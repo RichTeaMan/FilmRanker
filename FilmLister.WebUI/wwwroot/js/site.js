@@ -168,6 +168,11 @@ $(document).ready(function () {
                                     ${captionElement}
                                 </figcaption>
                             </figure>
+                            <form action="/FilmListTemplate/RemoveFilm" method="post">
+                                <input type="hidden" name="filmListTemplateId" value="${templateId}" />
+                                <input type="hidden" name="tmdbId" value="${film.tmdbId}" />
+                                <input type="submit" class="btn btn-outline-danger" value="Remove" />
+                            </form>
                         </div>`
                     );
                 }

@@ -74,6 +74,23 @@ namespace FilmLister.WebUI.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> RemoveFilm(int filmListTemplateId, int tmdbId)
+        {
+            IActionResult result;
+            try
+            {
+                await filmService.RemoveFilmFromFilmListTemplate(filmListTemplateId, tmdbId);
+                int id = filmListTemplateId;
+                result = RedirectToAction("View", new { filmListTemplateId = id });
+            }
+            catch (ListNotFoundException)
+            {
+                result = NotFound("Film list template with given ID not found.");
+            }
+            return result;
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Rename(Models.FilmListTemplate filmListTemplate)
         {
             if (!ModelState.IsValid)
