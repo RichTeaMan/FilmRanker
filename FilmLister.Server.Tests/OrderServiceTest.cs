@@ -1,6 +1,7 @@
 using FilmLister.Domain;
 using FilmLister.Service;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RichTea.Common.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -234,7 +235,7 @@ namespace FilmLister.Server.Tests
                 }
             }
 
-            var integerComparableList = ToRandomArray(integerComparableDictionary.Values);
+            var integerComparableList = integerComparableDictionary.Values.RandomiseOrder().ToArray();
             var orderedIntegerComparableSortResult = orderService.OrderObjects(integerComparableList);
 
             var expectedIntegerComparableList = integerComparableList.OrderBy(i => i.Value).ToArray();
@@ -245,22 +246,6 @@ namespace FilmLister.Server.Tests
 
             int comparisons = orderedIntegerComparableSortResult.SortedResults.Sum(i => i.Comparisons);
             System.Console.WriteLine(comparisons);
-        }
-
-        private T[] ToRandomArray<T>(IEnumerable<T> collection)
-        {
-            var linkedList = new LinkedList<T>(collection);
-            var result = new List<T>();
-            var random = new Random();
-
-            while (linkedList.Any())
-            {
-                int index = random.Next(linkedList.Count);
-                var elementAt = linkedList.ElementAt(index);
-                result.Add(elementAt);
-                linkedList.Remove(elementAt);
-            }
-            return result.ToArray();
         }
     }
 

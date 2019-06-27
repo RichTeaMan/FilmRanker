@@ -4,6 +4,7 @@ using FilmLister.Service.Exceptions;
 using FilmLister.TmdbIntegration;
 using FilmLister.TmdbIntegration.Models;
 using Microsoft.EntityFrameworkCore;
+using RichTea.Common.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +59,9 @@ namespace FilmLister.Service
                     .ThenInclude(i => i.Film)
                 .FirstAsync(l => l.Id == filmListTemplateId);
 
-            var films = persistenceListTemplate.FilmListItems.Select(i => new Persistence.OrderedFilm() { Film = i.Film }).ToList();
+            var films = persistenceListTemplate.FilmListItems.Select(i => new Persistence.OrderedFilm() { Film = i.Film })
+                .RandomiseOrder()
+                .ToList();
             var filmList = new Persistence.OrderedList()
             {
                 OrderedFilms = films,
