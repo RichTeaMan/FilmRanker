@@ -15,5 +15,21 @@
                 return ReleaseYear.HasValue ? $"{Name} ({ReleaseYear})" : $"{Name}";
             }
         }
+
+        /// <summary>
+        /// Gets the IMDB link, or an empty string if there is no IMDB ID.
+        /// </summary>
+        public string ImdbLink
+        {
+            get
+            {
+                string imdbLink = string.Empty;
+                if (!string.IsNullOrWhiteSpace(ImdbId))
+                {
+                    imdbLink = $"https://www.imdb.com/title/{ImdbId}/";
+                }
+                return imdbLink;
+            }
+        }
     }
 }

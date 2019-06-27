@@ -153,12 +153,19 @@ $(document).ready(function () {
             }).done(response => {
                 $("#filmRow").children().remove();
                 for (const film of response.films) {
+                    let captionElement = film.displayName;
+                    if (film.imdbLink) {
+                        captionElement = `
+                        <a href="${film.imdbLink}" target="_blank">
+                            ${film.displayName}
+                        </a>`;
+                    }
                     $("#filmRow").append(`
                         <div class="col-4 col-md-2">
                             <figure>
                                 <img class="img-fluid" src="${film.imageUrl}" />
                                 <figcaption>
-                                    ${film.displayName}
+                                    ${captionElement}
                                 </figcaption>
                             </figure>
                         </div>`

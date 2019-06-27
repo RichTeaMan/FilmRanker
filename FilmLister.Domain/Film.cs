@@ -22,7 +22,7 @@ namespace FilmLister.Domain
             Name = name ?? throw new ArgumentNullException(nameof(name));
             TmdbId = tmdbId;
             ImageUrl = imageUrl ?? throw new ArgumentNullException(nameof(imageUrl));
-            ImdbId = imdbId ?? throw new ArgumentNullException(nameof(imdbId));
+            ImdbId = imdbId;
             ReleaseYear = releaseYear;
         }
     }

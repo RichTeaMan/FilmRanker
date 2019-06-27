@@ -23,9 +23,31 @@
             <a class="btn btn-secondary" asp-controller="FilmList" asp-action="SubmitIgnoreFilm" asp-route-filmListId="@Model.Id" asp-route-filmId="@Model.ChoiceA.Id">Not Seen</a>
         </div>
         <div class="col-4 mx-auto align-middle align-items-center text-center">
-            <h4 class="text-left">@Model.ChoiceA.Name</h4>
+            <h4 class="text-left">
+                @if (!string.IsNullOrEmpty(Model.ChoiceA.ImdbLink))
+                {
+                    <a href="@Model.ChoiceA.ImdbLink" target="_blank">
+                        @Model.ChoiceA.DisplayName
+                    </a>
+                }
+                else
+                {
+                    @Model.ChoiceA.DisplayName
+                }
+            </h4>
             <h5>OR</h5>
-            <h4 class="text-right">@Model.ChoiceB.Name</h4>
+            <h4 class="text-right">
+                @if (!string.IsNullOrEmpty(Model.ChoiceB.ImdbLink))
+                {
+                    <a href="@Model.ChoiceB.ImdbLink" target="_blank">
+                        @Model.ChoiceB.DisplayName
+                    </a>
+                }
+                else
+                {
+                    @Model.ChoiceB.DisplayName
+                }
+            </h4>
         </div>
         <div class="col-4">
             <a asp-controller="FilmList" asp-action="SubmitFilmChoice" asp-route-id="@Model.Id" asp-route-lesserFilmId="@Model.ChoiceA.Id" asp-route-greaterFilmId="@Model.ChoiceB.Id">
@@ -60,7 +82,16 @@ else
             <figure>
                 <img class="img-fluid" src="@film.ImageUrl" />
                 <figcaption>
-                    @film.DisplayName
+                    @if (!string.IsNullOrEmpty(film.ImdbLink))
+                    {
+                        <a href="@film.ImdbLink" target="_blank">
+                            @film.DisplayName
+                        </a>
+                    }
+                    else
+                    {
+                        @film.DisplayName
+                    }
                 </figcaption>
             </figure>
         </div>
@@ -73,12 +104,20 @@ else
     <div class="row">
         @foreach (var film in Model.IgnoredFilms)
         {
-
             <div class="col-4 col-md-2">
                 <figure>
                     <img class="img-fluid black-and-white" src="@film.ImageUrl" />
                     <figcaption>
-                        @film.DisplayName
+                        @if (!string.IsNullOrEmpty(film.ImdbLink))
+                        {
+                            <a href="@film.ImdbLink" target="_blank">
+                                @film.DisplayName
+                            </a>
+                        }
+                        else
+                        {
+                            @film.DisplayName
+                        }
                     </figcaption>
                 </figure>
             </div>

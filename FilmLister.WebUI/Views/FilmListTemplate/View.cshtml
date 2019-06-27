@@ -66,7 +66,16 @@
             <figure>
                 <img class="img-fluid" src="@film.ImageUrl" />
                 <figcaption>
-                    @film.DisplayName
+                    @if (!string.IsNullOrEmpty(film.ImdbLink))
+                    {
+                        <a href="@film.ImdbLink" target="_blank">
+                            @film.DisplayName
+                        </a>
+                    }
+                    else
+                    {
+                        @film.DisplayName
+                    }
                 </figcaption>
             </figure>
         </div>
