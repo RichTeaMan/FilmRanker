@@ -1,12 +1,10 @@
 using FilmLister.Domain;
-using FilmLister.Service;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RichTea.Common.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FilmLister.Server.Tests
+namespace FilmLister.Service.Tests
 {
     [TestClass]
     public class OrderServiceTest

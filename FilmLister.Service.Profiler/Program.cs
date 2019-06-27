@@ -1,14 +1,13 @@
-﻿using FilmLister.Server.Tests;
+﻿using FilmLister.Service.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace FilmLister.Service.Profiler
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var orderService = new OrderService();
             int setLength = 2000;

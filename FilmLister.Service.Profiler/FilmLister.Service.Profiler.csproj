@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FilmLister.Server.Tests\FilmLister.Server.Tests.csproj" />
+    <ProjectReference Include="..\FilmLister.Service.Tests\FilmLister.Service.Tests.csproj" />
     <ProjectReference Include="..\FilmLister.Service\FilmLister.Service.csproj" />
   </ItemGroup>
 
