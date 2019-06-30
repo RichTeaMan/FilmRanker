@@ -5,7 +5,7 @@ namespace FilmLister.Domain.Test
     [TestClass]
     public class OrderedFilmComparisonTest
     {
-        private readonly Film testFilm = new Film(0, "test", 0, "test", "test", null);
+        private readonly Film testFilm = new Film(0, "test", 0, "test", "test", null, null, null, null, null);
 
         [TestMethod]
         [ExpectedException(typeof(UnknownComparisonException<OrderedFilm>))]

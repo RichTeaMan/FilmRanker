@@ -1,4 +1,6 @@
-﻿namespace FilmLister.WebUI.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FilmLister.WebUI.Models
 {
     public class Film
     {
@@ -7,9 +9,16 @@
         public string Name { get; set; }
         public string ImdbId { get; set; }
         public string ImageUrl { get; set; }
-        public int Revenue { get; set; }
-        public double FloatAverage { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:N0}", NullDisplayText = "Unknown")]
+        public long? Budget { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:N0}", NullDisplayText = "Unknown")]
+        public long? Revenue { get; set; }
+        public double? VoteAverage { get; set; }
+        public string Director { get; set; }
         public int? ReleaseYear { get; set; }
+        public string[] LesserRankedFilmNames { get; set; }
 
         public string DisplayName
         {

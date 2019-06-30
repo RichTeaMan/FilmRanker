@@ -9,7 +9,7 @@ namespace FilmLister.Service.Tests
     [TestClass]
     public class OrderServiceTest
     {
-        private readonly Film testFilm = new Film(0, "test", 0, "test", "test", null);
+        private readonly Film testFilm = new Film(0, "test", 0, "test", "test", null, null, null, null, null);
 
         private OrderService orderService;
 

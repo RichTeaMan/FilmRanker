@@ -1,4 +1,6 @@
 ﻿using FilmLister.WebUI.Models;
+using System.Linq;
+
 namespace FilmLister.WebUI.Mappers
 {
     public class FilmMapper
@@ -15,7 +17,12 @@ namespace FilmLister.WebUI.Mappers
                     ImageUrl = orderedFilm.Film.ImageUrl,
                     ImdbId = orderedFilm.Film.ImdbId,
                     TmdbId = orderedFilm.Film.TmdbId,
-                    ReleaseYear = orderedFilm.Film.ReleaseYear
+                    ReleaseYear = orderedFilm.Film.ReleaseYear,
+                    LesserRankedFilmNames = orderedFilm.LesserRankedFilms.Select(f => f.Film.Name).ToArray(),
+                    Budget = orderedFilm.Film.Budget,
+                    Revenue = orderedFilm.Film.Revenue,
+                    Director = orderedFilm.Film.Director,
+                    VoteAverage = orderedFilm.Film.VoteAverage
                 };
             }
             return film;
@@ -33,7 +40,12 @@ namespace FilmLister.WebUI.Mappers
                     ImageUrl = film.ImageUrl,
                     ImdbId = film.ImdbId,
                     TmdbId = film.TmdbId,
-                    ReleaseYear = film.ReleaseYear
+                    ReleaseYear = film.ReleaseYear,
+                    LesserRankedFilmNames = new string[0],
+                    Budget = film.Budget,
+                    Revenue = film.Revenue,
+                    Director = film.Director,
+                    VoteAverage = film.VoteAverage
                 };
             }
             return filmModel;

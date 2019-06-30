@@ -65,7 +65,8 @@ namespace FilmLister.Service
             var filmList = new Persistence.OrderedList()
             {
                 OrderedFilms = films,
-                FilmListTemplate = persistenceListTemplate
+                FilmListTemplate = persistenceListTemplate,
+                StartDateTime = DateTimeOffset.UtcNow
             };
 
             await filmListerContext.OrderedLists.AddAsync(filmList);
@@ -159,21 +160,43 @@ namespace FilmLister.Service
                 throw new ListNotFoundException(id);
             }
 
-            var orderedFilmList = Map(persistenceOrderedFilmList);
-            var orderResult = orderService.OrderFilms(orderedFilmList.SortedFilms.Where(f => !f.Ignore));
-
-            var filmList = new Domain.OrderedFilmList(
-                orderedFilmList.Id,
-                orderResult.Completed,
-                orderResult.SortedResults.ToArray(),
-                persistenceOrderedFilmList.OrderedFilms.Where(f => f.Ignored).Select(f => Map(f)).ToArray(),
-                orderResult.LeftSort,
-                orderResult.RightSort);
-
-            if (persistenceOrderedFilmList.Completed != filmList.Completed)
+            Domain.OrderedFilmList filmList;
+            if (persistenceOrderedFilmList.Completed)
             {
-                persistenceOrderedFilmList.Completed = filmList.Completed;
-                await filmListerContext.SaveChangesAsync();
+                filmList = MapCompletedList(persistenceOrderedFilmList);
+            }
+            else
+            {
+                var orderedFilmList = Map(persistenceOrderedFilmList);
+                var orderResult = orderService.OrderFilms(orderedFilmList.SortedFilms.Where(f => !f.Ignore));
+
+                if (orderResult.Completed)
+                {
+                    persistenceOrderedFilmList.Completed = orderResult.Completed;
+                    persistenceOrderedFilmList.CompletedDateTime = DateTimeOffset.UtcNow;
+
+                    var sortedFilms = orderResult.SortedResults.ToArray();
+                    for (int i = 0; i < sortedFilms.Length; i++)
+                    {
+                        var film = sortedFilms[i].Film;
+                        var persistenceFilm = persistenceOrderedFilmList.OrderedFilms.First(f => f.Film.Id == film.Id);
+                        persistenceFilm.Ordinal = i;
+                    }
+
+                    await filmListerContext.SaveChangesAsync();
+
+                    filmList = MapCompletedList(persistenceOrderedFilmList);
+                }
+                else
+                {
+                    filmList = new Domain.OrderedFilmList(
+                        orderedFilmList.Id,
+                        orderResult.Completed,
+                        orderResult.SortedResults.ToArray(),
+                        persistenceOrderedFilmList.OrderedFilms.Where(f => f.Ignored).Select(f => Map(f)).ToArray(),
+                        orderResult.LeftSort,
+                        orderResult.RightSort);
+                }
             }
 
             return filmList;
@@ -181,7 +204,7 @@ namespace FilmLister.Service
 
         public async Task UpdateAllFilmsFromTmdb()
         {
-            foreach(var film in filmListerContext.Films)
+            foreach (var film in filmListerContext.Films)
             {
                 await UpdateFilmFromTmdb(film);
             }
@@ -202,6 +225,7 @@ namespace FilmLister.Service
             film.Revenue = movieDetail.Revenue;
             film.Director = director?.Name;
             film.ReleaseDate = movieDetail.ReleaseDate;
+            film.VoteAverage = movieDetail.VoteAverage;
         }
 
         public async Task<Domain.Film> RetrieveFilmByTmdbId(int tmdbId)
@@ -445,7 +469,17 @@ namespace FilmLister.Service
             Domain.Film filmModel = null;
             if (film != null)
             {
-                filmModel = new Domain.Film(film.Id, film.Name, film.TmdbId, film.ImageUrl, film.ImdbId, film.ReleaseDate?.Year);
+                filmModel = new Domain.Film(
+                   film.Id,
+                   film.Name,
+                   film.TmdbId,
+                   film.ImageUrl,
+                   film.ImdbId,
+                   film.ReleaseDate?.Year,
+                   film.Budget,
+                   film.Revenue,
+                   film.VoteAverage,
+                   film.Director);
             }
             return filmModel;
         }
@@ -458,6 +492,43 @@ namespace FilmLister.Service
                 filmModel = new Domain.OrderedFilm(film.Id, film.Ignored, Map(film.Film));
             }
             return filmModel;
+        }
+
+        private Domain.OrderedFilmList MapCompletedList(OrderedList persistenceOrderedFilmList)
+        {
+            var orderedFilms = persistenceOrderedFilmList
+                .OrderedFilms
+                .Where(f => !f.Ignored)
+                .OrderBy(f => f.Ordinal)
+                .ToDictionary(k => k, v => Map(v));
+
+            foreach(var kvFilm in orderedFilms)
+            {
+                var persistenceFilm = kvFilm.Key;
+                var domainFilm = kvFilm.Value;
+
+                if (persistenceFilm.GreaterRankedFilmItems?.Any() == true)
+                {
+                    var lesserRanked = persistenceFilm
+                        .GreaterRankedFilmItems
+                        .Where(f => f.GreaterRankedFilm == persistenceFilm)
+                        .Select(f => orderedFilms[f.LesserRankedFilm])
+                        .Distinct()
+                        .ToArray();
+
+                    domainFilm.AddLesserRankedFilms(lesserRanked);
+                }
+            }
+
+            var filmList = new Domain.OrderedFilmList(
+                    persistenceOrderedFilmList.Id,
+                    persistenceOrderedFilmList.Completed,
+                    orderedFilms.Values.ToArray(),
+                    persistenceOrderedFilmList.OrderedFilms.Where(f => f.Ignored).Select(f => Map(f)).ToArray(),
+                    null,
+                    null);
+
+            return filmList;
         }
 
         private Domain.FilmListTemplate Map(Persistence.FilmListTemplate orderedFilmList)
@@ -488,6 +559,7 @@ namespace FilmLister.Service
                         kv.Value.AddHigherRankedObject(domain);
                     }
                 }
+
                 films.AddRange(mapping.Values);
             }
             var filmList = new Domain.OrderedFilmList(

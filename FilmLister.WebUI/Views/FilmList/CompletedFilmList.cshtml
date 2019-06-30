@@ -1,0 +1,121 @@
+﻿@model FilmLister.WebUI.Models.FilmList
+
+@{
+    ViewData["Title"] = "Film Lister - List Complete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4>Sort Complete</h4>
+
+<div class="row">
+    <div class="col-md-8">
+        Share your list:
+        <input type="text" class="form-control" value="@(Context.Request.IsHttps ? "https://" : "http://" )@Context.Request.Host@Context.Request.Path" />
+    </div>
+</div>
+<hr />
+@{int rank = 1; }
+@foreach (var film in Model.SortedFilms.Reverse())
+{
+    <div class="row">
+        <div class="col-md-1 text-center">
+            <h3>@rank</h3>
+        </div>
+        <div class="col-md-2">
+            <figure>
+                <img class="img-fluid" src="@film.ImageUrl" />
+                <figcaption>
+                    @if (!string.IsNullOrEmpty(film.ImdbLink))
+                    {
+                        <a href="@film.ImdbLink" target="_blank">
+                            @film.DisplayName
+                        </a>
+                    }
+                    else
+                    {
+                        @film.DisplayName
+                    }
+                </figcaption>
+            </figure>
+        </div>
+        <div class="col-md-8">
+            <dl>
+                <dt>
+                    Director
+                </dt>
+                <dd>
+                    @film.Director
+                </dd>
+                <dt>
+                    Budget
+                </dt>
+                <dd>
+                    @(film.Budget.HasValue ? "$" : string.Empty)@Html.DisplayFor(model => film.Budget)
+                </dd>
+                <dt>
+                    Revenue
+                </dt>
+                <dd>
+                    @(film.Revenue.HasValue ? "$" : string.Empty)@Html.DisplayFor(model => film.Revenue)
+                </dd>
+                <dt>
+                    Lower ranked films
+                </dt>
+                <dd>
+                    @(film.LesserRankedFilmNames?.Any() == true ? string.Join(", ", film.LesserRankedFilmNames) : "None")
+                </dd>
+            </dl>
+        </div>
+    </div>
+    rank++;
+}
+@if (Model.IgnoredFilms?.Any() == true)
+{
+    <h4>Unseen Films</h4>
+    <hr />
+
+    @foreach (var film in Model.IgnoredFilms)
+    {
+        <div class="row">
+            <div class="col-md-2">
+                <figure>
+                    <img class="img-fluid black-and-white" src="@film.ImageUrl" />
+                    <figcaption>
+                        @if (!string.IsNullOrEmpty(film.ImdbLink))
+                        {
+                            <a href="@film.ImdbLink" target="_blank">
+                                @film.DisplayName
+                            </a>
+                        }
+                        else
+                        {
+                            @film.DisplayName
+                        }
+                    </figcaption>
+                </figure>
+            </div>
+            <div class="col-md-8">
+                <dl>
+                    <dt>
+                        Director
+                    </dt>
+                    <dd>
+                        @film.Director
+                    </dd>
+                    <dt>
+                        Budget
+                    </dt>
+                    <dd>
+                        @(film.Budget.HasValue ? "$" : string.Empty)@Html.DisplayFor(model => film.Budget)
+                    </dd>
+                    <dt>
+                        Revenue
+                    </dt>
+                    <dd>
+                        @(film.Revenue.HasValue ? "$" : string.Empty)@Html.DisplayFor(model => film.Revenue)
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    }
+}

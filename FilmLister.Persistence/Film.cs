@@ -23,6 +23,8 @@ namespace FilmLister.Persistence
 
         public string Director { get; set; }
 
+        public double VoteAverage { get; set; }
+
         public DateTimeOffset? ReleaseDate { get; set; }
 
         public List<FilmListItem> FilmListItems { get; set; }

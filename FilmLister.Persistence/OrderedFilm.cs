@@ -13,6 +13,8 @@ namespace FilmLister.Persistence
 
         public bool Ignored { get; set; }
 
+        public int? Ordinal { get; set; }
+
         [InverseProperty("GreaterRankedFilm")]
         public List<OrderedFilmRankItem> GreaterRankedFilmItems { get; set; }
 

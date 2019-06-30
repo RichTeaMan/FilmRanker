@@ -1,10 +1,8 @@
-﻿using FilmLister.Domain;
-using FilmLister.Service;
+﻿using FilmLister.Service;
 using FilmLister.Service.Exceptions;
 using FilmLister.WebUI.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -72,7 +70,14 @@ namespace FilmLister.WebUI.Controllers
             {
                 var orderedFilmList = await filmService.AttemptListOrder(id);
                 var filmList = filmListMapper.Map(orderedFilmList);
-                result = View("FilmList", filmList);
+                if (filmList.Completed)
+                {
+                    result = View("CompletedFilmList", filmList);
+                }
+                else
+                {
+                    result = View("FilmList", filmList);
+                }
             }
             catch (ListNotFoundException)
             {
