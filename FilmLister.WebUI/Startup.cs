@@ -51,6 +51,7 @@ namespace FilmLister.WebUI
             });
             services.AddTransient<OrderService>();
             services.AddTransient<FilmService>();
+            services.AddHostedService<FilmUpdateHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

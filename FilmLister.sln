@@ -30,6 +30,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmLister.Service.Profiler
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilmLister.Service.Tests", "FilmLister.Service.Tests\FilmLister.Service.Tests.csproj", "{5A0732E1-2F3E-44EB-91D1-26A6DFB9792C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilmLister.Service.Updater", "FilmLister.Service.Updater\FilmLister.Service.Updater.csproj", "{A9BA3BFD-EAB7-42BF-A1E8-632514474B34}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +74,10 @@ Global
 		{5A0732E1-2F3E-44EB-91D1-26A6DFB9792C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A0732E1-2F3E-44EB-91D1-26A6DFB9792C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A0732E1-2F3E-44EB-91D1-26A6DFB9792C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9BA3BFD-EAB7-42BF-A1E8-632514474B34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9BA3BFD-EAB7-42BF-A1E8-632514474B34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9BA3BFD-EAB7-42BF-A1E8-632514474B34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9BA3BFD-EAB7-42BF-A1E8-632514474B34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

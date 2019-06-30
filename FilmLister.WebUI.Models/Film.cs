@@ -7,6 +7,8 @@
         public string Name { get; set; }
         public string ImdbId { get; set; }
         public string ImageUrl { get; set; }
+        public int Revenue { get; set; }
+        public double FloatAverage { get; set; }
         public int? ReleaseYear { get; set; }
 
         public string DisplayName

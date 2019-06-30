@@ -179,21 +179,43 @@ namespace FilmLister.Service
             return filmList;
         }
 
+        public async Task UpdateAllFilmsFromTmdb()
+        {
+            foreach(var film in filmListerContext.Films)
+            {
+                await UpdateFilmFromTmdb(film);
+            }
+            await filmListerContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateFilmFromTmdb(Persistence.Film film)
+        {
+            var movieDetail = await tmdbService.FetchMovieDetails(film.TmdbId);
+            var movieCredits = await tmdbService.FetchMovieCredits(film.TmdbId);
+
+            var director = movieCredits.FetchDirectorJobs().FirstOrDefault();
+
+            film.Name = movieDetail.Title;
+            film.ImageUrl = CreateFullImagePath(movieDetail.PosterPath);
+            film.ImdbId = movieDetail.ImdbId;
+            film.Budget = movieDetail.Budget;
+            film.Revenue = movieDetail.Revenue;
+            film.Director = director?.Name;
+            film.ReleaseDate = movieDetail.ReleaseDate;
+        }
+
         public async Task<Domain.Film> RetrieveFilmByTmdbId(int tmdbId)
         {
             var film = await filmListerContext.Films.FirstOrDefaultAsync(f => f.TmdbId == tmdbId);
             if (film == null)
             {
-                // try tmdb
-                var movieDetail = await tmdbService.FetchMovieDetails(tmdbId);
                 film = new Persistence.Film
                 {
-                    Name = movieDetail.Title,
-                    ImageUrl = CreateFullImagePath(movieDetail.PosterPath),
-                    ImdbId = movieDetail.ImdbId,
                     TmdbId = tmdbId,
-                    ReleaseDate = movieDetail.ReleaseDate
                 };
+
+                // try tmdb
+                await UpdateFilmFromTmdb(film);
 
                 await filmListerContext.Films.AddAsync(film);
                 await filmListerContext.SaveChangesAsync();

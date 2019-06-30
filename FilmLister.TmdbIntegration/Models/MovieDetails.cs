@@ -39,7 +39,7 @@ namespace FilmLister.TmdbIntegration.Models
         public string Overview { get; set; }
 
         [JsonProperty("popularity")]
-        public float Popularity { get; set; }
+        public double Popularity { get; set; }
 
         [JsonProperty("poster_path")]
         public string PosterPath { get; set; }
@@ -72,7 +72,7 @@ namespace FilmLister.TmdbIntegration.Models
         public bool Video { get; set; }
 
         [JsonProperty("vote_average")]
-        public float VoteAverage { get; set; }
+        public double VoteAverage { get; set; }
 
         [JsonProperty("vote_count")]
         public int VoteCount { get; set; }

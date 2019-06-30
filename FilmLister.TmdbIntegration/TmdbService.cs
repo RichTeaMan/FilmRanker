@@ -45,6 +45,14 @@ namespace FilmLister.TmdbIntegration
             return castCrewResult;
         }
 
+        public async Task<MovieCastCrewContainer> FetchMovieCredits(int tmdbMovieId)
+        {
+            string url = $"https://api.themoviedb.org/3/movie/{tmdbMovieId}/credits?api_key={ApiKey}&language=en-US";
+            string json = await client.GetStringAsync(url);
+            var castCrewResult = JsonConvert.DeserializeObject<MovieCastCrewContainer>(json);
+            return castCrewResult;
+        }
+
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 

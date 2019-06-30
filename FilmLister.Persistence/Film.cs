@@ -17,6 +17,12 @@ namespace FilmLister.Persistence
 
         public string ImdbId { get; set; }
 
+        public long? Budget { get; set; }
+
+        public long? Revenue { get; set; }
+
+        public string Director { get; set; }
+
         public DateTimeOffset? ReleaseDate { get; set; }
 
         public List<FilmListItem> FilmListItems { get; set; }
