@@ -43,12 +43,14 @@ namespace FilmLister.WebUI
             services.AddTransient<FilmMapper>();
             services.AddTransient<FilmListMapper>();
             services.AddTransient<FilmListTemplateMapper>();
-            services.AddTransient(sp => {
-                return new TmdbService
+            services.AddTransient(sp =>
+            {
+                return new TmdbServiceConfig
                 {
                     ApiKey = tmdbApiKey
                 };
             });
+            services.AddTransient<TmdbService>();
             services.AddTransient<OrderService>();
             services.AddTransient<FilmService>();
             services.AddHostedService<FilmUpdateHostedService>();

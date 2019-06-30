@@ -44,11 +44,12 @@ namespace FilmLister.Service.Updater
             serviceCollection.AddDbContext<FilmListerContext>(options => options.UseSqlServer(connectionString));
             serviceCollection.AddTransient(sp =>
             {
-                return new TmdbService
+                return new TmdbServiceConfig
                 {
                     ApiKey = tmdbApiKey
                 };
             });
+            serviceCollection.AddTransient<TmdbService>();
             serviceCollection.AddTransient<OrderService>();
             serviceCollection.AddTransient<FilmService>();
             serviceCollection.AddTransient<ServiceUpdater>();
