@@ -500,12 +500,14 @@ namespace FilmLister.Service
 
         private Domain.OrderedFilmList MapCompletedList(OrderedList persistenceOrderedFilmList)
         {
-            var orderedFilms = persistenceOrderedFilmList
+            var orderedFilmsDictionary = persistenceOrderedFilmList
                 .OrderedFilms
                 .OrderBy(f => f.Ordinal)
                 .ToDictionary(k => k, v => Map(v));
 
-            foreach(var kvFilm in orderedFilms.Where(kv => !kv.Key.Ignored))
+            var orderedFilms = new List<Domain.OrderedFilm>();
+
+            foreach(var kvFilm in orderedFilmsDictionary.Where(kv => !kv.Key.Ignored))
             {
                 var persistenceFilm = kvFilm.Key;
                 var domainFilm = kvFilm.Value;
@@ -517,7 +519,7 @@ namespace FilmLister.Service
                         var lesserRanked = persistenceFilm
                             .GreaterRankedFilmItems
                             .Where(f => f.GreaterRankedFilm == persistenceFilm)
-                            .Select(f => orderedFilms[f.LesserRankedFilm])
+                            .Select(f => orderedFilmsDictionary[f.LesserRankedFilm])
                             .Distinct()
                             .ToArray();
 
@@ -528,12 +530,13 @@ namespace FilmLister.Service
                         logger.LogError(ex, "Error occurred mapping completed list.");
                     }
                 }
+                orderedFilms.Add(kvFilm.Value);
             }
 
             var filmList = new Domain.OrderedFilmList(
                     persistenceOrderedFilmList.Id,
                     persistenceOrderedFilmList.Completed,
-                    orderedFilms.Values.ToArray(),
+                    orderedFilms.ToArray(),
                     persistenceOrderedFilmList.OrderedFilms.Where(f => f.Ignored).Select(f => Map(f)).ToArray(),
                     null,
                     null);
