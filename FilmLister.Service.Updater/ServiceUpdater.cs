@@ -35,7 +35,7 @@ namespace FilmLister.Service.Updater
                 var filmUpdateHostedService = scope.ServiceProvider.GetRequiredService<FilmService>();
                 var context = scope.ServiceProvider.GetRequiredService<FilmListerContext>();
 
-                var uncompletedLists = context.OrderedLists.Where(l => l.Completed && !l.CompletedDateTime.HasValue);
+                var uncompletedLists = context.OrderedLists.Where(l => l.Completed && !l.CompletedDateTime.HasValue).ToArray();
                 foreach(var uncompletedList in uncompletedLists)
                 {
                     uncompletedList.Completed = false;
