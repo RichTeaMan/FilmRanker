@@ -225,8 +225,8 @@ namespace FilmLister.Service
             film.Name = movieDetail.Title;
             film.ImageUrl = CreateFullImagePath(movieDetail.PosterPath);
             film.ImdbId = movieDetail.ImdbId;
-            film.Budget = movieDetail.Budget;
-            film.Revenue = movieDetail.Revenue;
+            film.Budget = movieDetail.Budget != 0 ? (long?)movieDetail.Budget : null;
+            film.Revenue = movieDetail.Revenue != 0 ? (long?)movieDetail.Revenue : null;
             film.Director = director?.Name;
             film.ReleaseDate = movieDetail.ReleaseDate;
             film.VoteAverage = movieDetail.VoteAverage;
