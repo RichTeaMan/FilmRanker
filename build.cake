@@ -86,11 +86,47 @@ Task("WebUIDocker")
     DotNetCoreExecute($"{publishDirectory}/FilmLister.WebUI.dll", $"--TmdbApiKey {tmdbApiKey}", executeSettings);
 });
 
-Task("Update")
+Task("UpdateDatabase")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    using(var process = StartAndReturnProcess("dotnet", new ProcessSettings {
+        Arguments = "ef database update --project FilmLister.Persistence --startup-project FilmLister.WebUI"}))
+    {
+        process.WaitForExit();
+        int exitCode = process.GetExitCode();
+        if (exitCode != 0) {
+            throw new Exception("Failed to update database.");
+        }
+    }
+
+    var publishDirectory = $"./FilmLister.Service.Updater/bin/{buildDir}/netcoreapp2.2";
+    DotNetCoreExecute($"{publishDirectory}/FilmLister.Service.Updater.dll");
+});
+
+Task("UpdateDatabaseDocker")
     .IsDependentOn("Build")
     .Does(() =>
 {
     var publishDirectory = $"./FilmLister.Service.Updater/bin/{buildDir}/netcoreapp2.2";
+    var webUIPublishDirectory = $"./FilmLister.WebUI/bin/Debug/netcoreapp2.2";
+    CopyFile(
+        "./FilmLister.Service.Updater/appsettings.Docker.json",
+        $"{publishDirectory}/appsettings.json");
+
+    CopyFile(
+        "./FilmLister.WebUI/appsettings.Docker.json",
+        $"{webUIPublishDirectory}/appsettings.json");
+
+    using(var process = StartAndReturnProcess("dotnet", new ProcessSettings {
+        Arguments = "ef database update --project FilmLister.Persistence --startup-project FilmLister.WebUI -v"}))
+    {
+        process.WaitForExit();
+        int exitCode = process.GetExitCode();
+        if (exitCode != 0) {
+            throw new Exception("Failed to update database.");
+        }
+    }
 
     DotNetCoreExecute($"{publishDirectory}/FilmLister.Service.Updater.dll");
 });
