@@ -4,6 +4,7 @@ using FilmLister.Service.Exceptions;
 using FilmLister.TmdbIntegration;
 using FilmLister.TmdbIntegration.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using RichTea.Common.Extensions;
 using System;
 using System.Collections.Generic;
@@ -14,14 +15,17 @@ namespace FilmLister.Service
 {
     public class FilmService
     {
+        private readonly ILogger logger;
+
         private readonly OrderService orderService;
 
         private readonly TmdbService tmdbService;
 
         private readonly FilmListerContext filmListerContext;
 
-        public FilmService(OrderService orderService, TmdbService tmdbService, FilmListerContext filmListerContext)
+        public FilmService(ILogger<FilmService> logger, OrderService orderService, TmdbService tmdbService, FilmListerContext filmListerContext)
         {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.orderService = orderService ?? throw new ArgumentNullException(nameof(orderService));
             this.tmdbService = tmdbService ?? throw new ArgumentNullException(nameof(tmdbService));
             this.filmListerContext = filmListerContext ?? throw new ArgumentNullException(nameof(filmListerContext));
@@ -498,25 +502,31 @@ namespace FilmLister.Service
         {
             var orderedFilms = persistenceOrderedFilmList
                 .OrderedFilms
-                .Where(f => !f.Ignored)
                 .OrderBy(f => f.Ordinal)
                 .ToDictionary(k => k, v => Map(v));
 
-            foreach(var kvFilm in orderedFilms)
+            foreach(var kvFilm in orderedFilms.Where(kv => !kv.Key.Ignored))
             {
                 var persistenceFilm = kvFilm.Key;
                 var domainFilm = kvFilm.Value;
 
                 if (persistenceFilm.GreaterRankedFilmItems?.Any() == true)
                 {
-                    var lesserRanked = persistenceFilm
-                        .GreaterRankedFilmItems
-                        .Where(f => f.GreaterRankedFilm == persistenceFilm)
-                        .Select(f => orderedFilms[f.LesserRankedFilm])
-                        .Distinct()
-                        .ToArray();
+                    try
+                    {
+                        var lesserRanked = persistenceFilm
+                            .GreaterRankedFilmItems
+                            .Where(f => f.GreaterRankedFilm == persistenceFilm)
+                            .Select(f => orderedFilms[f.LesserRankedFilm])
+                            .Distinct()
+                            .ToArray();
 
-                    domainFilm.AddLesserRankedFilms(lesserRanked);
+                        domainFilm.AddLesserRankedFilms(lesserRanked);
+                    }
+                    catch(Exception ex)
+                    {
+                        logger.LogError(ex, "Error occurred mapping completed list.");
+                    }
                 }
             }
 
