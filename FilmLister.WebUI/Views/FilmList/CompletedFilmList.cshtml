@@ -59,6 +59,12 @@
                     @(film.Revenue.HasValue ? "$" : string.Empty)@Html.DisplayFor(model => film.Revenue)
                 </dd>
                 <dt>
+                    User Rating
+                </dt>
+                <dd>
+                    @film.VoteAverage
+                </dd>
+                <dt>
                     Lower ranked films
                 </dt>
                 <dd>
@@ -113,6 +119,12 @@
                     </dt>
                     <dd>
                         @(film.Revenue.HasValue ? "$" : string.Empty)@Html.DisplayFor(model => film.Revenue)
+                    </dd>
+                    <dt>
+                        User Rating
+                    </dt>
+                    <dd>
+                        @film.VoteAverage
                     </dd>
                 </dl>
             </div>
