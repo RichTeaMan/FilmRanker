@@ -3,6 +3,7 @@ using FilmLister.Service;
 using FilmLister.Service.Exceptions;
 using FilmLister.WebUI.Mappers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -12,14 +13,21 @@ namespace FilmLister.WebUI.Controllers
     [ApiController]
     public class FilmListTemplateApiController : ControllerBase
     {
+        private readonly ILogger logger;
+
         private readonly FilmListerContext filmListerContext;
 
         private readonly FilmListTemplateMapper filmListTemplateMapper;
 
         private readonly FilmService filmService;
 
-        public FilmListTemplateApiController(FilmListerContext filmListerContext, FilmListTemplateMapper filmListTemplateMapper, FilmService filmService)
+        public FilmListTemplateApiController(
+            ILogger<FilmListTemplateApiController> logger,
+            FilmListerContext filmListerContext,
+            FilmListTemplateMapper filmListTemplateMapper,
+            FilmService filmService)
         {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.filmListerContext = filmListerContext ?? throw new ArgumentNullException(nameof(filmListerContext));
             this.filmListTemplateMapper = filmListTemplateMapper ?? throw new ArgumentNullException(nameof(filmListTemplateMapper));
             this.filmService = filmService ?? throw new ArgumentNullException(nameof(filmService));
@@ -39,7 +47,13 @@ namespace FilmLister.WebUI.Controllers
                     var listModel = filmListTemplateMapper.Map(updatedList);
                     return listModel;
                 }
-                catch(FilmAlreadyInFilmListTemplateException)
+                catch (FilmListTemplatePublishedException)
+                {
+                    logger.LogInformation("Cannot add film to published film list template.");
+                    var listModel = filmListTemplateMapper.Map(list);
+                    return listModel;
+                }
+                catch (FilmAlreadyInFilmListTemplateException)
                 {
                     return BadRequest($"Lists cannot have duplicate films. {film.Name} is already in the list.");
                 }

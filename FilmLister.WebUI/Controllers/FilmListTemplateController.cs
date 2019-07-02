@@ -4,6 +4,7 @@ using FilmLister.Service.Exceptions;
 using FilmLister.WebUI.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,14 +13,21 @@ namespace FilmLister.WebUI.Controllers
 {
     public class FilmListTemplateController : Controller
     {
+        private readonly ILogger logger;
+
         private readonly FilmListerContext filmListerContext;
 
         private readonly FilmListTemplateMapper filmListTemplateMapper;
 
         private readonly FilmService filmService;
 
-        public FilmListTemplateController(FilmListerContext filmListerContext, FilmListTemplateMapper filmListTemplateMapper, FilmService filmService)
+        public FilmListTemplateController(
+            ILogger<FilmListTemplateController> logger,
+            FilmListerContext filmListerContext,
+            FilmListTemplateMapper filmListTemplateMapper,
+            FilmService filmService)
         {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.filmListerContext = filmListerContext ?? throw new ArgumentNullException(nameof(filmListerContext));
             this.filmListTemplateMapper = filmListTemplateMapper ?? throw new ArgumentNullException(nameof(filmListTemplateMapper));
             this.filmService = filmService ?? throw new ArgumentNullException(nameof(filmService));
@@ -62,8 +70,15 @@ namespace FilmLister.WebUI.Controllers
 
             if (list != null && film != null)
             {
-                var updatedList = await filmService.AddFilmToFilmListTemplate(list, film);
-                var listModel = filmListTemplateMapper.Map(updatedList);
+                try
+                {
+                    var updatedList = await filmService.AddFilmToFilmListTemplate(list, film);
+                    var listModel = filmListTemplateMapper.Map(updatedList);
+                }
+                catch (FilmListTemplatePublishedException)
+                {
+                    logger.LogInformation("Cannot add film to published film list template.");
+                }
                 result = RedirectToAction("View", new { filmListTemplateId = list.Id });
             }
             else
@@ -77,10 +92,15 @@ namespace FilmLister.WebUI.Controllers
         public async Task<IActionResult> RemoveFilm(int filmListTemplateId, int tmdbId)
         {
             IActionResult result;
+            int id = filmListTemplateId;
             try
             {
                 await filmService.RemoveFilmFromFilmListTemplate(filmListTemplateId, tmdbId);
-                int id = filmListTemplateId;
+                result = RedirectToAction("View", new { filmListTemplateId = id });
+            }
+            catch (FilmListTemplatePublishedException)
+            {
+                logger.LogInformation("Cannot remove from film published film list template.");
                 result = RedirectToAction("View", new { filmListTemplateId = id });
             }
             catch (ListNotFoundException)
@@ -101,9 +121,13 @@ namespace FilmLister.WebUI.Controllers
             {
                 await filmService.RenameFilmListTemplate(filmListTemplate.Id, filmListTemplate.Name);
             }
+            catch (FilmListTemplatePublishedException)
+            {
+                logger.LogInformation("Cannot rename published film list template.");
+            }
             catch (Exception ex) when (ex is ArgumentException || ex is ListNotFoundException)
             {
-                Console.WriteLine($"Error occurred: {ex.Message}.");
+                logger.LogError(ex, $"Exception renaming film list template. ID: '{filmListTemplate.Id}'. New name: '{filmListTemplate.Name}'.");
             }
 
             return RedirectToAction("View", new { filmListTemplateId = filmListTemplate.Id });
