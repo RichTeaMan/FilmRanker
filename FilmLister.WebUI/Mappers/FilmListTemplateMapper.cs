@@ -18,7 +18,8 @@ namespace FilmLister.WebUI.Mappers
             {
                 Id = filmListTemplate.Id,
                 Name = filmListTemplate.Name,
-                Films = filmListTemplate.Films.Select(f => filmMapper.Map(f)).ToArray()
+                Films = filmListTemplate.Films.Select(f => filmMapper.Map(f)).ToArray(),
+                Published = filmListTemplate.Published
             };
             return model;
         }

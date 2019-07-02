@@ -7,57 +7,76 @@
 
 <h1>Create a Film List</h1>
 
-<div class="row">
-    <div class="col-md">
-        <form method="post" action="/FilmListTemplate/Rename">
-            <input type="hidden" asp-for="Id" />
-
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group input-group" style="margin-right: 5px">
-                <label asp-for="Name" class="col-form-label control-label mr-1"></label>
-                <input asp-for="Name" class="form-control mr-1" />
-                <input type="submit" value="Rename List" class="btn btn-secondary mr-1" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+@if (Model.Published)
+{
+    <div class="row">
+        <div class="col-md">
+            <div class="alert alert-dark" role="alert">
+                A list cannot be modified once it's published.
             </div>
-        </form>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md">
-        Create a film list be searching titles and pressing Add. You can add a many films as you'd like.
-    </div>
-</div>
-<div class="row">
-    <div class="col-lg-3 col-md-9">
-        <div id="selectedFilmImgContainer" class="jumbotron">
-            <h3>Choose a film</h3>
-            <img id="selectedFilmImg" class="img-fluid" />
         </div>
     </div>
-    <div class="col-lg-9">
-        <form id="filmForm" method="post" action="/FilmListTemplate/AddFilm">
-            <input type="hidden" id="filmListTemplateId" name="filmListTemplateId" value="@Model.Id" />
-            <div class="form-group">
-                <h4>Search by film name:</h4>
-                <label class="control-label">Film Name</label>
-                <input id="filmSearch" class="form-control" type="text" />
-            </div>
-            <div class="form-group">
-                <h4>Search by person, such as actor or director:</h4>
-                <label class="control-label">Person Name</label>
-                <input id="personSearch" class="form-control" type="text" />
-
-                <div class="form-check" id="jobFilterContainer"></div>
-
-                <label class="control-label">Person's Film</label>
-                <input id="filmsPerPersonSearch" class="form-control" type="text" disabled="disabled" />
-            </div>
-            <div class="form-group">
-                <input id="submitButton" type="submit" value="Add" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="row">
+        <div class="col-md">
+            <h4>@Model.Name</h4>
+        </div>
     </div>
-</div>
+
+}
+else
+{
+    <div class="row">
+        <div class="col-md">
+            <form method="post" action="/FilmListTemplate/Rename">
+                <input type="hidden" asp-for="Id" />
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group input-group" style="margin-right: 5px">
+                    <label asp-for="Name" class="col-form-label control-label mr-1"></label>
+                    <input asp-for="Name" class="form-control mr-1" />
+                    <input type="submit" value="Rename List" class="btn btn-secondary mr-1" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md">
+            Create a film list be searching titles and pressing Add. You can add a many films as you'd like.
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3 col-md-9">
+            <div id="selectedFilmImgContainer" class="jumbotron">
+                <h3>Choose a film</h3>
+                <img id="selectedFilmImg" class="img-fluid" />
+            </div>
+        </div>
+        <div class="col-lg-9">
+            <form id="filmForm" method="post" action="/FilmListTemplate/AddFilm">
+                <input type="hidden" id="filmListTemplateId" name="filmListTemplateId" value="@Model.Id" />
+                <div class="form-group">
+                    <h4>Search by film name:</h4>
+                    <label class="control-label">Film Name</label>
+                    <input id="filmSearch" class="form-control" type="text" />
+                </div>
+                <div class="form-group">
+                    <h4>Search by person, such as actor or director:</h4>
+                    <label class="control-label">Person Name</label>
+                    <input id="personSearch" class="form-control" type="text" />
+
+                    <div class="form-check" id="jobFilterContainer"></div>
+
+                    <label class="control-label">Person's Film</label>
+                    <input id="filmsPerPersonSearch" class="form-control" type="text" disabled="disabled" />
+                </div>
+                <div class="form-group">
+                    <input id="submitButton" type="submit" value="Add" class="btn btn-secondary" />
+                </div>
+            </form>
+        </div>
+    </div>
+}
 <hr />
 <div id="filmRow" class="row">
     @foreach (var film in Model.Films)
@@ -78,17 +97,39 @@
                     }
                 </figcaption>
             </figure>
-            <form action="/FilmListTemplate/RemoveFilm" method="post">
-                <input type="hidden" name="filmListTemplateId" value="@Model.Id" />
-                <input type="hidden" name="tmdbId" value="@film.TmdbId" />
-                <input type="submit" class="btn btn-outline-danger" value="Remove" />
-            </form>
+            @if (!Model.Published)
+            {
+                <form action="/FilmListTemplate/RemoveFilm" method="post">
+                    <input type="hidden" name="filmListTemplateId" value="@Model.Id" />
+                    <input type="hidden" name="tmdbId" value="@film.TmdbId" />
+                    <input type="submit" class="btn btn-outline-danger" value="Remove" />
+                </form>
+            }
         </div>
     }
 </div>
-<div class="row">
-    <div class="col-md">
-        <a asp-controller="FilmList" asp-action="Create" asp-route-listId="@Model.Id">Sort the list by popularity</a>
+<hr />
+@if (Model.Published)
+{
+    <div class="row">
+        <div class="col-md">
+            <a class="btn btn-outline-primary" asp-controller="FilmList" asp-action="Create" asp-route-listId="@Model.Id">Play the list</a>
+        </div>
     </div>
-</div>
-
+}
+else
+{
+    <div class="row">
+        <div class="col-md-8">
+            <form method="post" action="/FilmListTemplate/Publish">
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group input-group" style="margin-right: 5px">
+                    <input type="submit" value="Publish" class="btn btn-primary mr-1" />
+                    <p class="form-text font-italic">
+                        Publish a list so it can be played. A list cannot be modified once it is published.
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+}

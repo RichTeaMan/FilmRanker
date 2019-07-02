@@ -44,6 +44,8 @@ namespace FilmLister.Service
             var filmListTemplates = await filmListerContext.FilmListTemplates
                 .Include(l => l.FilmListItems)
                     .ThenInclude(i => i.Film)
+                .Where(l => l.FilmListItems != null && l.FilmListItems.Any())
+                .Where(l => l.Published)
                 .ToArrayAsync();
 
             var domainLists = filmListTemplates.Select(l => Map(l)).ToArray();
@@ -321,6 +323,10 @@ namespace FilmLister.Service
             {
                 throw new FilmAlreadyInFilmListTemplateException(film.Id, filmListTemplate.Id);
             }
+            if (persistenceList.Published)
+            {
+                throw new FilmListTemplatePublishedException(filmListTemplate.Id);
+            }
 
             var persistenceFilm = await filmListerContext.Films.FirstAsync(l => l.Id == film.Id);
             persistenceList.FilmListItems.Add(new FilmListItem
@@ -351,6 +357,21 @@ namespace FilmLister.Service
             return domain;
         }
 
+        public async Task PublishFilmListTemplate(int filmListTemplateId)
+        {
+            var filmListTemplate = await filmListerContext
+                .FilmListTemplates
+                .FirstOrDefaultAsync(l => l.Id == filmListTemplateId);
+
+            if (filmListTemplate == null)
+            {
+                throw new ListNotFoundException(filmListTemplateId);
+            }
+
+            filmListTemplate.Published = true;
+            await filmListerContext.SaveChangesAsync();
+        }
+
         /// <summary>
         /// Removes the film with the given ID from the film list template.
         /// </summary>
@@ -367,6 +388,10 @@ namespace FilmLister.Service
             if (persistenceList == null)
             {
                 throw new ListNotFoundException(filmListTemplateId);
+            }
+            if (persistenceList.Published)
+            {
+                throw new FilmListTemplatePublishedException(filmListTemplateId);
             }
 
             persistenceList.FilmListItems.RemoveAll(f => f.Film.TmdbId == tmdbId);
@@ -391,6 +416,10 @@ namespace FilmLister.Service
             if (persistenceList == null)
             {
                 throw new ListNotFoundException(filmListId);
+            }
+            if (persistenceList.Published)
+            {
+                throw new FilmListTemplatePublishedException(filmListId);
             }
 
             persistenceList.Name = newListName;
@@ -554,7 +583,8 @@ namespace FilmLister.Service
             var filmList = new Domain.FilmListTemplate(
                 orderedFilmList.Id,
                 orderedFilmList.Name,
-                films.ToArray());
+                films.ToArray(),
+                orderedFilmList.Published);
             return filmList;
         }
 

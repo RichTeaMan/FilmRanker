@@ -109,6 +109,13 @@ namespace FilmLister.WebUI.Controllers
             return RedirectToAction("View", new { filmListTemplateId = filmListTemplate.Id });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Publish(Models.FilmListTemplate filmListTemplate)
+        {
+            await filmService.PublishFilmListTemplate(filmListTemplate.Id);
+            return RedirectToAction("View", new { filmListTemplateId = filmListTemplate.Id });
+        }
+
         public async Task<IActionResult> List()
         {
             var templates = await filmService.RetrieveFilmListTemplates();
