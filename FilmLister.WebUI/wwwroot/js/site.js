@@ -50,7 +50,7 @@ $(document).ready(function () {
         },
         onInvalidateSelection: function () {
             selectedSuggestion = null;
-            $("#selectedFilmImg").attr("src", "");
+            $("#selectedFilmImg").attr("src", "/empty.png");
         },
         onHide: function (container) {
         }
@@ -136,7 +136,7 @@ $(document).ready(function () {
         },
         onInvalidateSelection: function () {
             selectedSuggestion = null;
-            $("#selectedFilmImg").attr("src", "");
+            $("#selectedFilmImg").attr("src", "/empty.png");
         },
         onHide: function (container) {
         }
@@ -180,7 +180,7 @@ $(document).ready(function () {
                 selectedSuggestion = null;
                 $("#filmSearch").val('');
                 $("#filmsPerPersonSearch").val('');
-                $("#selectedFilmImg").attr("src", "");
+                $("#selectedFilmImg").attr("src", "/empty.png");
             }).fail(error => {
                 alert(`Failed to submit choice: ${error.responseText}`)
             });
