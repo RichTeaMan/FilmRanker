@@ -110,25 +110,45 @@ Task("UpdateDatabaseDocker")
 {
     var publishDirectory = $"./FilmLister.Service.Updater/bin/{buildDir}/netcoreapp2.2";
     var webUIPublishDirectory = $"./FilmLister.WebUI/bin/Debug/netcoreapp2.2";
-    CopyFile(
-        "./FilmLister.Service.Updater/appsettings.Docker.json",
-        $"{publishDirectory}/appsettings.json");
 
-    CopyFile(
-        "./FilmLister.WebUI/appsettings.Docker.json",
-        $"{webUIPublishDirectory}/appsettings.json");
+    Information("Copying config files.");
 
-    using(var process = StartAndReturnProcess("dotnet", new ProcessSettings {
-        Arguments = "ef database update --project FilmLister.Persistence --startup-project FilmLister.WebUI -v"}))
+    try
     {
-        process.WaitForExit();
-        int exitCode = process.GetExitCode();
-        if (exitCode != 0) {
-            throw new Exception("Failed to update database.");
-        }
-    }
+        CopyFile(
+            "./FilmLister.Service.Updater/appsettings.Docker.json",
+            $"{publishDirectory}/appsettings.json");
 
-    DotNetCoreExecute($"{publishDirectory}/FilmLister.Service.Updater.dll");
+        // running ef rebuilds config files, so do build area muscial chairs to make sure the correct config is passed
+        CopyFile(
+            "./FilmLister.WebUI/appsettings.json",
+            "./FilmLister.WebUI/appsettings.temp.json");
+
+        CopyFile(
+            "./FilmLister.WebUI/appsettings.Docker.json",
+            "./FilmLister.WebUI/appsettings.json");
+
+        using(var process = StartAndReturnProcess("dotnet", new ProcessSettings {
+            Arguments = "ef database update --project FilmLister.Persistence --startup-project FilmLister.WebUI -v"}))
+        {
+            process.WaitForExit();
+            int exitCode = process.GetExitCode();
+            if (exitCode != 0) {
+                throw new Exception("Failed to update database.");
+            }
+        }
+
+        DotNetCoreExecute($"{publishDirectory}/FilmLister.Service.Updater.dll");
+    }
+    finally
+    {
+        CopyFile(
+            "./FilmLister.WebUI/appsettings.temp.json",
+            "./FilmLister.WebUI/appsettings.json");
+
+        DeleteFile(
+            "./FilmLister.WebUI/appsettings.temp.json");
+    }
 });
 
 //////////////////////////////////////////////////////////////////////
