@@ -45,6 +45,13 @@ namespace FilmLister.WebUI.Controllers
             return RedirectToAction("View", new { filmListTemplateId = filmListTemplate.Id });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Clone(Models.FilmListTemplate filmListTemplate)
+        {
+            var clonedFilmListTemplate = await filmService.CloneFilmListTemplate(filmListTemplate.Id);
+            return RedirectToAction("View", new { filmListTemplateId = clonedFilmListTemplate.Id });
+        }
+
         public async Task<IActionResult> View(int filmListTemplateId)
         {
             IActionResult result;

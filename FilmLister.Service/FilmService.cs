@@ -261,6 +261,12 @@ namespace FilmLister.Service
                 .Include(l => l.FilmListItems)
                     .ThenInclude(i => i.Film)
                 .FirstOrDefaultAsync(l => l.Id == id);
+
+            if (list == null)
+            {
+                throw new ListNotFoundException(id);
+            }
+
             var domainList = Map(list);
             return domainList;
         }
@@ -354,6 +360,45 @@ namespace FilmLister.Service
             await filmListerContext.SaveChangesAsync();
 
             var domain = await RetrieveFilmListTemplateById(filmListTemplate.Id);
+            return domain;
+        }
+
+        /// <summary>
+        /// Clones a film list template from another list. The new list will
+        /// be unpublished, so it can be editted.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<Domain.FilmListTemplate> CloneFilmListTemplate(int filmListTemplateId)
+        {
+            var persistenceList = await filmListerContext.FilmListTemplates
+                .Include(l => l.FilmListItems)
+                    .ThenInclude(f => f.Film)
+                .FirstOrDefaultAsync(l => l.Id == filmListTemplateId);
+            if (persistenceList == null)
+            {
+                throw new ListNotFoundException(filmListTemplateId);
+            }
+
+            var clonedFilmListItems = persistenceList.FilmListItems?.Select(fli =>
+            {
+                return new FilmListItem
+                {
+                    Film = fli.Film
+                };
+            })
+            .ToList();
+
+            var clonedFilmListTemplate = new Persistence.FilmListTemplate()
+            {
+                Name = $"{persistenceList.Name} copy - {DateTimeOffset.Now.Date.ToShortDateString()}",
+                Published = false,
+                FilmListItems = clonedFilmListItems
+            };
+
+            await filmListerContext.FilmListTemplates.AddAsync(clonedFilmListTemplate);
+            await filmListerContext.SaveChangesAsync();
+
+            var domain = await RetrieveFilmListTemplateById(clonedFilmListTemplate.Id);
             return domain;
         }
 
@@ -536,7 +581,7 @@ namespace FilmLister.Service
 
             var orderedFilms = new List<Domain.OrderedFilm>();
 
-            foreach(var kvFilm in orderedFilmsDictionary.Where(kv => !kv.Key.Ignored))
+            foreach (var kvFilm in orderedFilmsDictionary.Where(kv => !kv.Key.Ignored))
             {
                 var persistenceFilm = kvFilm.Key;
                 var domainFilm = kvFilm.Value;
@@ -554,7 +599,7 @@ namespace FilmLister.Service
 
                         domainFilm.AddLesserRankedFilms(lesserRanked);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         logger.LogError(ex, "Error occurred mapping completed list.");
                     }

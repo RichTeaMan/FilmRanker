@@ -115,6 +115,14 @@ else
         <div class="col-md">
             <a class="btn btn-outline-primary" asp-controller="FilmList" asp-action="Create" asp-route-listId="@Model.Id">Play the list</a>
         </div>
+        <div class="col-md">
+            <form method="post" action="/FilmListTemplate/Clone">
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group input-group" style="margin-right: 5px">
+                    <input type="submit" value="Clone" class="btn btn-outline-secondary mr-1" />
+                </div>
+            </form>
+        </div>
     </div>
 }
 else
