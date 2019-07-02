@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FilmLister.Persistence
@@ -14,5 +15,9 @@ namespace FilmLister.Persistence
         public string Name { get; set; }
 
         public List<FilmListItem> FilmListItems { get; set; }
+
+        public DateTimeOffset CreatedDateTime { get; set; }
+
+        public DateTimeOffset? PublishedDateTime { get; set; }
     }
 }

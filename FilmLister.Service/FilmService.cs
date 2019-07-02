@@ -354,7 +354,8 @@ namespace FilmLister.Service
         {
             var filmListTemplate = new Persistence.FilmListTemplate()
             {
-                Name = $"New List - {DateTimeOffset.Now.Date.ToShortDateString()}"
+                Name = $"New List - {DateTimeOffset.UtcNow.Date.ToShortDateString()}",
+                CreatedDateTime = DateTimeOffset.UtcNow
             };
             await filmListerContext.FilmListTemplates.AddAsync(filmListTemplate);
             await filmListerContext.SaveChangesAsync();
@@ -390,9 +391,10 @@ namespace FilmLister.Service
 
             var clonedFilmListTemplate = new Persistence.FilmListTemplate()
             {
-                Name = $"{persistenceList.Name} copy - {DateTimeOffset.Now.Date.ToShortDateString()}",
+                Name = $"{persistenceList.Name} copy - {DateTimeOffset.UtcNow.Date.ToShortDateString()}",
                 Published = false,
-                FilmListItems = clonedFilmListItems
+                FilmListItems = clonedFilmListItems,
+                CreatedDateTime = DateTimeOffset.UtcNow
             };
 
             await filmListerContext.FilmListTemplates.AddAsync(clonedFilmListTemplate);
@@ -414,6 +416,7 @@ namespace FilmLister.Service
             }
 
             filmListTemplate.Published = true;
+            filmListTemplate.PublishedDateTime = DateTimeOffset.UtcNow;
             await filmListerContext.SaveChangesAsync();
         }
 
