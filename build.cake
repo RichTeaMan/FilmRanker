@@ -70,8 +70,18 @@ Task("WebUI")
     DotNetCoreExecute($"{publishDirectory}/FilmLister.WebUI.dll", $"--TmdbApiKey {tmdbApiKey}", executeSettings);
 });
 
-Task("WebUIDocker")
+Task("PublishWebUIDocker")
     .IsDependentOn("Build")
+    .Does(() =>
+{
+    var publishDirectory = $"./FilmLister.WebUI/bin/{buildDir}/netcoreapp2.2/publish";
+    CopyFile(
+        "./FilmLister.WebUI/appsettings.Docker.json",
+        $"{publishDirectory}/appsettings.json");
+});
+
+Task("WebUIDocker")
+    .IsDependentOn("PublishWebUIDocker")
     .Does(() =>
 {
     var publishDirectory = $"./FilmLister.WebUI/bin/{buildDir}/netcoreapp2.2/publish";
@@ -79,10 +89,6 @@ Task("WebUIDocker")
     {
         WorkingDirectory = publishDirectory
     };
-    CopyFile(
-        "./FilmLister.WebUI/appsettings.Docker.json",
-        $"{publishDirectory}/appsettings.json");
-    
     DotNetCoreExecute($"{publishDirectory}/FilmLister.WebUI.dll", $"--TmdbApiKey {tmdbApiKey}", executeSettings);
 });
 

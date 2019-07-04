@@ -1,0 +1,5 @@
+dockerfile
+.git/
+.gitignore
+.vscode/
+**/bin/**
