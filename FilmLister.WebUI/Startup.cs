@@ -41,8 +41,8 @@ namespace FilmLister.WebUI
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddMemoryCache();
             services.AddTransient<FilmMapper>();
+            services.AddTransient<FilmRankMapper>();
             services.AddTransient<FilmListMapper>();
-            services.AddTransient<FilmListTemplateMapper>();
             services.AddTransient(sp =>
             {
                 return new TmdbServiceConfig

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace FilmLister.Domain
 {
-    public class OrderedFilmList
+    public class OrderedFilmRank
     {
         public int Id { get; }
         public bool Completed { get; }
@@ -13,7 +13,7 @@ namespace FilmLister.Domain
         public OrderedFilm ChoiceA { get; }
         public OrderedFilm ChoiceB { get; }
 
-        public OrderedFilmList(
+        public OrderedFilmRank(
             int id,
             bool completed,
             IEnumerable<OrderedFilm> sortedFilms,

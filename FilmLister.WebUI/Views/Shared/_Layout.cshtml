@@ -49,15 +49,15 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="FilmList" asp-action="Index">Film List</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="FilmRank" asp-action="Index">Rank Films</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="FilmListTemplate" asp-action="Create">Create a Film List</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="FilmList" asp-action="Create">Create a Film List</a>
                         </li>
                         @if (SignInManager.IsSignedIn(User))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="FilmListTemplate" asp-action="List">Film List Admin</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="FilmList" asp-action="List">Film List Admin</a>
                             </li>
                         }
                     </ul>

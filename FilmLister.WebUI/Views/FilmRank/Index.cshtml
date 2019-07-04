@@ -1,4 +1,4 @@
-﻿@model FilmLister.WebUI.Models.FilmListTemplate[]
+﻿@model FilmLister.WebUI.Models.FilmList[]
 
 @{
     ViewData["Title"] = "Film Lister - Film Lists";
@@ -12,8 +12,8 @@
     @foreach (var filmList in Model)
     {
         <div>
-            <a asp-controller="FilmList" asp-action="Create" asp-route-listId="@filmList.Id">@filmList.Name (@filmList.Films.Length films)</a> |
-            <a asp-controller="FilmListTemplate" asp-action="Clone" asp-route-filmListTemplateId="@filmList.Id">Clone this list</a>
+            <a asp-controller="FilmRank" asp-action="Create" asp-route-listId="@filmList.Id">@filmList.Name (@filmList.Films.Length films)</a> |
+            <a asp-controller="FilmList" asp-action="Clone" asp-route-filmListId="@filmList.Id">Clone this list</a>
         </div>
     }
     </div>

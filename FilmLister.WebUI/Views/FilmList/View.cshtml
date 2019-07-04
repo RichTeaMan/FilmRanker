@@ -1,4 +1,4 @@
-﻿@model FilmLister.WebUI.Models.FilmListTemplate
+﻿@model FilmLister.WebUI.Models.FilmList
 
 @{
     ViewData["Title"] = "Film Lister - Add to a List";
@@ -27,7 +27,7 @@ else
 {
     <div class="row">
         <div class="col-md">
-            <form method="post" action="/FilmListTemplate/Rename">
+            <form method="post" action="/FilmList/Rename">
                 <input type="hidden" asp-for="Id" />
 
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -53,8 +53,8 @@ else
             </div>
         </div>
         <div class="col-lg-9">
-            <form id="filmForm" method="post" action="/FilmListTemplate/AddFilm">
-                <input type="hidden" id="filmListTemplateId" name="filmListTemplateId" value="@Model.Id" />
+            <form id="filmForm" method="post" action="/FilmList/AddFilm">
+                <input type="hidden" id="filmListId" name="filmListId" value="@Model.Id" />
                 <div class="form-group">
                     <h4>Search by film name:</h4>
                     <label class="control-label">Film Name</label>
@@ -99,8 +99,8 @@ else
             </figure>
             @if (!Model.Published)
             {
-                <form action="/FilmListTemplate/RemoveFilm" method="post">
-                    <input type="hidden" name="filmListTemplateId" value="@Model.Id" />
+                <form action="/FilmList/RemoveFilm" method="post">
+                    <input type="hidden" name="filmListId" value="@Model.Id" />
                     <input type="hidden" name="tmdbId" value="@film.TmdbId" />
                     <input type="submit" class="btn btn-outline-danger" value="Remove" />
                 </form>
@@ -113,11 +113,11 @@ else
 {
     <div class="row">
         <div class="col-md">
-            <a class="btn btn-outline-primary" asp-controller="FilmList" asp-action="Create" asp-route-listId="@Model.Id">Play the list</a>
+            <a class="btn btn-outline-primary" asp-controller="FilmRank" asp-action="Create" asp-route-listId="@Model.Id">Play the list</a>
         </div>
         <div class="col-md">
-            <form method="post" action="/FilmListTemplate/Clone">
-                <input type="hidden" name="filmListTemplateId" value="@Model.Id" />
+            <form method="post" action="/FilmList/Clone">
+                <input type="hidden" name="filmListId" value="@Model.Id" />
                 <div class="form-group input-group" style="margin-right: 5px">
                     <input type="submit" value="Clone" class="btn btn-outline-secondary mr-1" />
                 </div>
@@ -129,7 +129,7 @@ else
 {
     <div class="row">
         <div class="col-md-8">
-            <form method="post" action="/FilmListTemplate/Publish">
+            <form method="post" action="/FilmList/Publish">
                 <input type="hidden" asp-for="Id" />
                 <div class="form-group input-group" style="margin-right: 5px">
                     <input type="submit" value="Publish" class="btn btn-primary mr-1" />

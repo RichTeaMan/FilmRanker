@@ -1,4 +1,4 @@
-﻿@model FilmLister.WebUI.Models.FilmListTemplate
+﻿@model FilmLister.WebUI.Models.FilmList
 
 @{
     ViewData["Title"] = "Film Lister - Confirm Deletion";
@@ -15,7 +15,7 @@
 </div>
 <div class="row">
     <div class="col-md">
-        <a class="btn btn-primary mr-1" asp-controller="FilmListTemplate" asp-action="Delete" asp-route-filmListTemplateId="@Model.Id">Delete</a>
-        <a class="btn btn-secondary mr-1" asp-controller="FilmListTemplate" asp-action="List">Cancel</a>
+        <a class="btn btn-primary mr-1" asp-controller="FilmList" asp-action="Delete" asp-route-filmListId="@Model.Id">Delete</a>
+        <a class="btn btn-secondary mr-1" asp-controller="FilmList" asp-action="List">Cancel</a>
     </div>
 </div>

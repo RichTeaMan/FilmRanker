@@ -2,14 +2,14 @@
 
 namespace FilmLister.Domain
 {
-    public class FilmListTemplate
+    public class FilmList
     {
         public int Id { get; }
         public string Name { get; }
         public Film[] Films { get; }
         public bool Published { get; }
 
-        public FilmListTemplate(int id, string name, Film[] films, bool published)
+        public FilmList(int id, string name, Film[] films, bool published)
         {
             Id = id;
             Name = name ?? throw new ArgumentNullException(nameof(name));

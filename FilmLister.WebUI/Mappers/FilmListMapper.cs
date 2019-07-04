@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace FilmLister.WebUI.Mappers
 {
-    public class FilmListMapper
+    public class FilmRankMapper
     {
         private readonly FilmMapper filmMapper;
 
-        public FilmListMapper(FilmMapper filmMapper)
+        public FilmRankMapper(FilmMapper filmMapper)
         {
             this.filmMapper = filmMapper ?? throw new ArgumentNullException(nameof(filmMapper));
         }
 
-        public FilmList Map(OrderedFilmList orderedFilmList)
+        public FilmRank Map(OrderedFilmRank orderedFilmList)
         {
-            var filmList = new FilmList()
+            var filmList = new FilmRank()
             {
                 Id = orderedFilmList.Id,
                 Completed = orderedFilmList.Completed,

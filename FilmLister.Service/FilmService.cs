@@ -39,7 +39,7 @@ namespace FilmLister.Service
             return domainFilms;
         }
 
-        public async Task<Domain.FilmListTemplate[]> RetrieveFilmListTemplates()
+        public async Task<Domain.FilmList[]> RetrieveFilmLists()
         {
             var filmListTemplates = await filmListerContext.FilmListTemplates
                 .Include(l => l.FilmListItems)
@@ -55,15 +55,15 @@ namespace FilmLister.Service
         /// <summary>
         /// Creates a new list for ordering. Returns ID of the list.
         /// </summary>
-        /// <param name="filmListTemplateId"></param>
+        /// <param name="filmListId"></param>
         /// <returns></returns>
-        public async Task<int> CreateOrderedFilmList(int filmListTemplateId)
+        public async Task<int> CreateFilmRankFromFilmList(int filmListId)
         {
-            var filmListTemplate = await RetrieveFilmListTemplateById(filmListTemplateId);
+            var filmListTemplate = await RetrieveFilmListById(filmListId);
             var persistenceListTemplate = await filmListerContext.FilmListTemplates
                 .Include(l => l.FilmListItems)
                     .ThenInclude(i => i.Film)
-                .FirstAsync(l => l.Id == filmListTemplateId);
+                .FirstAsync(l => l.Id == filmListId);
 
             var films = persistenceListTemplate.FilmListItems.Select(i => new Persistence.OrderedFilm() { Film = i.Film })
                 .RandomiseOrder()
@@ -152,7 +152,7 @@ namespace FilmLister.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<OrderedFilmList> AttemptListOrder(int id)
+        public async Task<OrderedFilmRank> AttemptRankOrder(int id)
         {
             var persistenceOrderedFilmList = await filmListerContext.OrderedLists
                 .Include(ol => ol.OrderedFilms)
@@ -166,7 +166,7 @@ namespace FilmLister.Service
                 throw new ListNotFoundException(id);
             }
 
-            Domain.OrderedFilmList filmList;
+            Domain.OrderedFilmRank filmList;
             if (persistenceOrderedFilmList.Completed)
             {
                 filmList = MapCompletedList(persistenceOrderedFilmList);
@@ -195,7 +195,7 @@ namespace FilmLister.Service
                 }
                 else
                 {
-                    filmList = new Domain.OrderedFilmList(
+                    filmList = new Domain.OrderedFilmRank(
                         orderedFilmList.Id,
                         orderResult.Completed,
                         orderResult.SortedResults.ToArray(),
@@ -256,7 +256,7 @@ namespace FilmLister.Service
             return domainFilm;
         }
 
-        public async Task<Domain.FilmListTemplate> RetrieveFilmListTemplateById(int id)
+        public async Task<Domain.FilmList> RetrieveFilmListById(int id)
         {
             var list = await filmListerContext.FilmListTemplates
                 .Include(l => l.FilmListItems)
@@ -272,7 +272,7 @@ namespace FilmLister.Service
             return domainList;
         }
 
-        public async Task DeleteFilmListTemplateById(int id)
+        public async Task DeleteFilmListById(int id)
         {
             var list = await filmListerContext.FilmListTemplates
                 .Include(l => l.FilmListItems)
@@ -312,15 +312,15 @@ namespace FilmLister.Service
         }
 
         /// <summary>
-        /// Adds a film to the film list template.
+        /// Adds a film to the film list.
         /// </summary>
-        /// <param name="filmListTemplate"></param>
+        /// <param name="filmList"></param>
         /// <param name="film"></param>
         /// <exception cref="FilmAlreadyInFilmListTemplateException">Occurs when the given film is already in the list.</exception>
         /// <returns></returns>
-        public async Task<Domain.FilmListTemplate> AddFilmToFilmListTemplate(Domain.FilmListTemplate filmListTemplate, Domain.Film film)
+        public async Task<Domain.FilmList> AddFilmToFilmList(Domain.FilmList filmList, Domain.Film film)
         {
-            var persistenceList = await filmListerContext.FilmListTemplates.FirstAsync(l => l.Id == filmListTemplate.Id);
+            var persistenceList = await filmListerContext.FilmListTemplates.FirstAsync(l => l.Id == filmList.Id);
 
             if (persistenceList.FilmListItems == null)
             {
@@ -328,11 +328,11 @@ namespace FilmLister.Service
             }
             if (persistenceList.FilmListItems.Any(item => item.Film.Id == film.Id))
             {
-                throw new FilmAlreadyInFilmListTemplateException(film.Id, filmListTemplate.Id);
+                throw new FilmAlreadyInFilmListTemplateException(film.Id, filmList.Id);
             }
             if (persistenceList.Published)
             {
-                throw new FilmListTemplatePublishedException(filmListTemplate.Id);
+                throw new FilmListTemplatePublishedException(filmList.Id);
             }
 
             var persistenceFilm = await filmListerContext.Films.FirstAsync(l => l.Id == film.Id);
@@ -343,7 +343,7 @@ namespace FilmLister.Service
             });
             await filmListerContext.SaveChangesAsync();
 
-            var list = await RetrieveFilmListTemplateById(persistenceList.Id);
+            var list = await RetrieveFilmListById(persistenceList.Id);
             return list;
         }
 
@@ -351,7 +351,7 @@ namespace FilmLister.Service
         /// Creates a new empty film list with a generated name.
         /// </summary>
         /// <returns></returns>
-        public async Task<Domain.FilmListTemplate> CreateFilmListTemplate()
+        public async Task<Domain.FilmList> CreateFilmList()
         {
             var filmListTemplate = new Persistence.FilmListTemplate()
             {
@@ -361,24 +361,24 @@ namespace FilmLister.Service
             await filmListerContext.FilmListTemplates.AddAsync(filmListTemplate);
             await filmListerContext.SaveChangesAsync();
 
-            var domain = await RetrieveFilmListTemplateById(filmListTemplate.Id);
+            var domain = await RetrieveFilmListById(filmListTemplate.Id);
             return domain;
         }
 
         /// <summary>
-        /// Clones a film list template from another list. The new list will
+        /// Clones a film list from another list. The new list will
         /// be unpublished, so it can be editted.
         /// </summary>
         /// <returns></returns>
-        public async Task<Domain.FilmListTemplate> CloneFilmListTemplate(int filmListTemplateId)
+        public async Task<Domain.FilmList> CloneFilmList(int filmListId)
         {
             var persistenceList = await filmListerContext.FilmListTemplates
                 .Include(l => l.FilmListItems)
                     .ThenInclude(f => f.Film)
-                .FirstOrDefaultAsync(l => l.Id == filmListTemplateId);
+                .FirstOrDefaultAsync(l => l.Id == filmListId);
             if (persistenceList == null)
             {
-                throw new ListNotFoundException(filmListTemplateId);
+                throw new ListNotFoundException(filmListId);
             }
 
             var clonedFilmListItems = persistenceList.FilmListItems?.Select(fli =>
@@ -401,19 +401,19 @@ namespace FilmLister.Service
             await filmListerContext.FilmListTemplates.AddAsync(clonedFilmListTemplate);
             await filmListerContext.SaveChangesAsync();
 
-            var domain = await RetrieveFilmListTemplateById(clonedFilmListTemplate.Id);
+            var domain = await RetrieveFilmListById(clonedFilmListTemplate.Id);
             return domain;
         }
 
-        public async Task PublishFilmListTemplate(int filmListTemplateId)
+        public async Task PublishFilmList(int filmListId)
         {
             var filmListTemplate = await filmListerContext
                 .FilmListTemplates
-                .FirstOrDefaultAsync(l => l.Id == filmListTemplateId);
+                .FirstOrDefaultAsync(l => l.Id == filmListId);
 
             if (filmListTemplate == null)
             {
-                throw new ListNotFoundException(filmListTemplateId);
+                throw new ListNotFoundException(filmListId);
             }
 
             filmListTemplate.Published = true;
@@ -422,25 +422,25 @@ namespace FilmLister.Service
         }
 
         /// <summary>
-        /// Removes the film with the given ID from the film list template.
+        /// Removes the film with the given ID from the film list.
         /// </summary>
-        /// <param name="filmListTemplateId">Film list template ID.</param>
+        /// <param name="filmListId">Film list ID.</param>
         /// <param name="tmdbId"></param>
         /// <exception cref="ListNotFoundException">Could not find list with the given ID.</exception>
         /// <returns></returns>
-        public async Task RemoveFilmFromFilmListTemplate(int filmListTemplateId, int tmdbId)
+        public async Task RemoveFilmFromFilmList(int filmListId, int tmdbId)
         {
             var persistenceList = await filmListerContext.FilmListTemplates
                 .Include(l => l.FilmListItems)
                     .ThenInclude(f => f.Film)
-                .FirstOrDefaultAsync(l => l.Id == filmListTemplateId);
+                .FirstOrDefaultAsync(l => l.Id == filmListId);
             if (persistenceList == null)
             {
-                throw new ListNotFoundException(filmListTemplateId);
+                throw new ListNotFoundException(filmListId);
             }
             if (persistenceList.Published)
             {
-                throw new FilmListTemplatePublishedException(filmListTemplateId);
+                throw new FilmListTemplatePublishedException(filmListId);
             }
 
             persistenceList.FilmListItems.RemoveAll(f => f.Film.TmdbId == tmdbId);
@@ -448,14 +448,14 @@ namespace FilmLister.Service
         }
 
         /// <summary>
-        /// Renames the film list template with the given ID.
+        /// Renames the film list with the given ID.
         /// </summary>
         /// <param name="filmListId"></param>
         /// <param name="newListName"></param>
         /// <exception cref="ArgumentException">If new list name is null or longer than the maximum length.</exception>
         /// <exception cref="ListNotFoundException">Could not find list with the given ID.</exception>
         /// <returns></returns>
-        public async Task RenameFilmListTemplate(int filmListId, string newListName)
+        public async Task RenameFilmList(int filmListId, string newListName)
         {
             if (string.IsNullOrEmpty(newListName) || newListName.Length >= Persistence.Constants.FILM_LIST_TEMPLATE_MAX_LENGTH)
             {
@@ -576,7 +576,7 @@ namespace FilmLister.Service
             return filmModel;
         }
 
-        private Domain.OrderedFilmList MapCompletedList(OrderedList persistenceOrderedFilmList)
+        private Domain.OrderedFilmRank MapCompletedList(OrderedList persistenceOrderedFilmList)
         {
             var orderedFilmsDictionary = persistenceOrderedFilmList
                 .OrderedFilms
@@ -611,7 +611,7 @@ namespace FilmLister.Service
                 orderedFilms.Add(kvFilm.Value);
             }
 
-            var filmList = new Domain.OrderedFilmList(
+            var filmList = new Domain.OrderedFilmRank(
                     persistenceOrderedFilmList.Id,
                     persistenceOrderedFilmList.Completed,
                     orderedFilms.ToArray(),
@@ -622,14 +622,14 @@ namespace FilmLister.Service
             return filmList;
         }
 
-        private Domain.FilmListTemplate Map(Persistence.FilmListTemplate orderedFilmList)
+        private Domain.FilmList Map(Persistence.FilmListTemplate orderedFilmList)
         {
             List<Domain.Film> films = new List<Domain.Film>();
             if (orderedFilmList?.FilmListItems != null)
             {
                 films.AddRange(orderedFilmList.FilmListItems.Select(f => Map(f.Film)));
             }
-            var filmList = new Domain.FilmListTemplate(
+            var filmList = new Domain.FilmList(
                 orderedFilmList.Id,
                 orderedFilmList.Name,
                 films.ToArray(),
@@ -637,7 +637,7 @@ namespace FilmLister.Service
             return filmList;
         }
 
-        private Domain.OrderedFilmList Map(Persistence.OrderedList orderedFilmList)
+        private Domain.OrderedFilmRank Map(Persistence.OrderedList orderedFilmList)
         {
             var films = new List<Domain.OrderedFilm>();
             if (orderedFilmList?.OrderedFilms != null)
@@ -654,7 +654,7 @@ namespace FilmLister.Service
 
                 films.AddRange(mapping.Values);
             }
-            var filmList = new Domain.OrderedFilmList(
+            var filmList = new Domain.OrderedFilmRank(
                 orderedFilmList.Id,
                 orderedFilmList.Completed,
                 films,

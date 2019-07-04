@@ -1,4 +1,4 @@
-﻿@model FilmLister.WebUI.Models.FilmList
+﻿@model FilmLister.WebUI.Models.FilmRank
 
 @{
     ViewData["Title"] = "Film Lister - Choose a Film";
@@ -12,7 +12,7 @@
     </h4>
     <div class="row align-items-center">
         <div class="col-4">
-            <a asp-controller="FilmList" asp-action="SubmitFilmChoice" asp-route-id="@Model.Id" asp-route-lesserFilmId="@Model.ChoiceB.Id" asp-route-greaterFilmId="@Model.ChoiceA.Id">
+            <a asp-controller="FilmRank" asp-action="SubmitFilmChoice" asp-route-id="@Model.Id" asp-route-lesserFilmId="@Model.ChoiceB.Id" asp-route-greaterFilmId="@Model.ChoiceA.Id">
                 <figure>
                     <img class="img-fluid" src="@Model.ChoiceA.ImageUrl" />
                     <figcaption>
@@ -20,7 +20,7 @@
                     </figcaption>
                 </figure>
             </a>
-            <a class="btn btn-secondary" asp-controller="FilmList" asp-action="SubmitIgnoreFilm" asp-route-filmListId="@Model.Id" asp-route-filmId="@Model.ChoiceA.Id">Not Seen</a>
+            <a class="btn btn-secondary" asp-controller="FilmRank" asp-action="SubmitIgnoreFilm" asp-route-filmRankId="@Model.Id" asp-route-filmId="@Model.ChoiceA.Id">Not Seen</a>
         </div>
         <div class="col-4 mx-auto align-middle align-items-center text-center">
             <h4 class="text-left">
@@ -50,7 +50,7 @@
             </h4>
         </div>
         <div class="col-4">
-            <a asp-controller="FilmList" asp-action="SubmitFilmChoice" asp-route-id="@Model.Id" asp-route-lesserFilmId="@Model.ChoiceA.Id" asp-route-greaterFilmId="@Model.ChoiceB.Id">
+            <a asp-controller="FilmRank" asp-action="SubmitFilmChoice" asp-route-id="@Model.Id" asp-route-lesserFilmId="@Model.ChoiceA.Id" asp-route-greaterFilmId="@Model.ChoiceB.Id">
                 <figure>
                     <img class="img-fluid" src="@Model.ChoiceB.ImageUrl" />
                     <figcaption>
@@ -58,7 +58,7 @@
                     </figcaption>
                 </figure>
             </a>
-            <a class="btn btn-secondary" asp-controller="FilmList" asp-action="SubmitIgnoreFilm" asp-route-filmListId="@Model.Id" asp-route-filmId="@Model.ChoiceB.Id">Not Seen</a>
+            <a class="btn btn-secondary" asp-controller="FilmRank" asp-action="SubmitIgnoreFilm" asp-route-filmRankId="@Model.Id" asp-route-filmId="@Model.ChoiceB.Id">Not Seen</a>
         </div>
     </div>
     <div class="row">

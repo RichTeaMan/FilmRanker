@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
-@model FilmLister.WebUI.Models.FilmListTemplate[]
+@model FilmLister.WebUI.Models.FilmList[]
 
 @{
     ViewData["Title"] = "Film Lister - All Film Lists";
@@ -26,21 +26,21 @@
                 @foreach (var filmList in Model) {
                 <tr>
                     <td>
-                        <a asp-controller="FilmList" asp-action="Create" asp-route-listId="@filmList.Id">@filmList.Name</a>
+                        <a asp-controller="FilmRank" asp-action="Create" asp-route-listId="@filmList.Id">@filmList.Name</a>
                     </td>
                     <td>@filmList.Films.Length</td>
                     @if (SignInManager.IsSignedIn(User)) {
                     <td>
-                        <a asp-controller="FilmListTemplate"
+                        <a asp-controller="FilmList"
                            asp-action="View"
-                           asp-route-filmListTemplateId="@filmList.Id">
+                           asp-route-filmListId="@filmList.Id">
                             Edit
                         </a>
                     </td>
                     <td>
-                        <a asp-controller="FilmListTemplate"
+                        <a asp-controller="FilmList"
                            asp-action="ConfirmDelete"
-                           asp-route-filmListTemplateId="@filmList.Id">
+                           asp-route-filmListId="@filmList.Id">
                             Delete
                         </a>
                     </td>

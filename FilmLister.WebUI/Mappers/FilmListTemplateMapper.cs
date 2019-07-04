@@ -3,18 +3,18 @@ using System.Linq;
 
 namespace FilmLister.WebUI.Mappers
 {
-    public class FilmListTemplateMapper
+    public class FilmListMapper
     {
         private readonly FilmMapper filmMapper;
 
-        public FilmListTemplateMapper(FilmMapper filmMapper)
+        public FilmListMapper(FilmMapper filmMapper)
         {
             this.filmMapper = filmMapper ?? throw new ArgumentNullException(nameof(filmMapper));
         }
 
-        public Models.FilmListTemplate Map(Domain.FilmListTemplate filmListTemplate)
+        public Models.FilmList Map(Domain.FilmList filmListTemplate)
         {
-            var model = new Models.FilmListTemplate
+            var model = new Models.FilmList
             {
                 Id = filmListTemplate.Id,
                 Name = filmListTemplate.Name,

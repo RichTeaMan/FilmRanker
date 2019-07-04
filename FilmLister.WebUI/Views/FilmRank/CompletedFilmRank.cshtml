@@ -1,7 +1,7 @@
-﻿@model FilmLister.WebUI.Models.FilmList
+﻿@model FilmLister.WebUI.Models.FilmRank
 
 @{
-    ViewData["Title"] = "Film Lister - List Complete";
+    ViewData["Title"] = "Film Lister - Ranking Complete";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -9,7 +9,7 @@
 
 <div class="row">
     <div class="col-md-8">
-        Share your list:
+        Share your ranking:
         <input type="text" class="form-control" readonly value="@(Context.Request.IsHttps ? "https://" : "http://" )@Context.Request.Host@Context.Request.Path" />
     </div>
 </div>

@@ -39,7 +39,7 @@ namespace FilmLister.Service.Updater
                 foreach(var uncompletedList in uncompletedLists)
                 {
                     uncompletedList.Completed = false;
-                    await filmUpdateHostedService.AttemptListOrder(uncompletedList.Id);
+                    await filmUpdateHostedService.AttemptRankOrder(uncompletedList.Id);
                 }
             }
         }

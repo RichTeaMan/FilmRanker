@@ -144,12 +144,12 @@ $(document).ready(function () {
 
     $("#filmForm").submit(function (event) {
 
-        const templateId = $("#filmListTemplateId").val();
+        const templateId = $("#filmListId").val();
 
         if (selectedSuggestion) {
             $.post({
-                url: '/api/filmListTemplate/addFilm',
-                data: { filmListTemplateId: templateId, tmdbId: selectedSuggestion.tmdbId },
+                url: '/api/filmList/addFilm',
+                data: { filmListId: templateId, tmdbId: selectedSuggestion.tmdbId },
             }).done(response => {
                 $("#filmRow").children().remove();
                 for (const film of response.films) {
@@ -168,8 +168,8 @@ $(document).ready(function () {
                                     ${captionElement}
                                 </figcaption>
                             </figure>
-                            <form action="/FilmListTemplate/RemoveFilm" method="post">
-                                <input type="hidden" name="filmListTemplateId" value="${templateId}" />
+                            <form action="/FilmList/RemoveFilm" method="post">
+                                <input type="hidden" name="filmListId" value="${templateId}" />
                                 <input type="hidden" name="tmdbId" value="${film.tmdbId}" />
                                 <input type="submit" class="btn btn-outline-danger" value="Remove" />
                             </form>

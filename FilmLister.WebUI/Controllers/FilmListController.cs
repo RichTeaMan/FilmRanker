@@ -1,7 +1,10 @@
-﻿using FilmLister.Service;
+﻿using FilmLister.Persistence;
+using FilmLister.Service;
 using FilmLister.Service.Exceptions;
 using FilmLister.WebUI.Mappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,80 +13,172 @@ namespace FilmLister.WebUI.Controllers
 {
     public class FilmListController : Controller
     {
-        private readonly FilmListMapper filmListMapper;
+        private readonly ILogger logger;
 
-        private readonly FilmListTemplateMapper filmListTemplateMapper;
+        private readonly FilmListerContext filmListerContext;
+
+        private readonly FilmListMapper filmListMapper;
 
         private readonly FilmService filmService;
 
-        public FilmListController(FilmListMapper filmListMapper, FilmListTemplateMapper filmListTemplateMapper, FilmService filmService)
+        public FilmListController(
+            ILogger<FilmListController> logger,
+            FilmListerContext filmListerContext,
+            FilmListMapper filmListMapper,
+            FilmService filmService)
         {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.filmListerContext = filmListerContext ?? throw new ArgumentNullException(nameof(filmListerContext));
             this.filmListMapper = filmListMapper ?? throw new ArgumentNullException(nameof(filmListMapper));
-            this.filmListTemplateMapper = filmListTemplateMapper ?? throw new ArgumentNullException(nameof(filmListTemplateMapper));
             this.filmService = filmService ?? throw new ArgumentNullException(nameof(filmService));
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var lists = await filmService.RetrieveFilmListTemplates();
-            var modelLists = lists.Select(l => filmListTemplateMapper.Map(l)).ToArray();
-
-            return View(modelLists);
+            return View();
         }
 
-        public async Task<IActionResult> Create(int listId)
+        [HttpGet]
+        public async Task<IActionResult> Create()
         {
-            int filmListId = await filmService.CreateOrderedFilmList(listId);
-            return RedirectToAction("List", new { id = filmListId });
+            var filmListTemplate = await filmService.CreateFilmList();
+            return RedirectToAction("View", new { filmListId = filmListTemplate.Id });
         }
 
-        public async Task<IActionResult> SubmitFilmChoice(int id, int lesserFilmId, int greaterFilmId)
+        [HttpGet]
+        [HttpPost]
+        public async Task<IActionResult> Clone(int filmListId)
+        {
+            var clonedFilmListTemplate = await filmService.CloneFilmList(filmListId);
+            return RedirectToAction("View", new { filmListId = clonedFilmListTemplate.Id });
+        }
+
+        [HttpGet("/FilmList/{filmListId}")]
+        public async Task<IActionResult> View(int filmListId)
         {
             IActionResult result;
+            var list = await filmService.RetrieveFilmListById(filmListId);
+            if (list != null)
+            {
+                var listModel = filmListMapper.Map(list);
+                result = View(listModel);
+            }
+            else
+            {
+                result = NotFound("Film list template with given ID not found.");
+            }
+            return result;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddFilm(int filmListId, int tmdbId)
+        {
+            IActionResult result;
+            var list = await filmService.RetrieveFilmListById(filmListId);
+            var film = await filmService.RetrieveFilmByTmdbId(tmdbId);
+
+            if (list != null && film != null)
+            {
+                try
+                {
+                    var updatedList = await filmService.AddFilmToFilmList(list, film);
+                    var listModel = filmListMapper.Map(updatedList);
+                }
+                catch (FilmListTemplatePublishedException)
+                {
+                    logger.LogInformation("Cannot add film to published film list template.");
+                }
+                result = RedirectToAction("View", new { filmListId = list.Id });
+            }
+            else
+            {
+                result = NotFound("Film list template with given ID not found.");
+            }
+            return result;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveFilm(int filmListId, int tmdbId)
+        {
+            IActionResult result;
+            int id = filmListId;
             try
             {
-                await filmService.SubmitFilmChoice(id, lesserFilmId, greaterFilmId);
-                result = RedirectToAction("List", new { id = id });
+                await filmService.RemoveFilmFromFilmList(filmListId, tmdbId);
+                result = RedirectToAction("View", new { filmListId = id });
             }
-            catch (FilmNotFoundException)
+            catch (FilmListTemplatePublishedException)
             {
-                result = NotFound("Film with given ID not found.");
+                logger.LogInformation("Cannot remove from film published film list template.");
+                result = RedirectToAction("View", new { filmListId = id });
             }
             catch (ListNotFoundException)
+            {
+                result = NotFound("Film list template with given ID not found.");
+            }
+            return result;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Rename(Models.FilmList filmList)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(filmList);
+            }
+            try
+            {
+                await filmService.RenameFilmList(filmList.Id, filmList.Name);
+            }
+            catch (FilmListTemplatePublishedException)
+            {
+                logger.LogInformation("Cannot rename published film list template.");
+            }
+            catch (Exception ex) when (ex is ArgumentException || ex is ListNotFoundException)
+            {
+                logger.LogError(ex, $"Exception renaming film list. ID: '{filmList.Id}'. New name: '{filmList.Name}'.");
+            }
+
+            return RedirectToAction("View", new { filmListId = filmList.Id });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Publish(Models.FilmList filmList)
+        {
+            await filmService.PublishFilmList(filmList.Id);
+            return RedirectToAction("View", new { filmListId = filmList.Id });
+        }
+
+        public async Task<IActionResult> List()
+        {
+            var lists = await filmService.RetrieveFilmLists();
+            var modelTemplates = lists.Select(l => filmListMapper.Map(l)).ToArray();
+            return View(modelTemplates);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> ConfirmDelete(int filmListId)
+        {
+            IActionResult result;
+            var list = await filmService.RetrieveFilmListById(filmListId);
+
+            if (list != null)
+            {
+                var listModel = filmListMapper.Map(list);
+                return View(listModel);
+            }
+            else
             {
                 result = NotFound("Film list with given ID not found.");
-
             }
             return result;
         }
 
-        public async Task<IActionResult> SubmitIgnoreFilm(int filmListId, int filmId)
+        [Authorize]
+        public async Task<IActionResult> Delete(int filmListId)
         {
-            await filmService.SubmitIgnoreFilm(filmListId, filmId);
-            return RedirectToAction("List", new { id = filmListId });
-        }
-
-        public async Task<IActionResult> List(int id)
-        {
-            IActionResult result;
-            try
-            {
-                var orderedFilmList = await filmService.AttemptListOrder(id);
-                var filmList = filmListMapper.Map(orderedFilmList);
-                if (filmList.Completed)
-                {
-                    result = View("CompletedFilmList", filmList);
-                }
-                else
-                {
-                    result = View("FilmList", filmList);
-                }
-            }
-            catch (ListNotFoundException)
-            {
-                result = NotFound();
-            }
-            return result;
+            await filmService.DeleteFilmListById(filmListId);
+            return RedirectToAction(nameof(List));
         }
     }
 }
