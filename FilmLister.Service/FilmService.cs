@@ -210,7 +210,8 @@ namespace FilmLister.Service
 
         public async Task UpdateAllFilmsFromTmdb()
         {
-            foreach (var film in filmListerContext.Films)
+            var films = await filmListerContext.Films.ToArrayAsync();
+            foreach (var film in films)
             {
                 await UpdateFilmFromTmdb(film);
             }
