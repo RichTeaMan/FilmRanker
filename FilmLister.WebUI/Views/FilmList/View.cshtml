@@ -5,26 +5,28 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create a Film List</h1>
 
 @if (Model.Published)
 {
+    <h1>@Model.Name</h1>
+    <div class="row pb-2">
+        <div class="col-md-8">
+            Share this list:
+            <input type="text" class="form-control" readonly value="@(Context.Request.IsHttps ? "https://" : "http://" )@Context.Request.Host@Context.Request.Path" />
+        </div>
+    </div>
     <div class="row">
         <div class="col-md">
             <div class="alert alert-dark" role="alert">
-                A list cannot be modified once it's published.
+                A list cannot be modified once it's published, but it can be
+                <a asp-controller="FilmList" asp-action="Clone" asp-route-filmListId="@Model.Id">cloned</a>.
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md">
-            <h4>@Model.Name</h4>
-        </div>
-    </div>
-
 }
 else
 {
+    <h1>Create a Film List</h1>
     <div class="row">
         <div class="col-md">
             <form method="post" action="/FilmList/Rename">
