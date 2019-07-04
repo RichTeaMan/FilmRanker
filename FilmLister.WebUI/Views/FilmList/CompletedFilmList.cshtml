@@ -47,15 +47,10 @@
                     @film.Director
                 </dd>
                 <dt>
-                    Budget
+                    Budget / Revenue
                 </dt>
                 <dd>
-                    @(film.Budget.HasValue ? "$" : string.Empty)@Html.DisplayFor(model => film.Budget)
-                </dd>
-                <dt>
-                    Revenue
-                </dt>
-                <dd>
+                    @(film.Budget.HasValue ? "$" : string.Empty)@Html.DisplayFor(model => film.Budget) /
                     @(film.Revenue.HasValue ? "$" : string.Empty)@Html.DisplayFor(model => film.Revenue)
                 </dd>
                 <dt>
@@ -82,52 +77,49 @@
 
     @foreach (var film in Model.IgnoredFilms)
     {
-        <div class="row">
-            <div class="col-md-2">
-                <figure>
-                    <img class="img-fluid black-and-white" src="@film.ImageUrl" />
-                    <figcaption>
-                        @if (!string.IsNullOrEmpty(film.ImdbLink))
-                        {
-                            <a href="@film.ImdbLink" target="_blank">
-                                @film.DisplayName
-                            </a>
-                        }
-                        else
-                        {
-                            @film.DisplayName
-                        }
-                    </figcaption>
-                </figure>
-            </div>
-            <div class="col-md-8">
-                <dl>
-                    <dt>
-                        Director
-                    </dt>
-                    <dd>
-                        @film.Director
-                    </dd>
-                    <dt>
-                        Budget
-                    </dt>
-                    <dd>
-                        @(film.Budget.HasValue ? "$" : string.Empty)@Html.DisplayFor(model => film.Budget)
-                    </dd>
-                    <dt>
-                        Revenue
-                    </dt>
-                    <dd>
-                        @(film.Revenue.HasValue ? "$" : string.Empty)@Html.DisplayFor(model => film.Revenue)
-                    </dd>
-                    <dt>
-                        User Rating
-                    </dt>
-                    <dd>
-                        @film.VoteAverage
-                    </dd>
-                </dl>
-            </div>
+    <div class="row">
+        <div class="col-md-1">
         </div>
+        <div class="col-md-2">
+            <figure>
+                <img class="img-fluid black-and-white" src="@film.ImageUrl" />
+                <figcaption>
+                    @if (!string.IsNullOrEmpty(film.ImdbLink))
+                    {
+                        <a href="@film.ImdbLink" target="_blank">
+                            @film.DisplayName
+                        </a>
+                    }
+                    else
+                    {
+                        @film.DisplayName
+                    }
+                </figcaption>
+            </figure>
+        </div>
+        <div class="col-md-8">
+            <dl>
+                <dt>
+                    Director
+                </dt>
+                <dd>
+                    @film.Director
+                </dd>
+                <dt>
+                    Budget / Revenue
+                </dt>
+                <dd>
+                    @(film.Budget.HasValue ? "$" : string.Empty)@Html.DisplayFor(model => film.Budget) /
+                    @(film.Revenue.HasValue ? "$" : string.Empty)@Html.DisplayFor(model => film.Revenue)
+                </dd>
+                <dt>
+                    User Rating
+                </dt>
+                <dd>
+                    @film.VoteAverage
+                </dd>
+            </dl>
+        </div>
+    </div>
     }
 }
