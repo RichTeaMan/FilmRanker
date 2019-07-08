@@ -1,6 +1,7 @@
 ﻿using FilmLister.Domain;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FilmLister.Service
 {
@@ -11,11 +12,11 @@ namespace FilmLister.Service
             return OrderObjects(films, new QuickSort<T>());
        }
 
-        public SortResult<T> OrderObjects<T>(IEnumerable<T> films, ISortAlgorithm<T> sortAlgorithm) where T : AbstractComparable<T>
+        public SortResult<T> OrderObjects<T>(IEnumerable<T> objectsToOrder, ISortAlgorithm<T> sortAlgorithm) where T : AbstractComparable<T>
         {
-            if (films == null)
+            if (objectsToOrder == null)
             {
-                throw new ArgumentNullException(nameof(films));
+                throw new ArgumentNullException(nameof(objectsToOrder));
             }
 
             if (sortAlgorithm == null)
@@ -23,8 +24,19 @@ namespace FilmLister.Service
                 throw new ArgumentNullException(nameof(sortAlgorithm));
             }
 
-            T[] results;
-            results = new List<T>(films).ToArray();
+            var lowerRanks = objectsToOrder.ToDictionary(k => k, v => new List<T>());
+            foreach(var o in objectsToOrder)
+            {
+                foreach(var hO in o.HigherRankedObjects)
+                {
+                    lowerRanks[hO].Add(o);
+                }
+            }
+
+            var results = objectsToOrder
+                .OrderBy(o => o.HigherRankedObjects.Count)
+                .ThenBy(o => lowerRanks[o].Count)
+                .ToArray();
             T left = null;
             T right = null;
             bool completed = true;

@@ -22,6 +22,11 @@ namespace FilmLister.Domain
             Film = film ?? throw new ArgumentNullException(nameof(film));
         }
 
+        public void AddLesserRankedFilm(OrderedFilm lesserRanked)
+        {
+            _lesserRankedFilms.Add(lesserRanked);
+        }
+
         public void AddLesserRankedFilms(IEnumerable<OrderedFilm> lesserRanked)
         {
             _lesserRankedFilms.AddRange(lesserRanked);

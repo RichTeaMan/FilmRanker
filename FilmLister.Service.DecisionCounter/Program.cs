@@ -18,7 +18,7 @@ namespace FilmLister.Service.DecisionCounter
             Console.WriteLine("FilmLister decision counter");
             Console.WriteLine("This program will test the average number of user");
             Console.WriteLine("decisions it will take to finish a list.");
-            Console.WriteLine("This will take several minutes to execute of the debugger is attached.");
+            Console.WriteLine("This will take several minutes to execute if the debugger is attached.");
 
             Console.WriteLine($"Testing sets of {setLength} over {sortAttempts} iterations.");
 

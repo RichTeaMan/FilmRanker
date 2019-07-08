@@ -649,6 +649,7 @@ namespace FilmLister.Service
                     {
                         var domain = mapping[greater.GreaterRankedFilm];
                         kv.Value.AddHigherRankedObject(domain);
+                        domain.AddLesserRankedFilm(kv.Value);
                     }
                 }
 
