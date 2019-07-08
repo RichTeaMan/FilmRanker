@@ -246,7 +246,7 @@ namespace FilmLister.Service.Tests
             CollectionAssert.AreEquivalent(expectedIntegerComparableList, orderedIntegerComparableSortResult.SortedResults.ToArray());
 
             int comparisons = orderedIntegerComparableSortResult.SortedResults.Sum(i => i.Comparisons);
-            System.Console.WriteLine(comparisons);
+            Console.WriteLine(comparisons);
         }
 
         [TestMethod]
@@ -258,7 +258,10 @@ namespace FilmLister.Service.Tests
 
             Parallel.ForEach(Enumerable.Range(0, sortAttempts), attempt =>
             {
-                var integerComparableList = ToRandomArray(Enumerable.Range(0, setLength).Select(i => new IntegerAbstractComparable(i)));
+                var integerComparableList = Enumerable.Range(0, setLength)
+                    .RandomiseOrder()
+                    .Select(i => new IntegerAbstractComparable(i))
+                    .ToArray();
 
                 bool completed = false;
                 int decisions = 0;
@@ -301,22 +304,6 @@ namespace FilmLister.Service.Tests
             // merge sort
             // min 17
             // max 52
-        }
-
-        private T[] ToRandomArray<T>(IEnumerable<T> collection)
-        {
-            var linkedList = new LinkedList<T>(collection);
-            var result = new List<T>();
-            var random = new Random();
-
-            while (linkedList.Any())
-            {
-                int index = random.Next(linkedList.Count);
-                var elementAt = linkedList.ElementAt(index);
-                result.Add(elementAt);
-                linkedList.Remove(elementAt);
-            }
-            return result.ToArray();
         }
     }
 

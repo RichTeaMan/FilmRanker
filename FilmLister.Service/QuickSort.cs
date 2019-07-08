@@ -7,7 +7,7 @@ namespace FilmLister.Service
     /// Sorts an array using QuickSort algorithm. Code shamelessly derived from https://rosettacode.org/wiki/Sorting_algorithms/Quicksort#C.23.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class QuickSort<T> where T : IComparable
+    public class QuickSort<T> : ISortAlgorithm<T> where T : IComparable
     {
         private const int INSERTION_LIMIT_DEFAULT = 12;
 

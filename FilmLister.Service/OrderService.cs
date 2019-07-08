@@ -8,6 +8,21 @@ namespace FilmLister.Service
     {
         public SortResult<T> OrderObjects<T>(IEnumerable<T> films) where T : AbstractComparable<T>
         {
+            return OrderObjects(films, new QuickSort<T>());
+       }
+
+        public SortResult<T> OrderObjects<T>(IEnumerable<T> films, ISortAlgorithm<T> sortAlgorithm) where T : AbstractComparable<T>
+        {
+            if (films == null)
+            {
+                throw new ArgumentNullException(nameof(films));
+            }
+
+            if (sortAlgorithm == null)
+            {
+                throw new ArgumentNullException(nameof(sortAlgorithm));
+            }
+
             T[] results;
             results = new List<T>(films).ToArray();
             T left = null;
@@ -16,9 +31,7 @@ namespace FilmLister.Service
 
             try
             {
-                var sorter = new QuickSort<T>();
-                // var sorter = new MergeSort<T>();
-                sorter.Sort(results);
+                sortAlgorithm.Sort(results);
             }
             catch (UnknownComparisonException<T> exception)
             {

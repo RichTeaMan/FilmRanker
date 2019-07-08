@@ -1,7 +1,7 @@
 namespace FilmLister.Service {
   using System;
 
-    public class MergeSort<T> where T : IComparable
+    public class MergeSort<T> : ISortAlgorithm<T> where T : IComparable
     {
         #region Constants
         private const int mergesDefault = 6;
