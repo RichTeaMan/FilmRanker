@@ -13,13 +13,19 @@ namespace FilmLister.Domain
         public OrderedFilm ChoiceA { get; }
         public OrderedFilm ChoiceB { get; }
 
+        /// <summary>
+        /// Gets the choices remaining. Null if it is uncertain.
+        /// </summary>
+        public int? ChoicesRemaining { get; }
+
         public OrderedFilmRank(
             int id,
             bool completed,
             IEnumerable<OrderedFilm> sortedFilms,
             IEnumerable<OrderedFilm> ignoredFilms,
             OrderedFilm choiceA,
-            OrderedFilm choiceB)
+            OrderedFilm choiceB,
+            int? choicesRemaining)
         {
             Id = id;
             Completed = completed;
@@ -27,6 +33,7 @@ namespace FilmLister.Domain
             IgnoredFilms = ignoredFilms.ToList() ?? throw new ArgumentNullException(nameof(ignoredFilms));
             ChoiceA = choiceA;
             ChoiceB = choiceB;
+            ChoicesRemaining = choicesRemaining;
         }
     }
 }

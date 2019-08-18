@@ -157,6 +157,14 @@ Task("UpdateDatabaseDocker")
     }
 });
 
+Task("CalculateMetrics")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    var publishDirectory = $"./FilmLister.MetricFinder/bin/{buildDir}/netcoreapp2.2/";
+    DotNetCoreExecute($"{publishDirectory}/FilmLister.MetricFinder.dll", $"-o FilmLister.WebUI/choices.json");
+});
+
 //////////////////////////////////////////////////////////////////////
 // TASK TARGETS
 //////////////////////////////////////////////////////////////////////

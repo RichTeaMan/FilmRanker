@@ -21,13 +21,21 @@ namespace FilmLister.Service
 
         private readonly TmdbService tmdbService;
 
+        private readonly ChoicesRemainingService choicesRemainingService;
+
         private readonly FilmListerContext filmListerContext;
 
-        public FilmService(ILogger<FilmService> logger, OrderService orderService, TmdbService tmdbService, FilmListerContext filmListerContext)
+        public FilmService(
+            ILogger<FilmService> logger,
+            OrderService orderService,
+            TmdbService tmdbService,
+            ChoicesRemainingService choicesRemainingService,
+            FilmListerContext filmListerContext)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.orderService = orderService ?? throw new ArgumentNullException(nameof(orderService));
             this.tmdbService = tmdbService ?? throw new ArgumentNullException(nameof(tmdbService));
+            this.choicesRemainingService = choicesRemainingService ?? throw new ArgumentNullException(nameof(choicesRemainingService));
             this.filmListerContext = filmListerContext ?? throw new ArgumentNullException(nameof(filmListerContext));
         }
 
@@ -195,13 +203,21 @@ namespace FilmLister.Service
                 }
                 else
                 {
+                    var list = orderResult.SortedResults.ToArray();
+                    int? remaining = choicesRemainingService.FindChoicesRemaining(list.Length);
+                    if (remaining.HasValue)
+                    {
+                        remaining = remaining - orderResult.SortedResults.Sum(i => i.LesserRankedFilms.Count);
+                    }
+
                     filmList = new Domain.OrderedFilmRank(
                         orderedFilmList.Id,
                         orderResult.Completed,
-                        orderResult.SortedResults.ToArray(),
+                        list,
                         persistenceOrderedFilmList.OrderedFilms.Where(f => f.Ignored).Select(f => Map(f)).ToArray(),
                         orderResult.LeftSort,
-                        orderResult.RightSort);
+                        orderResult.RightSort,
+                        remaining);
                 }
             }
 
@@ -617,7 +633,8 @@ namespace FilmLister.Service
                     orderedFilms.ToArray(),
                     persistenceOrderedFilmList.OrderedFilms.Where(f => f.Ignored).Select(f => Map(f)).ToArray(),
                     null,
-                    null);
+                    null,
+                    0);
 
             return filmList;
         }
@@ -655,13 +672,21 @@ namespace FilmLister.Service
 
                 films.AddRange(mapping.Values);
             }
+
+            int? remaining = choicesRemainingService.FindChoicesRemaining(orderedFilmList.OrderedFilms.Count());
+            if (remaining.HasValue)
+            {
+                remaining = remaining - orderedFilmList.OrderedFilms.Sum(i => i?.LesserRankedFilmItems?.Count ?? 0);
+            }
+
             var filmList = new Domain.OrderedFilmRank(
                 orderedFilmList.Id,
                 orderedFilmList.Completed,
                 films,
                 new Domain.OrderedFilm[0],
                 null,
-                null);
+                null,
+                remaining);
             return filmList;
         }
     }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace FilmLister.WebUI
 {
@@ -49,6 +50,19 @@ namespace FilmLister.WebUI
                 {
                     ApiKey = tmdbApiKey
                 };
+            });
+            services.AddSingleton<ChoicesRemainingService>(sp =>
+            {
+                var choicesRemaingService = new ChoicesRemainingService();
+                try
+                {
+                    choicesRemaingService.LoadChoicesFromJson("choices.json").Wait();
+                }
+                catch(Exception ex)
+                {
+                    throw new Exception("Cannot build ChoicesRemainingService.", ex);
+                }
+                return choicesRemaingService;
             });
             services.AddTransient<TmdbService>();
             services.AddTransient<OrderService>();

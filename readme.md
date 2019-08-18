@@ -7,6 +7,15 @@ in a SQL database that can be eventually be used to order film preferences via t
 
 Film information, such as titles and posters, are provided via [The Movie Database](https://www.themoviedb.org/).
 
+## Building
+
+This project uses [Cake](https://cakebuild.net).
+* cake -target=Clean
+* cake -target=Restore-Nuget-Packages
+* cake -target=Build
+* cake -target=CalculateMetrics
+    ** Calculates metrics for remaining decision choices and updates choices.json the web project.
+
 ## Web App Deployment
 
 The application can be deployed with Docker. You'll need a [TMDB API key](https://developers.themoviedb.org/3/getting-started/introduction) for full functionality.

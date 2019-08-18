@@ -7,6 +7,18 @@
 
 @if (!Model.Completed)
 {
+    if (Model.ChoicesRemaining <= 0)
+    {
+        <h5>
+            Ranking almost finished
+        </h5>
+    }
+    else if (Model.ChoicesRemaining != null)
+    {
+        <h5>
+            Approximately @Model.ChoicesRemaining choices remaining
+        </h5>
+    }
     <h4>
         Which do you prefer?
     </h4>
