@@ -29,7 +29,11 @@ namespace FilmLister.Service
             {
                 foreach(var hO in o.HigherRankedObjects)
                 {
-                    lowerRanks[hO].Add(o);
+                    List<T> lowerRankList = null;
+                    if (lowerRanks.TryGetValue(hO, out lowerRankList))
+                    {
+                        lowerRankList.Add(o);
+                    }
                 }
             }
 
