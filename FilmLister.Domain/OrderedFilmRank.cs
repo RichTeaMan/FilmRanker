@@ -35,5 +35,25 @@ namespace FilmLister.Domain
             ChoiceB = choiceB;
             ChoicesRemaining = choicesRemaining;
         }
+
+        public OrderedFilmRank Clone()
+        {
+            var clonedSortedFilms = SortedFilms?.Select(f => f.Clone())?.ToArray();
+            var clonedIgnoredFilms = IgnoredFilms?.Select(f => f.Clone())?.ToArray();
+
+            var clonedChoiceA = ChoiceA?.Clone();
+            var clonedChoiceB = ChoiceB?.Clone();
+
+            var cloned = new OrderedFilmRank(
+                Id,
+                Completed,
+                clonedSortedFilms,
+                clonedIgnoredFilms,
+                clonedChoiceA,
+                clonedChoiceB,
+                ChoicesRemaining);
+
+            return cloned;
+        }
     }
 }

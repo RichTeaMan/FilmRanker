@@ -41,6 +41,8 @@ namespace FilmLister.WebUI
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddMemoryCache();
+
+            var orderService = new OrderService();
             services.AddTransient<FilmMapper>();
             services.AddTransient<FilmRankMapper>();
             services.AddTransient<FilmListMapper>();
@@ -53,7 +55,7 @@ namespace FilmLister.WebUI
             });
             services.AddSingleton<ChoicesRemainingService>(sp =>
             {
-                var choicesRemaingService = new ChoicesRemainingService();
+                var choicesRemaingService = new ChoicesRemainingService(orderService);
                 try
                 {
                     choicesRemaingService.LoadChoicesFromJson("choices.json").Wait();
@@ -65,7 +67,7 @@ namespace FilmLister.WebUI
                 return choicesRemaingService;
             });
             services.AddTransient<TmdbService>();
-            services.AddTransient<OrderService>();
+            services.AddSingleton(sp => { return orderService; });
             services.AddTransient<FilmService>();
             services.AddHostedService<FilmUpdateHostedService>();
         }

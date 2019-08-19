@@ -40,12 +40,29 @@ namespace FilmLister.Service
         /// </remarks>
         public T RightSort { get; }
 
+        [Obsolete]
         public SortResult(IReadOnlyList<T> sortedResults, bool completed, T leftSort, T rightSort)
         {
             SortedResults = sortedResults ?? throw new ArgumentNullException(nameof(sortedResults));
             Completed = completed;
             LeftSort = leftSort;
             RightSort = rightSort;
+        }
+
+        public SortResult(IReadOnlyList<T> sortedResults, T leftSort, T rightSort)
+        {
+            SortedResults = sortedResults ?? throw new ArgumentNullException(nameof(sortedResults));
+            Completed = false;
+            LeftSort = leftSort;
+            RightSort = rightSort;
+        }
+
+        public SortResult(IReadOnlyList<T> sortedResults)
+        {
+            SortedResults = sortedResults ?? throw new ArgumentNullException(nameof(sortedResults));
+            Completed = true;
+            LeftSort = default(T);
+            RightSort = default(T);
         }
     }
 }

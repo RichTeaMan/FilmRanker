@@ -204,11 +204,7 @@ namespace FilmLister.Service
                 else
                 {
                     var list = orderResult.SortedResults.ToArray();
-                    int? remaining = choicesRemainingService.FindChoicesRemaining(list.Length);
-                    if (remaining.HasValue)
-                    {
-                        remaining = remaining - orderResult.SortedResults.Sum(i => i.LesserRankedFilms.Count);
-                    }
+                    int? remaining = choicesRemainingService.FindChoicesRemaining(orderedFilmList);
 
                     filmList = new Domain.OrderedFilmRank(
                         orderedFilmList.Id,
@@ -673,12 +669,6 @@ namespace FilmLister.Service
                 films.AddRange(mapping.Values);
             }
 
-            int? remaining = choicesRemainingService.FindChoicesRemaining(orderedFilmList.OrderedFilms.Count());
-            if (remaining.HasValue)
-            {
-                remaining = remaining - orderedFilmList.OrderedFilms.Sum(i => i?.LesserRankedFilmItems?.Count ?? 0);
-            }
-
             var filmList = new Domain.OrderedFilmRank(
                 orderedFilmList.Id,
                 orderedFilmList.Completed,
@@ -686,7 +676,7 @@ namespace FilmLister.Service
                 new Domain.OrderedFilm[0],
                 null,
                 null,
-                remaining);
+                0);
             return filmList;
         }
     }

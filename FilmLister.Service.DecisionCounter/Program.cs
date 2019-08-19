@@ -22,8 +22,8 @@ namespace FilmLister.Service.DecisionCounter
 
             Console.WriteLine($"Testing sets of {setLength} over {sortAttempts} iterations.");
 
-            TestSortAlgorithm(setLength, sortAttempts,
-                new MergeSort<IntegerAbstractComparable>());
+            //TestSortAlgorithm(setLength, sortAttempts,
+           //     new MergeSort<IntegerAbstractComparable>());
             TestSortAlgorithm(setLength, sortAttempts,
                 new QuickSort<IntegerAbstractComparable>());
 

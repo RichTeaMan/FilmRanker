@@ -22,6 +22,21 @@ namespace FilmLister.Domain
             Film = film ?? throw new ArgumentNullException(nameof(film));
         }
 
+        /// <summary>
+        /// Clones the ordered film. Does not clone the underlying film object.
+        /// </summary>
+        /// <returns></returns>
+        public OrderedFilm Clone()
+        {
+            var clonedOrderedFilm = new OrderedFilm(
+                Id,
+                Ignore,
+                Film);
+
+            clonedOrderedFilm.AddLesserRankedFilms(LesserRankedFilms);
+            return clonedOrderedFilm;
+        }
+
         public void AddLesserRankedFilm(OrderedFilm lesserRanked)
         {
             _lesserRankedFilms.Add(lesserRanked);

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using FilmLister.Domain;
 
 namespace FilmLister.Service
 {
-    public interface ISortAlgorithm<T> where T : IComparable
+    public interface ISortAlgorithm<T> where T : AbstractComparable<T>
     {
-        void Sort(T[] entries);
+        SortResult<T> Sort(T[] entries);
     }
 }

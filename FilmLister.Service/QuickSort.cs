@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FilmLister.Domain;
+using System;
 using System.Linq;
 
 namespace FilmLister.Service
@@ -7,7 +8,7 @@ namespace FilmLister.Service
     /// Sorts an array using QuickSort algorithm. Code shamelessly derived from https://rosettacode.org/wiki/Sorting_algorithms/Quicksort#C.23.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class QuickSort<T> : ISortAlgorithm<T> where T : IComparable
+    public class QuickSort<T> : ISortAlgorithm<T> where T : AbstractComparable<T>
     {
         private const int INSERTION_LIMIT_DEFAULT = 12;
 
@@ -39,26 +40,37 @@ namespace FilmLister.Service
         #endregion
 
         #region Sort Methods
-        public void Sort(T[] entries)
+        public SortResult<T> Sort(T[] entries)
         {
-            Sort(entries, 0, entries.Length - 1);
+            return Sort(entries, 0, entries.Length - 1);
         }
 
-        public void Sort(T[] entries, int first, int last)
+        public SortResult<T> Sort(T[] entries, int first, int last)
         {
             var length = last + 1 - first;
             while (length > 1)
             {
                 if (length < InsertionLimit)
                 {
-                    InsertionSort<T>.Sort(entries, first, last);
-                    return;
+                    var sortResult = InsertionSort<T>.Sort(entries, first, last);
+                    if (!sortResult.Completed)
+                    {
+                        return sortResult;
+                    }
                 }
 
                 Left = first;
                 Right = last;
-                Pivot(entries);
-                Partition(entries);
+                var pivotResult = Pivot(entries);
+                if (!pivotResult.Completed)
+                {
+                    return pivotResult;
+                }
+                var partitionResult = Partition(entries);
+                if (!partitionResult.Completed)
+                {
+                    return partitionResult;
+                }
                 //[Note]Right < Left
 
                 var leftLength = Right + 1 - first;
@@ -70,20 +82,29 @@ namespace FilmLister.Service
                 //
                 if (leftLength < rightLength)
                 {
-                    Sort(entries, first, Right);
+                    var sortResult = Sort(entries, first, Right);
+                    if (!sortResult.Completed)
+                    {
+                        return sortResult;
+                    }
                     first = Left;
                     length = rightLength;
                 }
                 else
                 {
-                    Sort(entries, Left, last);
+                    var sortResult = Sort(entries, Left, last);
+                    if (!sortResult.Completed)
+                    {
+                        return sortResult;
+                    }
                     last = Right;
                     length = leftLength;
                 }
             }
+            return new SortResult<T>(entries);
         }
 
-        private void Pivot(T[] entries)
+        private SortResult<T> Pivot(T[] entries)
         {
             // An odd sample size is chosen based on the log of the interval size.
             // The median of a randomly chosen set of samples is then returned as
@@ -102,11 +123,16 @@ namespace FilmLister.Service
                 Swap(entries, first, random);
             }
 
-            InsertionSort<T>.Sort(entries, Left, last);
+            var insertionResult = InsertionSort<T>.Sort(entries, Left, last);
+            if (!insertionResult.Completed)
+            {
+                return insertionResult;
+            }
             Median = entries[Left + sampleSize / 2];
+            return new SortResult<T>(entries);
         }
 
-        private void Partition(T[] entries)
+        private SortResult<T> Partition(T[] entries)
         {
             var first = Left;
             var last = Right;
@@ -117,14 +143,51 @@ namespace FilmLister.Service
                 //[Assert]There exists some index >= Left where entries[index] >= Median
                 //[Assert]There exists some index <= Right where entries[index] <= Median
                 // So, there is no need for Left or Right bound checks
-                while (Median.CompareTo(entries[Left]) > 0) Left++;
-                while (Median.CompareTo(entries[Right]) < 0) Right--;
+
+                // while (Median.CompareTo(entries[Left]) > 0) Left++;
+                while (true)
+                {
+                    var compareResult = Median.AbstractCompareTo(entries[Left]);
+                    if (!compareResult.ComparisonSucceeded)
+                    {
+                        return new SortResult<T>(entries, entries[Left], Median);
+                    }
+                    if (compareResult.ComparisonResult > 0)
+                    {
+                        Left++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                //while (Median.CompareTo(entries[Right]) < 0) Right--;
+                while (true)
+                {
+                    var compareResult = Median.AbstractCompareTo(entries[Right]);
+                    if (!compareResult.ComparisonSucceeded)
+                    {
+                        return new SortResult<T>(entries, entries[Right], Median);
+                    }
+                    if (compareResult.ComparisonResult < 0)
+                    {
+                        Right--;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
 
                 //[Assert]entries[Right] <= Median <= entries[Left]
                 if (Right <= Left) break;
 
                 Swap(entries, Left, Right);
-                SwapOut(entries);
+                if (!SwapOut(entries))
+                {
+                    return new SortResult<T>(entries, entries[Left], entries[Right]);
+                }
                 Left++;
                 Right--;
                 //[Assert]entries[first:Left - 1] <= Median <= entries[Right + 1:last]
@@ -140,14 +203,36 @@ namespace FilmLister.Service
 
             //[Assert]entries[first:Right] <= Median <= entries[Left:last]
             //[Assert]entries[Right + 1:Left - 1] == Median when non-empty
+
+            return new SortResult<T>(entries);
         }
         #endregion
 
         #region Swap Methods
-        private void SwapOut(T[] entries)
+        private bool SwapOut(T[] entries)
         {
-            if (Median.CompareTo(entries[Left]) == 0) Swap(entries, LeftMedian++, Left);
-            if (Median.CompareTo(entries[Right]) == 0) Swap(entries, Right, RightMedian--);
+            // if (Median.CompareTo(entries[Left]) == 0) Swap(entries, LeftMedian++, Left);
+            var leftCompare = Median.AbstractCompareTo(entries[Left]);
+            if (!leftCompare.ComparisonSucceeded)
+            {
+                return false;
+            }
+            if (leftCompare.ComparisonResult == 0)
+            {
+                Swap(entries, LeftMedian++, Left);
+            }
+
+            // if (Median.CompareTo(entries[Right]) == 0) Swap(entries, Right, RightMedian--);
+            var rightCompare = Median.AbstractCompareTo(entries[Right]);
+            if (!rightCompare.ComparisonSucceeded)
+            {
+                return false;
+            }
+            if (rightCompare.ComparisonResult == 0)
+            {
+                Swap(entries, Right, RightMedian--);
+            }
+            return true;
         }
 
         private void SwapIn(T[] entries, int first, int last)
@@ -170,32 +255,76 @@ namespace FilmLister.Service
     }
 
     #region Insertion Sort
-    internal static class InsertionSort<T> where T : IComparable
+    internal static class InsertionSort<T> where T : AbstractComparable<T>
     {
-        public static void Sort(T[] entries, int first, int last)
+        public static SortResult<T> Sort(T[] entries, int first, int last)
         {
             T[] result = entries.ToArray();
             for (var index = first + 1; index <= last; index++)
             {
-                result = Insert(result, first, index);
+                var insertionResult = Insert(result, first, index);
+                if (!insertionResult.Completed)
+                {
+                    return insertionResult;
+                }
+                result = insertionResult.SortedResults.ToArray();
             }
             for (int index = 0; index < entries.Length; index++)
             {
                 entries[index] = result[index];
             }
+            return new SortResult<T>(entries);
         }
 
-        private static T[] Insert(T[] entries, int first, int index)
+        private static SortResult<T> Insert(T[] entries, int first, int index)
         {
             T[] result = entries.ToArray();
             var entry = result[index];
-            while (index > first && result[index - 1].CompareTo(entry) > 0)
+            while (index > first)
             {
-                result[index] = result[--index];
+                var compareResult = result[index - 1].AbstractCompareTo(entry);
+                if (!compareResult.ComparisonSucceeded)
+                {
+                    return new SortResult<T>(entries, result[index - 1], entry);
+                }
+
+                if (compareResult.ComparisonResult > 0)
+                {
+                    result[index] = result[--index];
+                }
+                else
+                {
+                    break;
+                }
             }
             result[index] = entry;
-            return result;
+            return new SortResult<T>(result);
         }
+
+        public class InsertionResult
+        {
+            public bool Succeeded { get; }
+
+            public T[] Entries { get; }
+
+            public InsertionResult(T[] entries)
+            {
+                Succeeded = true;
+                Entries = entries ?? throw new ArgumentNullException(nameof(entries));
+            }
+
+            private InsertionResult()
+            {
+                Succeeded = false;
+                Entries = null;
+            }
+
+            public static InsertionResult FailedResult()
+            {
+                return new InsertionResult();
+            }
+        }
+
     }
     #endregion
 }

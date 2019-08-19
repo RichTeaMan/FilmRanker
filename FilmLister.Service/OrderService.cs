@@ -10,7 +10,7 @@ namespace FilmLister.Service
         public SortResult<T> OrderObjects<T>(IEnumerable<T> films) where T : AbstractComparable<T>
         {
             return OrderObjects(films, new QuickSort<T>());
-       }
+        }
 
         public SortResult<T> OrderObjects<T>(IEnumerable<T> objectsToOrder, ISortAlgorithm<T> sortAlgorithm) where T : AbstractComparable<T>
         {
@@ -25,9 +25,9 @@ namespace FilmLister.Service
             }
 
             var lowerRanks = objectsToOrder.ToDictionary(k => k, v => new List<T>());
-            foreach(var o in objectsToOrder)
+            foreach (var o in objectsToOrder)
             {
-                foreach(var hO in o.HigherRankedObjects)
+                foreach (var hO in o.HigherRankedObjects)
                 {
                     List<T> lowerRankList = null;
                     if (lowerRanks.TryGetValue(hO, out lowerRankList))
@@ -43,20 +43,19 @@ namespace FilmLister.Service
                 .ToArray();
             T left = null;
             T right = null;
-            bool completed = true;
 
+            SortResult<T> sortResult;
             try
             {
-                sortAlgorithm.Sort(results);
+                sortResult = sortAlgorithm.Sort(results);
             }
             catch (UnknownComparisonException<T> exception)
             {
                 // TODO: Add check that result is the correct length
                 left = exception.Left;
                 right = exception.Right;
-                completed = false;
+                sortResult = new SortResult<T>(results, left, right);
             }
-            var sortResult = new SortResult<T>(results, completed, left, right);
             return sortResult;
         }
 
